@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UP</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #240046;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .bg-gradient {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(ellipse at top, #7b2cbf 0%, #240046 60%);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 390px;
+      padding: 0 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding-top: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: white;
+    }
+
+    .streak-badge {
+      background: rgba(129, 90, 192, 0.4);
+      border: 1px solid #815ac0;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .streak-fire { font-size: 16px; }
+
+    .greeting {
+      margin-top: 48px;
+    }
+
+    .greeting-sub {
+      font-size: 14px;
+      color: #815ac0;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .greeting-main {
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #815ac0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .last-workout {
+      margin-top: 32px;
+      background: rgba(123, 44, 191, 0.2);
+      border: 1px solid rgba(129, 90, 192, 0.3);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .last-workout-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #815ac0;
+    }
+
+    .last-workout-name {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    .last-workout-meta {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      background: rgba(129, 90, 192, 0.2);
+      border-radius: 12px;
+      padding: 10px 16px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+    }
+
+    .spacer { flex: 1; }
+
+    .start-btn {
+      width: 100%;
+      padding: 22px;
+      background: linear-gradient(135deg, #7b2cbf, #815ac0);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+
+    .start-btn:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+
+    .secondary-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid rgba(129, 90, 192, 0.4);
+      border-radius: 16px;
+      color: rgba(255,255,255,0.6);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="container">
+    <div class="header">
+      <div class="logo">UP</div>
+      <div class="streak-badge">
+        <span class="streak-fire">🔥</span>
+        <span>7 day streak</span>
+      </div>
+    </div>
+
+    <div class="greeting">
+      <div class="greeting-sub">Ready to work?</div>
+      <div class="greeting-main">Let's get<br>after it.</div>
+    </div>
+
+    <div class="last-workout">
+      <div class="last-workout-label">Last Session</div>
+      <div class="last-workout-name">Push Day A</div>
+      <div class="last-workout-meta">Yesterday · 58 mins</div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-value">9</div>
+          <div class="stat-label">Exercises</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">24</div>
+          <div class="stat-label">Sets</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">3</div>
+          <div class="stat-label">PRs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <button class="start-btn" onclick="startWorkout()">
+      START WORKOUT
+    </button>
+    <button class="secondary-btn">
+      View History
+    </button>
+  </div>
+
+  <script>
+    function startWorkout() {
+      alert("UP! Let's get it. 💪");
+    }
+  </script>
+</body>
+</html>
