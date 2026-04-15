@@ -2,231 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>UP</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { background: #240046; color: white; font-family: -apple-system, sans-serif; overflow-x: hidden; }
+    
+    /* Layout Containers */
+    .container { padding: 24px; min-height: 100vh; display: flex; flex-direction: column; }
+    #workout-view, #revolver-view { display: none; }
 
-    body {
-      background: #240046;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-x: hidden;
-    }
+    /* Reusable Components */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .logo { font-size: 32px; font-weight: 900; letter-spacing: -1px; }
+    .streak-badge { background: rgba(129, 90, 192, 0.4); border: 1px solid #815ac0; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; }
+    
+    .greeting-main { font-size: 42px; font-weight: 900; margin-bottom: 20px; background: linear-gradient(135deg, #fff, #815ac0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+ 
+    .start-btn { width: 100%; padding: 22px; background: linear-gradient(135deg, #7b2cbf, #815ac0); border: none; border-radius: 20px; color: white; font-size: 20px; font-weight: 900; text-transform: uppercase; cursor: pointer; margin-top: auto; }
 
-    .bg-gradient {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: radial-gradient(ellipse at top, #7b2cbf 0%, #240046 60%);
-      z-index: 0;
-    }
+    .exercise-card { background: rgba(123, 44, 191, 0.2); border: 1px solid rgba(129, 90, 192, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 390px;
-      padding: 0 24px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header {
-      padding-top: 60px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 32px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      color: white;
-    }
-
-    .streak-badge {
-      background: rgba(129, 90, 192, 0.4);
-      border: 1px solid #815ac0;
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .streak-fire { font-size: 16px; }
-
-    .greeting {
-      margin-top: 48px;
-    }
-
-    .greeting-sub {
-      font-size: 14px;
-      color: #815ac0;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .greeting-main {
-      font-size: 42px;
-      font-weight: 900;
-      line-height: 1.1;
-      margin-top: 8px;
-      background: linear-gradient(135deg, #ffffff 0%, #815ac0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .last-workout {
-      margin-top: 32px;
-      background: rgba(123, 44, 191, 0.2);
-      border: 1px solid rgba(129, 90, 192, 0.3);
-      border-radius: 20px;
-      padding: 20px;
-    }
-
-    .last-workout-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #815ac0;
-    }
-
-    .last-workout-name {
-      font-size: 22px;
-      font-weight: 800;
-      margin-top: 6px;
-    }
-
-    .last-workout-meta {
-      font-size: 13px;
-      color: rgba(255,255,255,0.5);
-      margin-top: 4px;
-    }
-
-    .stats-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .stat {
-      background: rgba(129, 90, 192, 0.2);
-      border-radius: 12px;
-      padding: 10px 16px;
-      flex: 1;
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .stat-label {
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      margin-top: 2px;
-    }
-
-    .spacer { flex: 1; }
-
-    .start-btn {
-      width: 100%;
-      padding: 22px;
-      background: linear-gradient(135deg, #7b2cbf, #815ac0);
-      border: none;
-      border-radius: 20px;
-      color: white;
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      margin-bottom: 16px;
-      transition: transform 0.1s, opacity 0.1s;
-    }
-
-    .start-btn:active {
-      transform: scale(0.97);
-      opacity: 0.9;
-    }
-
-    .secondary-btn {
-      width: 100%;
-      padding: 16px;
-      background: transparent;
-      border: 1px solid rgba(129, 90, 192, 0.4);
-      border-radius: 16px;
-      color: rgba(255,255,255,0.6);
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 40px;
-    }
+    /* THE REVOLVER */
+    .revolver-container { display: flex; justify-content: space-around; background: #1a0035; border: 2px solid #815ac0; border-radius: 30px; height: 250px; margin: 30px 0; overflow: hidden; position: relative; }
+    .wheel { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; width: 45%; padding: 100px 0; }
+    .wheel::-webkit-scrollbar { display: none; }
+    .wheel div { height: 50px; line-height: 50px; font-size: 24px; font-weight: 800; scroll-snap-align: center; color: rgba(255,255,255,0.2); text-align: center; }
+    .revolver-overlay { position: absolute; top: 100px; left: 5%; width: 90%; height: 50px; border-top: 1px solid #815ac0; border-bottom: 1px solid #815ac0; pointer-events: none; background: rgba(129,90,192,0.1); border-radius: 10px; }
   </style>
 </head>
 <body>
-  <div class="bg-gradient"></div>
-  <div class="container">
+
+  <div id="home-view" class="container">
     <div class="header">
       <div class="logo">UP</div>
-      <div class="streak-badge">
-        <span class="streak-fire">🔥</span>
-        <span>7 day streak</span>
-      </div>
+      <div class="streak-badge">🔥 7 day streak</div>
     </div>
-
-    <div class="greeting">
-      <div class="greeting-sub">Ready to work?</div>
-      <div class="greeting-main">Let's get<br>after it.</div>
-    </div>
-
-    <div class="last-workout">
-      <div class="last-workout-label">Last Session</div>
-      <div class="last-workout-name">Push Day A</div>
-      <div class="last-workout-meta">Yesterday · 58 mins</div>
-      <div class="stats-row">
-        <div class="stat">
-          <div class="stat-value">9</div>
-          <div class="stat-label">Exercises</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">24</div>
-          <div class="stat-label">Sets</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">3</div>
-          <div class="stat-label">PRs</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="spacer"></div>
-
-    <button class="start-btn" onclick="startWorkout()">
-      START WORKOUT
-    </button>
-    <button class="secondary-btn">
-      View History
-    </button>
+    <div class="greeting-main">Let's get<br>after it.</div>
+	<button class="start-btn" onclick="startWorkout()">START WORKOUT</button>
   </div>
 
-  <script>
+  <div id="workout-view" class="container">
+    <div class="header"><div class="logo">UP</div><button class="streak-badge" onclick="showView('home-view')">Back</button></div>
+    <div class="greeting-main" style="font-size: 32px;">Push Day A</div>
+    <div id="exercise-list">
+      <div class="exercise-card" onclick="openRevolver('Flat Barbell Bench')"><span>Flat Barbell Bench</span><span>+</span></div>
+      <div class="exercise-card" onclick="openRevolver('Incline DB Bench')"><span>Incline DB Bench</span><span>+</span></div>
+      <div class="exercise-card" onclick="openRevolver('Chest Fly Machine')"><span>Chest Fly Machine</span><span>+</span></div>
+    </div>
+  </div>
+
+  <div id="revolver-view" class="container">
+    <div class="header"><div class="logo" id="active-ex-name">Exercise</div></div>
+    <div class="revolver-container">
+      <div class="revolver-overlay"></div>
+      <div class="wheel" id="weight-wheel"></div>
+      <div class="wheel" id="reps-wheel"></div>
+    </div>
+    <button class="start-btn" onclick="saveSet()">LOG SET</button>
+  </div>
+
+<script>
+    // 1. YOUR AWS KEYS
+    const clientId = "672r492bnbt36s3lc05s07rcgs";
+    const domain = "us-east-1stqlgicyi.auth.us-east-1.amazoncognito.com"; 
+    const cloudFrontUrl = "https://d2wkw7ice8703z.cloudfront.net"; 
+
+    // 2. THE LOCK (Triggers when they hit Start)
     function startWorkout() {
-      alert("UP! Let's get it. 💪");
+      const loginUrl = `https://${domain}/login?client_id=${clientId}&response_type=code&scope=email+openid+profile&redirect_uri=${encodeURIComponent(cloudFrontUrl)}`;
+      window.location.href = loginUrl;
+    }
+
+    // 3. THE HANDYMAN (Check if we just logged in)
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      
+      if (code) {
+        // If there is a code in the URL, the user just logged in!
+        // For now, we'll just show the workout view.
+        showView('workout-view');
+        // Clean the URL so it looks professional
+        window.history.replaceState({}, document.title, "/");
+      }
+    };
+
+    function showView(viewId) {
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('workout-view').style.display = 'none';
+      document.getElementById('revolver-view').style.display = 'none';
+      document.getElementById(viewId).style.display = 'flex';
+    }
+
+    function openRevolver(exName) {
+      document.getElementById('active-ex-name').innerText = exName;
+      const wWheel = document.getElementById('weight-wheel');
+      const rWheel = document.getElementById('reps-wheel');
+      wWheel.innerHTML = ''; rWheel.innerHTML = '';
+      for(let i=0; i<=400; i+=5) wWheel.innerHTML += `<div>${i} lbs</div>`;
+      for(let i=1; i<=30; i++) rWheel.innerHTML += `<div>${i} reps</div>`;
+      showView('revolver-view');
+    }
+
+    function saveSet() {
+      alert("THAT WAS INSANE. ↑ New PR.");
+      showView('workout-view');
     }
   </script>
 </body>
