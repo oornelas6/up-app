@@ -1,23 +1,30 @@
-import { StyleSheet, Text, View, TouchableOpacity, FlatList, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 
-const { height } = Dimensions.get('window');
+const PREVIOUS_BESTS = {
+  'Flat Barbell Bench': { weight: 185, reps: 5 },
+  'Incline DB Bench': { weight: 70, reps: 8 },
+  'Overhead Press': { weight: 135, reps: 6 },
+  'Wide Grip Lat Pulldown': { weight: 150, reps: 10 },
+  'Back Squat': { weight: 225, reps: 5 },
+};
+
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 const WHEEL_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
-
-const WEIGHTS = Array.from({ length: 161 }, (_, i) => i * 2.5);
+const WEIGHTS_LBS = Array.from({ length: 161 }, (_, i) => i * 2.5);
+const WEIGHTS_KG = Array.from({ length: 121 }, (_, i) => i * 1.25);
 const REPS = Array.from({ length: 30 }, (_, i) => i + 1);
 
 const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
-  const flatListRef = useRef(null);
+  const scrollRef = useRef(null);
 
-  const getItemLayout = (_, index) => ({
-    length: ITEM_HEIGHT,
-    offset: ITEM_HEIGHT * index,
-    index,
-  });
+  useEffect(() => {
+    setTimeout(() => {
+      scrollRef.current?.scrollTo({ y: selectedIndex * ITEM_HEIGHT, animated: true });
+    }, 50);
+  }, [selectedIndex]);
 
   const onMomentumScrollEnd = useCallback((e) => {
     const idx = Math.round(e.nativeEvent.contentOffset.y / ITEM_HEIGHT);
@@ -25,38 +32,32 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
     onIndexChange(clamped);
   }, [data, onIndexChange]);
 
-  const renderItem = ({ item, index }) => {
-    const distance = Math.abs(index - selectedIndex);
-    const opacity = distance === 0 ? 1 : distance === 1 ? 0.4 : 0.15;
-    const fontSize = distance === 0 ? 28 : distance === 1 ? 20 : 16;
-    const fontWeight = distance === 0 ? '800' : '500';
-
-    return (
-      <View style={styles.wheelItem}>
-        <Text style={[styles.wheelText, { opacity, fontSize, fontWeight }]}>
-          {item}{unit}
-        </Text>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.wheelWrapper}>
-      <FlatList
-        ref={flatListRef}
-        data={data}
-        keyExtractor={(_, i) => i.toString()}
-        renderItem={renderItem}
-        getItemLayout={getItemLayout}
+      <ScrollView
+        ref={scrollRef}
         showsVerticalScrollIndicator={false}
         snapToInterval={ITEM_HEIGHT}
-        decelerationRate="fast"
+        decelerationRate={0.92}
         onMomentumScrollEnd={onMomentumScrollEnd}
-        initialScrollIndex={selectedIndex}
+        scrollEventThrottle={16}
         contentContainerStyle={{ paddingVertical: ITEM_HEIGHT * 2 }}
         style={{ height: WHEEL_HEIGHT }}
-      />
-      {/* Center selector lines */}
+      >
+        {data.map((item, index) => {
+          const distance = Math.abs(index - selectedIndex);
+          const opacity = distance === 0 ? 1 : distance === 1 ? 0.45 : distance === 2 ? 0.2 : 0.08;
+          const fontSize = distance === 0 ? 28 : distance === 1 ? 20 : 16;
+          const fontWeight = distance === 0 ? '800' : '500';
+          return (
+            <View key={index} style={styles.wheelItem}>
+              <Text style={[styles.wheelText, { opacity, fontSize, fontWeight }]}>
+                {item}{unit}
+              </Text>
+            </View>
+          );
+        })}
+      </ScrollView>
       <View pointerEvents="none" style={styles.selectorTop} />
       <View pointerEvents="none" style={styles.selectorBottom} />
     </View>
@@ -68,33 +69,31 @@ export default function RevolverScreen({ navigation, route }) {
   const [setNum, setSetNum] = useState(1);
   const [lastWeight, setLastWeight] = useState(null);
   const [lastReps, setLastReps] = useState(null);
-  const [weightIdx, setWeightIdx] = useState(27); // 135 lbs default
-  const [repsIdx, setRepsIdx] = useState(7);  // 8 reps default
-
+  const [weightIdx, setWeightIdx] = useState(27);
+  const [repsIdx, setRepsIdx] = useState(7);
+  const [isKg, setIsKg] = useState(false);
+  const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
+  const unit = isKg ? 'kg' : 'lbs';
   const selectedWeight = WEIGHTS[weightIdx];
   const selectedReps = REPS[repsIdx];
 
   const logSet = () => {
+    const prev = PREVIOUS_BESTS[exercise];
+    const isNewPR = prev
+      ? (selectedWeight > prev.weight) || (selectedWeight === prev.weight && selectedReps > prev.reps)
+      : false;
     setLastWeight(selectedWeight);
     setLastReps(selectedReps);
     setSetNum(s => s + 1);
     navigation.navigate('PR', {
-      exercise,
-      weight: selectedWeight,
-      reps: selectedReps,
-      setNum,
-      split,
+      exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR,
     });
   };
 
   const sameAsLast = () => {
     setSetNum(s => s + 1);
     navigation.navigate('PR', {
-      exercise,
-      weight: lastWeight,
-      reps: lastReps,
-      setNum,
-      split,
+      exercise, weight: lastWeight, reps: lastReps, setNum, split, isPR: false,
     });
   };
 
@@ -113,13 +112,40 @@ export default function RevolverScreen({ navigation, route }) {
         </View>
 
         <Text style={styles.exName}>{exercise}</Text>
-        <Text style={styles.setLabel}>SET {setNum}</Text>
+        <View style={styles.setRow}>
+          <Text style={styles.setLabel}>SET {setNum}</Text>
+          <TouchableOpacity
+            style={styles.unitToggle}
+            onPress={() => {
+              setIsKg(k => {
+                const newIsKg = !k;
+                const currentWeight = k ? WEIGHTS_KG[weightIdx] : WEIGHTS_LBS[weightIdx];
+                if (newIsKg) {
+                  // Converting lbs to kg
+                  const kgWeight = currentWeight * 0.453592;
+                  const closest = WEIGHTS_KG.reduce((prev, curr) =>
+                    Math.abs(curr - kgWeight) < Math.abs(prev - kgWeight) ? curr : prev
+                  );
+                  setWeightIdx(WEIGHTS_KG.indexOf(closest));
+                } else {
+                  // Converting kg to lbs
+                  const lbsWeight = currentWeight * 2.20462;
+                  const closest = WEIGHTS_LBS.reduce((prev, curr) =>
+                    Math.abs(curr - lbsWeight) < Math.abs(prev - lbsWeight) ? curr : prev
+                  );
+                  setWeightIdx(WEIGHTS_LBS.indexOf(closest));
+                }
+                return newIsKg;
+              });
+            }}          >
+            <Text style={styles.unitToggleText}>{isKg ? 'KG' : 'LBS'}</Text>
+          </TouchableOpacity>
+        </View>
 
-        {/* Selected value display */}
         <View style={styles.selectedDisplay}>
           <View style={styles.selectedItem}>
             <Text style={styles.selectedValue}>{selectedWeight}</Text>
-            <Text style={styles.selectedUnit}>lbs</Text>
+            <Text style={styles.selectedUnit}>{unit}</Text>
           </View>
           <View style={styles.selectedDivider} />
           <View style={styles.selectedItem}>
@@ -128,20 +154,17 @@ export default function RevolverScreen({ navigation, route }) {
           </View>
         </View>
 
-        {/* Wheels */}
         <View style={styles.wheelsRow}>
           <View style={styles.wheelContainer}>
             <Text style={styles.wheelLabel}>WEIGHT</Text>
             <WheelPicker
               data={WEIGHTS}
-              unit=" lbs"
+              unit={` ${unit}`}
               selectedIndex={weightIdx}
               onIndexChange={setWeightIdx}
             />
           </View>
-
           <View style={styles.wheelDivider} />
-
           <View style={styles.wheelContainer}>
             <Text style={styles.wheelLabel}>REPS</Text>
             <WheelPicker
@@ -163,17 +186,17 @@ export default function RevolverScreen({ navigation, route }) {
             style={styles.logBtn}
           >
             <Text style={styles.logBtnText}>LOG SET</Text>
-            <Text style={styles.logBtnSub}>{selectedWeight} lbs × {selectedReps} reps</Text>
+            <Text style={styles.logBtnSub}>{selectedWeight} {unit} × {selectedReps} reps</Text>
           </LinearGradient>
         </TouchableOpacity>
 
         {lastWeight !== null && (
           <TouchableOpacity style={styles.sameBtn} onPress={sameAsLast}>
-            <Text style={styles.sameBtnText}>↩ Same · {lastWeight} lbs × {lastReps} reps</Text>
+            <Text style={styles.sameBtnText}>↩ Same · {lastWeight} {unit} × {lastReps} reps</Text>
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
           <Text style={styles.doneBtnText}>Done with Exercise</Text>
         </TouchableOpacity>
       </View>
@@ -188,7 +211,10 @@ const styles = StyleSheet.create({
   back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },
   logo: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: 4 },
   exName: { fontSize: 26, fontWeight: '800', color: '#ffffff', letterSpacing: -0.5, marginBottom: 4 },
-  setLabel: { fontSize: 12, fontWeight: '700', letterSpacing: 3, color: '#9d4edd', marginBottom: 20 },
+  setRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
+  setLabel: { fontSize: 12, fontWeight: '700', letterSpacing: 3, color: '#9d4edd' },
+  unitToggle: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 100, paddingHorizontal: 14, paddingVertical: 6 },
+  unitToggleText: { color: '#9d4edd', fontSize: 12, fontWeight: '800', letterSpacing: 2 },
   selectedDisplay: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 20, paddingVertical: 16, marginBottom: 16, gap: 32 },
   selectedItem: { alignItems: 'center' },
   selectedValue: { fontSize: 36, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
