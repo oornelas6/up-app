@@ -109,7 +109,7 @@ export default function WorkoutScreen({ navigation, route }) {
               key={i}
               style={styles.card}
               activeOpacity={0.8}
-              onPress={() => navigation.navigate('Revolver', { exercise: ex.name })}
+              onPress={() => navigation.navigate('Revolver', { exercise: ex.name, split: split })}
             >
               <Text style={styles.exName}>{ex.name}</Text>
               <View style={styles.tag}>

@@ -59,8 +59,7 @@ export default function PRScreen({ navigation, route }) {
 
         <TouchableOpacity
           style={styles.doneBtn}
-          onPress={() => navigation.navigate('Workout', route.params)}
-        >
+          onPress={() => navigation.navigate('Workout', { split: route.params.split })}>
           <Text style={styles.doneBtnText}>Back to Exercises</Text>
         </TouchableOpacity>
 
