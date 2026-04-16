@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import * as Haptics from 'expo-haptics';
 
 const MESSAGES = [
   { title: "Set locked in.", sub: "Every rep is a deposit into your future self." },
@@ -10,19 +11,61 @@ const MESSAGES = [
   { title: "Noted.", sub: "Your body is adapting. Show up again tomorrow." },
 ];
 
+const REST_TIMES = {
+  default: 90,
+  heavy: 180,    // squats, deadlifts, bench
+  moderate: 120, // most exercises
+  light: 60,     // isolation movements
+};
+
 export default function PRScreen({ navigation, route }) {
-  const { exercise, weight, reps, setNum, split } = route.params;
+  const { exercise, weight, reps, setNum, split, isPR } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [timeLeft, setTimeLeft] = useState(REST_TIMES.default);
+  const [timerDone, setTimerDone] = useState(false);
+  const timerRef = useRef(null);
 
-  const isPR = route.params.isPR;
   const msg = MESSAGES[(setNum - 1) % MESSAGES.length];
+
   useEffect(() => {
     Animated.parallel([
       Animated.spring(scaleAnim, { toValue: 1, tension: 50, friction: 6, useNativeDriver: true }),
       Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
     ]).start();
+
+    // Start rest timer
+    timerRef.current = setInterval(() => {
+      setTimeLeft(t => {
+        if (t <= 1) {
+          clearInterval(timerRef.current);
+          setTimerDone(true);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          return 0;
+        }
+        if (t === 10) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        return t - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timerRef.current);
   }, []);
+
+  const skipTimer = () => {
+    clearInterval(timerRef.current);
+    setTimerDone(true);
+    setTimeLeft(0);
+  };
+
+  const formatTime = (s) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+
+const progress = timeLeft / REST_TIMES.default;
 
   return (
     <View style={styles.root}>
@@ -32,7 +75,7 @@ export default function PRScreen({ navigation, route }) {
       />
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
 
-       {/* Set badge */}
+        {/* Badge */}
         <Animated.View style={[styles.badge, { transform: [{ scale: scaleAnim }] }]}>
           {isPR ? (
             <LinearGradient colors={['#f0a500', '#e07000']} style={styles.badgeInner}>
@@ -78,13 +121,52 @@ export default function PRScreen({ navigation, route }) {
 
         <View style={{ flex: 1 }} />
 
+            <View style={styles.timerContainer}>
+        <View style={styles.timerHeader}>
+          <Text style={styles.timerLabel}>REST</Text>
+          <View style={styles.timerAdjust}>
+            <TouchableOpacity
+              style={styles.adjustBtn}
+              onPress={() => setTimeLeft(t => Math.max(t - 15, 0))}
+            >
+              <Text style={styles.adjustBtnText}>−15</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.adjustBtn}
+              onPress={() => setTimeLeft(t => t + 15)}
+            >
+              <Text style={styles.adjustBtnText}>+15</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={skipTimer}>
+              <Text style={styles.skipText}>Skip</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+          {/* Progress bar */}
+          <View style={styles.progressBar}>
+            <Animated.View style={[styles.progressFill, {
+              width: `${progress * 100}%`,
+              backgroundColor: timerDone ? '#4caf50' : timeLeft <= 10 ? '#f0a500' : '#7b2cbf',
+            }]} />
+          </View>
+
+          <Text style={[styles.timerCount, {
+            color: timerDone ? '#4caf50' : timeLeft <= 10 ? '#f0a500' : '#ffffff'
+          }]}>
+            {timerDone ? "REST DONE" : formatTime(timeLeft)}
+          </Text>
+        </View>
+
         {/* Actions */}
         <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.goBack()}>
           <LinearGradient
-            colors={['#7b2cbf', '#4a0080']}
+            colors={timerDone ? ['#4caf50', '#2e7d32'] : ['#7b2cbf', '#4a0080']}
             style={styles.continueBtn}
           >
-            <Text style={styles.continueBtnText}>NEXT SET</Text>
+            <Text style={styles.continueBtnText}>
+              {timerDone ? "LET'S GO" : "NEXT SET"}
+            </Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -109,23 +191,33 @@ export default function PRScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#080010' },
-  container: { flex: 1, paddingHorizontal: 28, paddingTop: 100, paddingBottom: 40, alignItems: 'center' },
-  badge: { marginBottom: 40 },
+  container: { flex: 1, paddingHorizontal: 28, paddingTop: 80, paddingBottom: 40, alignItems: 'center' },
+  badge: { marginBottom: 28 },
   badgeInner: { paddingHorizontal: 28, paddingVertical: 14, borderRadius: 100 },
   badgeText: { color: 'white', fontSize: 12, fontWeight: '800', letterSpacing: 3 },
-  statsRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 24, paddingVertical: 28, paddingHorizontal: 40, gap: 40, marginBottom: 40 },
+  statsRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 24, paddingVertical: 24, paddingHorizontal: 40, gap: 40, marginBottom: 28, width: '100%', justifyContent: 'center' },
   statBox: { alignItems: 'center' },
-  statVal: { fontSize: 48, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
+  statVal: { fontSize: 42, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
   statLbl: { fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: '500', letterSpacing: 1, marginTop: 4 },
   statDivider: { width: 1, height: 50, backgroundColor: 'rgba(255,255,255,0.08)' },
-  msgContainer: { alignItems: 'center', paddingHorizontal: 20 },
-  msgTitle: { fontSize: 28, fontWeight: '800', color: '#ffffff', letterSpacing: -0.5, textAlign: 'center', marginBottom: 10 },
-  msgSub: { fontSize: 14, color: 'rgba(255,255,255,0.35)', textAlign: 'center', lineHeight: 22, fontWeight: '400' },
+  msgContainer: { alignItems: 'center', paddingHorizontal: 20, width: '100%' },
+  msgTitle: { fontSize: 24, fontWeight: '800', color: '#ffffff', letterSpacing: -0.5, textAlign: 'center', marginBottom: 8 },
+  msgSub: { fontSize: 13, color: 'rgba(255,255,255,0.3)', textAlign: 'center', lineHeight: 20, fontWeight: '400' },
+  prTitle: { fontSize: 32, fontWeight: '900', color: '#f0a500', letterSpacing: -1, textAlign: 'center', marginBottom: 10, lineHeight: 38 },
+  timerContainer: { width: '100%', marginBottom: 20 },
+  timerHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  timerLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.25)' },
+  skipText: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.25)' },
+  progressBar: { height: 3, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 2, marginBottom: 10, overflow: 'hidden', width: '100%' },
+  progressFill: { height: '100%', borderRadius: 2 },
+  timerCount: { fontSize: 32, fontWeight: '900', letterSpacing: -1, textAlign: 'center' },
   continueBtn: { width: '100%', paddingVertical: 22, borderRadius: 18, alignItems: 'center', marginBottom: 12 },
   continueBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
   doneBtnText: { color: 'rgba(255,255,255,0.3)', fontSize: 14, fontWeight: '500' },
   finishBtn: { paddingVertical: 10, alignItems: 'center' },
   finishBtnText: { color: 'rgba(255,255,255,0.15)', fontSize: 13, fontWeight: '500', letterSpacing: 0.5 },
-  prTitle: { fontSize: 36, fontWeight: '900', color: '#f0a500', letterSpacing: -1, textAlign: 'center', marginBottom: 10, lineHeight: 42 },
+  timerAdjust: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  adjustBtn: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
+  adjustBtnText: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '700' },
 });
