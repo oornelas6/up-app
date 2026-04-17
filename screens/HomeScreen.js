@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, Animated, Dimensions } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 
@@ -19,8 +19,11 @@ export default function HomeScreen({ navigation }) {
   const blob3Y = useRef(new Animated.Value(0)).current;
   const blob1X = useRef(new Animated.Value(0)).current;
   const blob2X = useRef(new Animated.Value(0)).current;
+  const [lastSession, setLastSession] = useState(null);
+  const [stats, setStats] = useState({ streak: 0, sessions: 0, prs: 0 });
 
   useEffect(() => {
+    fetchHomeData();
     Animated.timing(fadeAnim, { toValue: 1, duration: 1000, useNativeDriver: true }).start();
     Animated.loop(Animated.sequence([
       Animated.timing(pulseAnim, { toValue: 1.02, duration: 1800, useNativeDriver: true }),
@@ -47,6 +50,39 @@ export default function HomeScreen({ navigation }) {
       Animated.timing(blob3Y, { toValue: 35, duration: 11000, useNativeDriver: true }),
     ])).start();
   }, []);
+
+  const fetchHomeData = async () => {
+    try {
+      const response = await fetch(
+        'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=user-test-001'
+      );
+      const data = await response.json();
+      const sets = data.sets || [];
+
+      if (sets.length > 0) {
+        const lastSet = sets[0];
+        const lastDate = lastSet.timestamp?.split('T')[0];
+        const sessionSets = sets.filter(s => s.timestamp?.split('T')[0] === lastDate);
+        const uniqueExercises = [...new Set(sessionSets.map(s => s.exercise))];
+
+        setLastSession({
+          split: lastSet.split || 'Workout',
+          date: lastDate,
+          exercises: uniqueExercises.length,
+          sets: sessionSets.length,
+        });
+
+        const uniqueDates = [...new Set(sets.map(s => s.timestamp?.split('T')[0]))];
+        setStats({
+          streak: uniqueDates.length,
+          sessions: sets.length,
+          prs: sets.filter(s => s.isPR).length,
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch home data:', err);
+    }
+  };
 
   return (
     <View style={styles.root}>
@@ -80,12 +116,14 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.logo}>UP</Text>
           <View style={styles.streakBadge}>
             <StreakIcon />
-            <Text style={styles.streakText}>7 day streak</Text>
+            <Text style={styles.streakText}>{stats.streak} day streak</Text>
           </View>
         </View>
 
         <View style={styles.greeting}>
-          <Text style={styles.greetingSub}>Wednesday</Text>
+          <Text style={styles.greetingSub}>
+            {new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}
+          </Text>
           <Text style={styles.greetingMain}>Let's get{'\n'}after it.</Text>
         </View>
 
@@ -93,31 +131,37 @@ export default function HomeScreen({ navigation }) {
 
         <View style={styles.lastSession}>
           <Text style={styles.lastSessionLabel}>LAST SESSION</Text>
-          <View style={styles.lastSessionRow}>
-            <Text style={styles.lastSessionName}>Push Day A</Text>
-            <Text style={styles.lastSessionTime}>58 min</Text>
-          </View>
-          <View style={styles.prRow}>
-            <View style={styles.prBadge}>
-              <Text style={styles.prBadgeText}>3 PRs</Text>
-            </View>
-            <Text style={styles.lastSessionMeta}>Yesterday</Text>
-          </View>
+          {lastSession ? (
+            <>
+              <View style={styles.lastSessionRow}>
+                <Text style={styles.lastSessionName}>{lastSession.split}</Text>
+                <Text style={styles.lastSessionTime}>{lastSession.sets} sets</Text>
+              </View>
+              <View style={styles.prRow}>
+                <View style={styles.prBadge}>
+                  <Text style={styles.prBadgeText}>{lastSession.exercises} exercises</Text>
+                </View>
+                <Text style={styles.lastSessionMeta}>{lastSession.date}</Text>
+              </View>
+            </>
+          ) : (
+            <Text style={styles.lastSessionName}>No sessions yet</Text>
+          )}
         </View>
 
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>7</Text>
-            <Text style={styles.statLabel}>day streak</Text>
+            <Text style={styles.statValue}>{stats.streak}</Text>
+            <Text style={styles.statLabel}>days</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>24</Text>
-            <Text style={styles.statLabel}>sessions</Text>
+            <Text style={styles.statValue}>{stats.sessions}</Text>
+            <Text style={styles.statLabel}>total sets</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>12</Text>
+            <Text style={styles.statValue}>{stats.prs}</Text>
             <Text style={styles.statLabel}>total PRs</Text>
           </View>
         </View>
@@ -133,7 +177,9 @@ export default function HomeScreen({ navigation }) {
               style={styles.startBtn}
             >
               <Text style={styles.startBtnText}>START WORKOUT</Text>
-              <Text style={styles.startBtnSub}>Push Day B is next</Text>
+              <Text style={styles.startBtnSub}>
+                {lastSession ? `Last: ${lastSession.split}` : 'Begin your first session'}
+              </Text>
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>
