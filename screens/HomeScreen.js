@@ -113,12 +113,20 @@ export default function HomeScreen({ navigation }) {
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <View style={styles.header}>
-          <Text style={styles.logo}>UP</Text>
+        <Text style={styles.logo}>UP</Text>
+        <View style={styles.headerRight}>
+          <TouchableOpacity
+            style={styles.settingsBtn}
+            onPress={() => navigation.navigate('Settings')}
+          >
+            <Text style={styles.settingsBtnText}>⚙</Text>
+          </TouchableOpacity>
           <View style={styles.streakBadge}>
             <StreakIcon />
             <Text style={styles.streakText}>{stats.streak} day streak</Text>
           </View>
         </View>
+      </View>
 
         <View style={styles.greeting}>
           <Text style={styles.greetingSub}>
@@ -215,6 +223,9 @@ const styles = StyleSheet.create({
   lastSessionMeta: { fontSize: 12, color: 'rgba(255,255,255,0.25)' },
   statsRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.02)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', borderRadius: 20, paddingVertical: 22, paddingHorizontal: 8 },
   statItem: { flex: 1, alignItems: 'center' },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  settingsBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center' },
+  settingsBtnText: { fontSize: 16 },
   statDivider: { width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.06)' },
   statValue: { fontSize: 24, fontWeight: '700', color: '#ffffff', marginBottom: 3, letterSpacing: -0.5 },
   statLabel: { fontSize: 11, fontWeight: '400', color: 'rgba(255,255,255,0.25)', letterSpacing: 0.5 },
