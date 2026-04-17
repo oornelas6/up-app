@@ -28,6 +28,20 @@ const logSetToAPI = async (userId, exercise, weight, reps, unit, split, setNum) 
   }
 };
 
+const getLastSet = async (userId, exercise) => {
+  try {
+    const response = await fetch(
+      `https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=${userId}`
+    );
+    const data = await response.json();
+    const sets = data.sets || [];
+    const lastSet = sets.find(s => s.exercise === exercise);
+    return lastSet || null;
+  } catch (err) {
+    return null;
+  }
+};
+
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 const WHEEL_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
@@ -82,6 +96,8 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
   );
 };
 
+
+
 export default function RevolverScreen({ navigation, route }) {
   const { exercise, split } = route.params;
   const [setNum, setSetNum] = useState(1);
@@ -94,6 +110,28 @@ export default function RevolverScreen({ navigation, route }) {
   const unit = isKg ? 'kg' : 'lbs';
   const selectedWeight = WEIGHTS[weightIdx];
   const selectedReps = REPS[repsIdx];
+  const [suggestion, setSuggestion] = useState(null);
+
+  useEffect(() => {
+  const loadSuggestion = async () => {
+    const lastSet = await getLastSet('user-test-001', exercise);
+    if (lastSet) {
+      setSuggestion({
+        weight: parseFloat(lastSet.weight),
+        reps: parseInt(lastSet.reps),
+        unit: lastSet.unit,
+      });
+      const suggestedWeight = parseFloat(lastSet.weight) + 5;
+      const idx = WEIGHTS_LBS.findIndex(w => w >= suggestedWeight);
+      if (idx !== -1) {
+        setTimeout(() => {
+          setWeightIdx(idx);
+        }, 500);
+      }
+    }
+  };
+  loadSuggestion();
+}, [exercise]);
 
   const logSet = async () => {
     try {
@@ -147,7 +185,7 @@ export default function RevolverScreen({ navigation, route }) {
           <Text style={styles.logo}>UP</Text>
         </View>
 
-        <Text style={styles.exName}>{exercise}</Text>
+       <Text style={styles.exName}>{exercise}</Text>
         <View style={styles.setRow}>
           <Text style={styles.setLabel}>SET {setNum}</Text>
           <TouchableOpacity
@@ -176,6 +214,17 @@ export default function RevolverScreen({ navigation, route }) {
             <Text style={styles.unitToggleText}>{isKg ? 'KG' : 'LBS'}</Text>
           </TouchableOpacity>
         </View>
+
+        {suggestion && (
+  <View style={styles.suggestionRow}>
+    <Text style={styles.suggestion}>
+      Last: {suggestion.weight} {suggestion.unit} × {suggestion.reps} reps
+    </Text>
+    <Text style={styles.suggestionTarget}>
+      Target: {parseFloat(suggestion.weight) + 5} {suggestion.unit}
+    </Text>
+  </View>
+)}
 
         <View style={styles.selectedDisplay}>
           <View style={styles.selectedItem}>
@@ -270,5 +319,8 @@ const styles = StyleSheet.create({
   sameBtn: { backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 14, paddingVertical: 14, alignItems: 'center', marginBottom: 10 },
   sameBtnText: { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '600' },
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
+  suggestionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+suggestionTarget: { fontSize: 12, color: '#9d4edd', fontWeight: '800', letterSpacing: 0.3 },
+  suggestion: { fontSize: 12, color: 'rgba(157,78,221,0.6)', fontWeight: '600', marginBottom: 12, letterSpacing: 0.3 },
   doneBtnText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontWeight: '500', letterSpacing: 1 },
 });
