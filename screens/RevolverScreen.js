@@ -10,6 +10,23 @@ const PREVIOUS_BESTS = {
   'Back Squat': { weight: 225, reps: 5 },
 };
 
+const API_URL = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/log-set';
+
+const logSetToAPI = async (userId, exercise, weight, reps, unit, split, setNum) => {
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, exercise, weight, reps, unit, split, setNum }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to log set:', error);
+    return { success: false, isPR: false };
+  }
+};
+
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 const WHEEL_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
@@ -77,11 +94,24 @@ export default function RevolverScreen({ navigation, route }) {
   const selectedWeight = WEIGHTS[weightIdx];
   const selectedReps = REPS[repsIdx];
 
-  const logSet = () => {
+  const logSet = async () => {
     const prev = PREVIOUS_BESTS[exercise];
-    const isNewPR = prev
+    
+    // Call real API
+    const result = await logSetToAPI(
+      'user-test-001',
+      exercise,
+      selectedWeight,
+      selectedReps,
+      unit,
+      split,
+      setNum
+    );
+
+    const isNewPR = result.isPR || (prev
       ? (selectedWeight > prev.weight) || (selectedWeight === prev.weight && selectedReps > prev.reps)
-      : false;
+      : false);
+
     setLastWeight(selectedWeight);
     setLastReps(selectedReps);
     setSetNum(s => s + 1);
