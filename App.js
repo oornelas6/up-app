@@ -5,6 +5,8 @@ import SplitScreen from './screens/SplitScreen';
 import WorkoutScreen from './screens/WorkoutScreen';
 import RevolverScreen from './screens/RevolverScreen';
 import PRScreen from './screens/PRScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import './aws-config';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +29,8 @@ export default function App() {
         <Stack.Screen name="Workout" component={WorkoutScreen} />
         <Stack.Screen name="Revolver" component={RevolverScreen} />
         <Stack.Screen name="PR" component={PRScreen} />
+        <Stack.Screen name="History" component={HistoryScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

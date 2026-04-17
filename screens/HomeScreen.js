@@ -138,7 +138,7 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </Animated.View>
 
-        <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7} onPress={() => navigation.navigate('History')}>
           <Text style={styles.historyBtnText}>View History</Text>
         </TouchableOpacity>
       </Animated.View>

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState, useCallback, useEffect } from 'react';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 const PREVIOUS_BESTS = {
   'Flat Barbell Bench': { weight: 185, reps: 5 },
@@ -95,29 +96,34 @@ export default function RevolverScreen({ navigation, route }) {
   const selectedReps = REPS[repsIdx];
 
   const logSet = async () => {
-    const prev = PREVIOUS_BESTS[exercise];
-    
-    // Call real API
-    const result = await logSetToAPI(
-      'user-test-001',
-      exercise,
-      selectedWeight,
-      selectedReps,
-      unit,
-      split,
-      setNum
-    );
+    try {
+      let userId = 'user-test-001';
+      try {
+        const user = await getCurrentUser();
+        userId = user.userId;
+      } catch (e) {
+        console.log('No auth user, using default');
+      }
 
-    const isNewPR = result.isPR || (prev
-      ? (selectedWeight > prev.weight) || (selectedWeight === prev.weight && selectedReps > prev.reps)
-      : false);
+      const result = await logSetToAPI(
+        userId, exercise, selectedWeight, selectedReps, unit, split, setNum
+      );
 
-    setLastWeight(selectedWeight);
-    setLastReps(selectedReps);
-    setSetNum(s => s + 1);
-    navigation.navigate('PR', {
-      exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR,
-    });
+      const prev = PREVIOUS_BESTS[exercise];
+      const isNewPR = result.isPR || (prev
+        ? (selectedWeight > prev.weight) || (selectedWeight === prev.weight && selectedReps > prev.reps)
+        : false);
+
+      setLastWeight(selectedWeight);
+      setLastReps(selectedReps);
+      setSetNum(s => s + 1);
+      navigation.navigate('PR', {
+        exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR,
+      });
+    } catch (err) {
+      console.error('logSet error:', err);
+      alert('Error: ' + err.message);
+    }
   };
 
   const sameAsLast = () => {
@@ -151,14 +157,12 @@ export default function RevolverScreen({ navigation, route }) {
                 const newIsKg = !k;
                 const currentWeight = k ? WEIGHTS_KG[weightIdx] : WEIGHTS_LBS[weightIdx];
                 if (newIsKg) {
-                  // Converting lbs to kg
                   const kgWeight = currentWeight * 0.453592;
                   const closest = WEIGHTS_KG.reduce((prev, curr) =>
                     Math.abs(curr - kgWeight) < Math.abs(prev - kgWeight) ? curr : prev
                   );
                   setWeightIdx(WEIGHTS_KG.indexOf(closest));
                 } else {
-                  // Converting kg to lbs
                   const lbsWeight = currentWeight * 2.20462;
                   const closest = WEIGHTS_LBS.reduce((prev, curr) =>
                     Math.abs(curr - lbsWeight) < Math.abs(prev - lbsWeight) ? curr : prev
@@ -167,7 +171,8 @@ export default function RevolverScreen({ navigation, route }) {
                 }
                 return newIsKg;
               });
-            }}          >
+            }}
+          >
             <Text style={styles.unitToggleText}>{isKg ? 'KG' : 'LBS'}</Text>
           </TouchableOpacity>
         </View>
