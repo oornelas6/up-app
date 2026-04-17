@@ -76,7 +76,7 @@ export default function HomeScreen({ navigation }) {
         setStats({
           streak: uniqueDates.length,
           sessions: sets.length,
-          prs: sets.filter(s => s.isPR).length,
+        prs: sets.filter(s => s.isPR === true || s.isPR === 'true').length,
         });
       }
     } catch (err) {
