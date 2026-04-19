@@ -1,11 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity, Switch, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
+import { useSettings } from '../context/SettingsContext';
 
-export default function SettingsScreen({ navigation }) {
-  const [isKg, setIsKg] = useState(false);
-  const [restTimer, setRestTimer] = useState(90);
-  const [showRPE, setShowRPE] = useState(false);
+  export default function SettingsScreen({ navigation }) {
+  const { isKg, setIsKg, restTimer, setRestTimer, showRPE, setShowRPE } = useSettings();
   const [notifications, setNotifications] = useState(true);
 
   const restOptions = [60, 90, 120, 180, 240];

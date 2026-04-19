@@ -8,12 +8,15 @@ import PRScreen from './screens/PRScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import './aws-config';
 import SettingsScreen from './screens/SettingsScreen';
+import { SettingsProvider } from './context/SettingsContext';
+
 
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
+    <SettingsProvider>
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
@@ -36,5 +39,6 @@ export default function App() {
 
       </Stack.Navigator>
     </NavigationContainer>
+    </SettingsProvider>
   );
 }

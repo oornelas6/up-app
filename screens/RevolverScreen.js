@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
+import { useSettings } from '../context/SettingsContext';
+
 
 const PREVIOUS_BESTS = {
   'Flat Barbell Bench': { weight: 185, reps: 5 },
@@ -105,7 +107,7 @@ export default function RevolverScreen({ navigation, route }) {
   const [lastReps, setLastReps] = useState(null);
   const [weightIdx, setWeightIdx] = useState(27);
   const [repsIdx, setRepsIdx] = useState(7);
-  const [isKg, setIsKg] = useState(false);
+const { isKg, setIsKg, restTimer } = useSettings();
   const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
   const unit = isKg ? 'kg' : 'lbs';
   const selectedWeight = WEIGHTS[weightIdx];

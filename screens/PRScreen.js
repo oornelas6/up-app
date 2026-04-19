@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import * as Haptics from 'expo-haptics';
+import { useSettings } from '../context/SettingsContext';
+
 
 const MESSAGES = [
   { title: "Set locked in.", sub: "Every rep is a deposit into your future self." },
@@ -22,9 +24,10 @@ export default function PRScreen({ navigation, route }) {
   const { exercise, weight, reps, setNum, split, isPR } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [timeLeft, setTimeLeft] = useState(REST_TIMES.default);
+const [timeLeft, setTimeLeft] = useState(restTimer);
   const [timerDone, setTimerDone] = useState(false);
   const timerRef = useRef(null);
+  
 
   const msg = MESSAGES[(setNum - 1) % MESSAGES.length];
 
@@ -65,7 +68,7 @@ export default function PRScreen({ navigation, route }) {
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
-const progress = timeLeft / REST_TIMES.default;
+const progress = timeLeft / restTimer;
 
   return (
     <View style={styles.root}>
