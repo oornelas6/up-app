@@ -117,8 +117,25 @@ export default function WorkoutScreen({ navigation, route }) {
               </View>
             </TouchableOpacity>
           ))}
-          <View style={{ height: 40 }} />
+          <View style={{ height: 16 }} />
         </ScrollView>
+
+        <TouchableOpacity
+          style={styles.finishBtn}
+          activeOpacity={0.9}
+          onPress={() => navigation.navigate('Summary', {
+            sets: [],
+            split: split,
+            duration: 0
+          })}
+        >
+          <LinearGradient
+            colors={['#7b2cbf', '#4a0080']}
+            style={styles.finishBtnGradient}
+          >
+            <Text style={styles.finishBtnText}>FINISH WORKOUT</Text>
+          </LinearGradient>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -136,4 +153,7 @@ const styles = StyleSheet.create({
   exName: { fontSize: 16, fontWeight: '600', color: '#ffffff', flex: 1 },
   tag: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
   tagText: { fontSize: 11, fontWeight: '600', color: '#9d4edd', letterSpacing: 0.5 },
+  finishBtn: { marginTop: 16, marginBottom: 8 },
+  finishBtnGradient: { paddingVertical: 18, borderRadius: 18, alignItems: 'center' },
+  finishBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
 });

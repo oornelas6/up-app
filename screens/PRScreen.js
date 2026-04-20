@@ -24,7 +24,8 @@ export default function PRScreen({ navigation, route }) {
   const { exercise, weight, reps, setNum, split, isPR } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-const [timeLeft, setTimeLeft] = useState(restTimer);
+  const { restTimer } = useSettings();
+  const [timeLeft, setTimeLeft] = useState(restTimer || 90);
   const [timerDone, setTimerDone] = useState(false);
   const timerRef = useRef(null);
   
@@ -68,7 +69,7 @@ const [timeLeft, setTimeLeft] = useState(restTimer);
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
-const progress = timeLeft / restTimer;
+const progress = timeLeft / (restTimer || 90);
 
   return (
     <View style={styles.root}>

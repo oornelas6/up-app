@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState, useCallback, useEffect } from 'react';
-import { getCurrentUser } from 'aws-amplify/auth';
 import { useSettings } from '../context/SettingsContext';
 
 
