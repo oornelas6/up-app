@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SettingsProvider } from './context/SettingsContext';
+import { useState } from 'react';
 import HomeScreen from './screens/HomeScreen';
 import SplitScreen from './screens/SplitScreen';
 import WorkoutScreen from './screens/WorkoutScreen';
@@ -9,14 +10,25 @@ import PRScreen from './screens/PRScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import SummaryScreen from './screens/SummaryScreen';
+import SplashScreen from './screens/SplashScreen';
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <SettingsProvider>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: '#080010' } }}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            cardStyle: { backgroundColor: '#080010' },
+            cardStyleInterpolator: ({ current }) => ({
+              cardStyle: { opacity: current.progress },
+            }),
+          }}
+        >
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Split" component={SplitScreen} />
           <Stack.Screen name="Workout" component={WorkoutScreen} />
@@ -27,6 +39,7 @@ export default function App() {
           <Stack.Screen name="History" component={HistoryScreen} />
         </Stack.Navigator>
       </NavigationContainer>
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
     </SettingsProvider>
   );
 }

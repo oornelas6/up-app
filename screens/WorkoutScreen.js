@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
+import { useState, useEffect } from 'react';
 
 const EXERCISES = {
   Push: [
@@ -85,6 +86,15 @@ const EXERCISES = {
 export default function WorkoutScreen({ navigation, route }) {
   const { split } = route.params;
   const exercises = EXERCISES[split] || [];
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customExercise, setCustomExercise] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+  if (split === 'Custom') {
+    setShowCustomInput(true);
+  }
+}, []);
 
   return (
     <View style={styles.root}>
@@ -102,9 +112,21 @@ export default function WorkoutScreen({ navigation, route }) {
 
         <Text style={styles.title}>{split} Day</Text>
         <Text style={styles.subtitle}>{exercises.length} exercises · Tap to log</Text>
+        <View style={styles.searchBar}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search exercises..."
+          placeholderTextColor="rgba(255,255,255,0.25)"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          autoCorrect={false}
+        />
+      </View>
 
         <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 24 }}>
-          {exercises.map((ex, i) => (
+        {exercises
+            .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map((ex, i) => (
             <TouchableOpacity
               key={i}
               style={styles.card}
@@ -118,6 +140,12 @@ export default function WorkoutScreen({ navigation, route }) {
             </TouchableOpacity>
           ))}
           <View style={{ height: 16 }} />
+          <TouchableOpacity
+              style={styles.customBtn}
+              onPress={() => setShowCustomInput(true)}
+            >
+              <Text style={styles.customBtnText}>+ Add Custom Exercise</Text>
+            </TouchableOpacity>
         </ScrollView>
 
         <TouchableOpacity
@@ -137,6 +165,43 @@ export default function WorkoutScreen({ navigation, route }) {
           </LinearGradient>
         </TouchableOpacity>
       </View>
+      <Modal visible={showCustomInput} transparent animationType="slide">
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalBox}>
+      <Text style={styles.modalTitle}>Custom Exercise</Text>
+      <TextInput
+        style={styles.modalInput}
+        placeholder="Exercise name..."
+        placeholderTextColor="rgba(255,255,255,0.3)"
+        value={customExercise}
+        onChangeText={setCustomExercise}
+        autoFocus
+        autoCorrect={false}
+      />
+      <TouchableOpacity
+        style={styles.modalBtn}
+        onPress={() => {
+          if (customExercise.trim()) {
+            navigation.navigate('Revolver', {
+              exercise: customExercise.trim(),
+              split: split
+            });
+            setCustomExercise('');
+            setShowCustomInput(false);
+          }
+        }}
+      >
+        
+        <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.modalBtnGradient}>
+          <Text style={styles.modalBtnText}>START LOGGING</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => setShowCustomInput(false)}>
+        <Text style={styles.modalCancel}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
     </View>
   );
 }
@@ -155,5 +220,17 @@ const styles = StyleSheet.create({
   tagText: { fontSize: 11, fontWeight: '600', color: '#9d4edd', letterSpacing: 0.5 },
   finishBtn: { marginTop: 16, marginBottom: 8 },
   finishBtnGradient: { paddingVertical: 18, borderRadius: 18, alignItems: 'center' },
+  searchBar: { marginBottom: 16, marginTop: 8 },
+  searchInput: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, color: '#ffffff', fontSize: 15 },
+  customBtn: { paddingVertical: 16, alignItems: 'center', marginTop: 8 },
+  customBtnText: { color: 'rgba(157,78,221,0.7)', fontSize: 14, fontWeight: '600', letterSpacing: 0.5 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
+  modalBox: { backgroundColor: '#1a0035', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 28, paddingBottom: 48 },
+  modalTitle: { fontSize: 20, fontWeight: '800', color: '#ffffff', marginBottom: 16 },
+  modalInput: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, color: '#ffffff', fontSize: 16, marginBottom: 16 },
+  modalBtn: { marginBottom: 12 },
+  modalBtnGradient: { paddingVertical: 18, borderRadius: 14, alignItems: 'center' },
+  modalBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 2 },
+  modalCancel: { color: 'rgba(255,255,255,0.3)', fontSize: 14, textAlign: 'center', paddingVertical: 8 },
   finishBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
 });

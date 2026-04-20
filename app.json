@@ -8,10 +8,10 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#240046"
-    },
+    "image": "./assets/splash-icon.png",
+    "resizeMode": "contain",
+    "backgroundColor": "#240046"
+  },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.oornelas6.UP",
