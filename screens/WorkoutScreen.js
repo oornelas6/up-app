@@ -89,12 +89,28 @@ export default function WorkoutScreen({ navigation, route }) {
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customExercise, setCustomExercise] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loggedExercises, setLoggedExercises] = useState([]);
+  const [sessionStartTime] = useState(Date.now());
 
   useEffect(() => {
   if (split === 'Custom') {
     setShowCustomInput(true);
   }
 }, []);
+
+useEffect(() => {
+  const unsubscribe = navigation.addListener('focus', () => {
+    const params = navigation.getState()?.routes?.find(r => r.name === 'Workout')?.params;
+    if (params?.lastLoggedExercise) {
+      setLoggedExercises(prev => 
+        prev.includes(params.lastLoggedExercise) 
+          ? prev 
+          : [...prev, params.lastLoggedExercise]
+      );
+    }
+  });
+  return unsubscribe;
+}, [navigation]);
 
   return (
     <View style={styles.root}>
@@ -124,21 +140,29 @@ export default function WorkoutScreen({ navigation, route }) {
       </View>
 
         <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 24 }}>
-        {exercises
-            .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()))
-            .map((ex, i) => (
-            <TouchableOpacity
-              key={i}
-              style={styles.card}
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate('Revolver', { exercise: ex.name, split: split })}
-            >
-              <Text style={styles.exName}>{ex.name}</Text>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>{ex.tag}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+      {exercises
+  .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  .map((ex, i) => {
+    const isLogged = loggedExercises.includes(ex.name);
+    return (
+      <TouchableOpacity
+        key={i}
+        style={[styles.card, isLogged && styles.cardLogged]}
+        activeOpacity={0.8}
+        onPress={() => {
+          navigation.navigate('Revolver', { exercise: ex.name, split: split });
+        }}
+      >
+        <Text style={styles.exName}>{ex.name}</Text>
+        <View style={styles.cardRight}>
+          {isLogged && <Text style={styles.checkmark}>✓</Text>}
+          <View style={[styles.tag, isLogged && styles.tagLogged]}>
+            <Text style={styles.tagText}>{ex.tag}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  })}
           <View style={{ height: 16 }} />
           <TouchableOpacity
               style={styles.customBtn}
@@ -151,10 +175,10 @@ export default function WorkoutScreen({ navigation, route }) {
         <TouchableOpacity
           style={styles.finishBtn}
           activeOpacity={0.9}
-          onPress={() => navigation.navigate('Summary', {
+         onPress={() => navigation.navigate('Summary', {
             sets: [],
             split: split,
-            duration: 0
+            duration: Math.floor((Date.now() - sessionStartTime) / 1000)
           })}
         >
           <LinearGradient
@@ -208,6 +232,10 @@ export default function WorkoutScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#080010' },
+  cardLogged: { borderColor: 'rgba(157,78,221,0.5)', backgroundColor: 'rgba(123,44,191,0.12)' },
+  cardRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  checkmark: { color: '#9d4edd', fontSize: 16, fontWeight: '800' },
+  tagLogged: { borderColor: 'rgba(157,78,221,0.5)' },
   container: { flex: 1, paddingHorizontal: 28, paddingTop: 64, paddingBottom: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },

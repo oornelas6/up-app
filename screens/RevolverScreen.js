@@ -4,14 +4,6 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
 
 
-const PREVIOUS_BESTS = {
-  'Flat Barbell Bench': { weight: 185, reps: 5 },
-  'Incline DB Bench': { weight: 70, reps: 8 },
-  'Overhead Press': { weight: 135, reps: 6 },
-  'Wide Grip Lat Pulldown': { weight: 150, reps: 10 },
-  'Back Squat': { weight: 225, reps: 5 },
-};
-
 const API_URL = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/log-set';
 
 const logSetToAPI = async (userId, exercise, weight, reps, unit, split, setNum) => {
@@ -113,22 +105,29 @@ const { isKg, setIsKg, restTimer } = useSettings();
   const selectedReps = REPS[repsIdx];
   const [suggestion, setSuggestion] = useState(null);
 
-  useEffect(() => {
+ useEffect(() => {
   const loadSuggestion = async () => {
     const lastSet = await getLastSet('user-test-001', exercise);
     if (lastSet) {
+      const lastWeight = parseFloat(lastSet.weight);
+      const lastRepsVal = parseInt(lastSet.reps);
+      const lastUnit = lastSet.unit || 'lbs';
+
       setSuggestion({
-        weight: parseFloat(lastSet.weight),
-        reps: parseInt(lastSet.reps),
-        unit: lastSet.unit,
+        weight: lastWeight,
+        reps: lastRepsVal,
+        unit: lastUnit,
       });
-      const suggestedWeight = parseFloat(lastSet.weight) + 5;
-      const idx = WEIGHTS_LBS.findIndex(w => w >= suggestedWeight);
-      if (idx !== -1) {
-        setTimeout(() => {
-          setWeightIdx(idx);
-        }, 500);
-      }
+
+      // Set wheel to last weight (not +5, just last used)
+      const targetWeights = lastUnit === 'kg' ? WEIGHTS_KG : WEIGHTS_LBS;
+      const idx = targetWeights.findIndex(w => w >= lastWeight);
+      const repsIdx = REPS.findIndex(r => r >= lastRepsVal);
+
+      setTimeout(() => {
+        if (idx !== -1) setWeightIdx(idx);
+        if (repsIdx !== -1) setRepsIdx(repsIdx);
+      }, 500);
     }
   };
   loadSuggestion();
@@ -148,10 +147,7 @@ const { isKg, setIsKg, restTimer } = useSettings();
         userId, exercise, selectedWeight, selectedReps, unit, split, setNum
       );
 
-      const prev = PREVIOUS_BESTS[exercise];
-      const isNewPR = result.isPR || (prev
-        ? (selectedWeight > prev.weight) || (selectedWeight === prev.weight && selectedReps > prev.reps)
-        : false);
+      const isNewPR = result.isPR || false;
 
       setLastWeight(selectedWeight);
       setLastReps(selectedReps);

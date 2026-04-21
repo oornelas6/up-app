@@ -176,8 +176,10 @@ const progress = timeLeft / (restTimer || 90);
 
         <TouchableOpacity
           style={styles.doneBtn}
-          onPress={() => navigation.navigate('Workout', { split })}
-        >
+          onPress={() => navigation.navigate('Workout', { 
+            split,
+            lastLoggedExercise: exercise 
+          })}        >
           <Text style={styles.doneBtnText}>Back to Exercises</Text>
         </TouchableOpacity>
 
