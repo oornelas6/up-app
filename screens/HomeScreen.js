@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Animated, Dimensions } from '
 import { useEffect, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,11 +19,15 @@ export default function HomeScreen({ navigation }) {
   const blob2Y = useRef(new Animated.Value(0)).current;
   const blob3Y = useRef(new Animated.Value(0)).current;
   const blob1X = useRef(new Animated.Value(0)).current;
+  const [userName, setUserName] = useState('');
   const blob2X = useRef(new Animated.Value(0)).current;
   const [lastSession, setLastSession] = useState(null);
   const [stats, setStats] = useState({ streak: 0, sessions: 0, prs: 0 });
 
   useEffect(() => {
+    AsyncStorage.getItem('user_name').then(val => {
+      if (val) setUserName(val);
+    });
     fetchHomeData();
     Animated.timing(fadeAnim, { toValue: 1, duration: 1000, useNativeDriver: true }).start();
     Animated.loop(Animated.sequence([
@@ -132,8 +137,10 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.greetingSub}>
             {new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}
           </Text>
-          <Text style={styles.greetingMain}>Let's get{'\n'}after it.</Text>
-        </View>
+            <Text style={styles.greetingMain}>
+              {userName ? `Hey ${userName}.\nLet's work.` : `Let's get\nafter it.`}
+            </Text>       
+            </View>
 
         <View style={styles.divider} />
 
