@@ -90,6 +90,7 @@ export default function WorkoutScreen({ navigation, route }) {
   const [customExercise, setCustomExercise] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loggedExercises, setLoggedExercises] = useState([]);
+  const [sessionSets, setSessionSets] = useState([]);
   const [sessionStartTime] = useState(Date.now());
 
   useEffect(() => {
@@ -98,19 +99,24 @@ export default function WorkoutScreen({ navigation, route }) {
     }
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      const params = navigation.getState()?.routes?.find(r => r.name === 'Workout')?.params;
-      if (params?.lastLoggedExercise) {
-        setLoggedExercises(prev =>
-          prev.includes(params.lastLoggedExercise)
-            ? prev
-            : [...prev, params.lastLoggedExercise]
-        );
-      }
-    });
-    return unsubscribe;
-  }, [navigation]);
+ useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+          const routes = navigation.getState()?.routes;
+          const workoutRoute = routes?.find(r => r.name === 'Workout');
+          const params = workoutRoute?.params;
+          if (params?.lastLoggedExercise) {
+            setLoggedExercises(prev =>
+              prev.includes(params.lastLoggedExercise)
+                ? prev
+                : [...prev, params.lastLoggedExercise]
+            );
+          }
+          if (params?.lastLoggedSet) {
+            setSessionSets(prev => [...prev, params.lastLoggedSet]);
+          }
+        });
+        return unsubscribe;
+      }, [navigation]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -176,7 +182,7 @@ export default function WorkoutScreen({ navigation, route }) {
             style={styles.finishBtn}
             activeOpacity={0.9}
             onPress={() => navigation.navigate('Summary', {
-              sets: [],
+              sets: sessionSets,
               split,
               duration: Math.floor((Date.now() - sessionStartTime) / 1000)
             })}
