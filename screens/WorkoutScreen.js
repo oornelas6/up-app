@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useState, useEffect } from 'react';
 
 const EXERCISES = {
@@ -93,165 +93,171 @@ export default function WorkoutScreen({ navigation, route }) {
   const [sessionStartTime] = useState(Date.now());
 
   useEffect(() => {
-  if (split === 'Custom') {
-    setShowCustomInput(true);
-  }
-}, []);
-
-useEffect(() => {
-  const unsubscribe = navigation.addListener('focus', () => {
-    const params = navigation.getState()?.routes?.find(r => r.name === 'Workout')?.params;
-    if (params?.lastLoggedExercise) {
-      setLoggedExercises(prev => 
-        prev.includes(params.lastLoggedExercise) 
-          ? prev 
-          : [...prev, params.lastLoggedExercise]
-      );
+    if (split === 'Custom') {
+      setShowCustomInput(true);
     }
-  });
-  return unsubscribe;
-}, [navigation]);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      const params = navigation.getState()?.routes?.find(r => r.name === 'Workout')?.params;
+      if (params?.lastLoggedExercise) {
+        setLoggedExercises(prev =>
+          prev.includes(params.lastLoggedExercise)
+            ? prev
+            : [...prev, params.lastLoggedExercise]
+        );
+      }
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   return (
-    <View style={styles.root}>
-      <LinearGradient
-        colors={['rgba(60,0,100,0.4)', 'rgba(8,0,16,0.95)']}
-        style={StyleSheet.absoluteFillObject}
-      />
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.back}>← Back</Text>
-          </TouchableOpacity>
-          <Text style={styles.logo}>UP</Text>
-        </View>
-
-        <Text style={styles.title}>{split} Day</Text>
-        <Text style={styles.subtitle}>{exercises.length} exercises · Tap to log</Text>
-        <View style={styles.searchBar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search exercises..."
-          placeholderTextColor="rgba(255,255,255,0.25)"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          autoCorrect={false}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.root}>
+        <LinearGradient
+          colors={['rgba(60,0,100,0.4)', 'rgba(8,0,16,0.95)']}
+          style={StyleSheet.absoluteFillObject}
         />
-      </View>
-
-        <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 24 }}>
-      {exercises
-  .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()))
-  .map((ex, i) => {
-    const isLogged = loggedExercises.includes(ex.name);
-    return (
-      <TouchableOpacity
-        key={i}
-        style={[styles.card, isLogged && styles.cardLogged]}
-        activeOpacity={0.8}
-        onPress={() => {
-          navigation.navigate('Revolver', { exercise: ex.name, split: split });
-        }}
-      >
-        <Text style={styles.exName}>{ex.name}</Text>
-        <View style={styles.cardRight}>
-          {isLogged && <Text style={styles.checkmark}>✓</Text>}
-          <View style={[styles.tag, isLogged && styles.tagLogged]}>
-            <Text style={styles.tagText}>{ex.tag}</Text>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={styles.back}>← Back</Text>
+            </TouchableOpacity>
+            <Text style={styles.logo}>UP</Text>
           </View>
-        </View>
-      </TouchableOpacity>
-    );
-  })}
-          <View style={{ height: 16 }} />
-          <TouchableOpacity
+
+          <Text style={styles.title}>{split} Day</Text>
+          <Text style={styles.subtitle}>{exercises.length} exercises · Tap to log</Text>
+
+          <View style={styles.searchBar}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search exercises..."
+              placeholderTextColor="rgba(255,255,255,0.25)"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCorrect={false}
+            />
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 8 }}>
+            {exercises
+              .filter(ex => ex.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              .map((ex, i) => {
+                const isLogged = loggedExercises.includes(ex.name);
+                return (
+                  <TouchableOpacity
+                    key={i}
+                    style={[styles.card, isLogged && styles.cardLogged]}
+                    activeOpacity={0.8}
+                    onPress={() => navigation.navigate('Revolver', { exercise: ex.name, split })}
+                  >
+                    <Text style={styles.exName}>{ex.name}</Text>
+                    <View style={styles.cardRight}>
+                      {isLogged && <Text style={styles.checkmark}>✓</Text>}
+                      <View style={[styles.tag, isLogged && styles.tagLogged]}>
+                        <Text style={styles.tagText}>{ex.tag}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            <View style={{ height: 16 }} />
+            <TouchableOpacity
               style={styles.customBtn}
               onPress={() => setShowCustomInput(true)}
             >
               <Text style={styles.customBtnText}>+ Add Custom Exercise</Text>
             </TouchableOpacity>
-        </ScrollView>
+          </ScrollView>
 
-        <TouchableOpacity
-          style={styles.finishBtn}
-          activeOpacity={0.9}
-         onPress={() => navigation.navigate('Summary', {
-            sets: [],
-            split: split,
-            duration: Math.floor((Date.now() - sessionStartTime) / 1000)
-          })}
-        >
-          <LinearGradient
-            colors={['#7b2cbf', '#4a0080']}
-            style={styles.finishBtnGradient}
+          <TouchableOpacity
+            style={styles.finishBtn}
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate('Summary', {
+              sets: [],
+              split,
+              duration: Math.floor((Date.now() - sessionStartTime) / 1000)
+            })}
           >
-            <Text style={styles.finishBtnText}>FINISH WORKOUT</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            <LinearGradient
+              colors={['#7b2cbf', '#4a0080']}
+              style={styles.finishBtnGradient}
+            >
+              <Text style={styles.finishBtnText}>FINISH WORKOUT</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        <Modal visible={showCustomInput} transparent animationType="slide">
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalBox}>
+                <Text style={styles.modalTitle}>Custom Exercise</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  placeholder="Exercise name..."
+                  placeholderTextColor="rgba(255,255,255,0.3)"
+                  value={customExercise}
+                  onChangeText={setCustomExercise}
+                  autoFocus
+                  autoCorrect={false}
+                />
+                <TouchableOpacity
+                  style={styles.modalBtn}
+                  onPress={() => {
+                    if (customExercise.trim()) {
+                      navigation.navigate('Revolver', {
+                        exercise: customExercise.trim(),
+                        split
+                      });
+                      setCustomExercise('');
+                      setSearchQuery('');
+                      setShowCustomInput(false);
+                      Keyboard.dismiss();
+                    }
+                  }}
+                >
+                  <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.modalBtnGradient}>
+                    <Text style={styles.modalBtnText}>START LOGGING</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { setShowCustomInput(false); Keyboard.dismiss(); }}>
+                  <Text style={styles.modalCancel}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
       </View>
-      <Modal visible={showCustomInput} transparent animationType="slide">
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalBox}>
-      <Text style={styles.modalTitle}>Custom Exercise</Text>
-      <TextInput
-        style={styles.modalInput}
-        placeholder="Exercise name..."
-        placeholderTextColor="rgba(255,255,255,0.3)"
-        value={customExercise}
-        onChangeText={setCustomExercise}
-        autoFocus
-        autoCorrect={false}
-      />
-      <TouchableOpacity
-        style={styles.modalBtn}
-        onPress={() => {
-          if (customExercise.trim()) {
-            navigation.navigate('Revolver', {
-              exercise: customExercise.trim(),
-              split: split
-            });
-            setCustomExercise('');
-            setShowCustomInput(false);
-          }
-        }}
-      >
-        
-        <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.modalBtnGradient}>
-          <Text style={styles.modalBtnText}>START LOGGING</Text>
-        </LinearGradient>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => setShowCustomInput(false)}>
-        <Text style={styles.modalCancel}>Cancel</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#080010' },
-  cardLogged: { borderColor: 'rgba(157,78,221,0.5)', backgroundColor: 'rgba(123,44,191,0.12)' },
-  cardRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  checkmark: { color: '#9d4edd', fontSize: 16, fontWeight: '800' },
-  tagLogged: { borderColor: 'rgba(157,78,221,0.5)' },
   container: { flex: 1, paddingHorizontal: 28, paddingTop: 64, paddingBottom: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },
   logo: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: 4 },
   title: { fontSize: 36, fontWeight: '800', color: '#ffffff', letterSpacing: -0.5 },
   subtitle: { fontSize: 14, color: 'rgba(255,255,255,0.3)', marginTop: 6, fontWeight: '400' },
+  searchBar: { marginBottom: 8, marginTop: 12 },
+  searchInput: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, color: '#ffffff', fontSize: 15 },
   card: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.15)', borderRadius: 16, padding: 20, marginBottom: 10 },
+  cardLogged: { borderColor: 'rgba(157,78,221,0.5)', backgroundColor: 'rgba(123,44,191,0.12)' },
+  cardRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  checkmark: { color: '#9d4edd', fontSize: 16, fontWeight: '800' },
   exName: { fontSize: 16, fontWeight: '600', color: '#ffffff', flex: 1 },
   tag: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
+  tagLogged: { borderColor: 'rgba(157,78,221,0.5)' },
   tagText: { fontSize: 11, fontWeight: '600', color: '#9d4edd', letterSpacing: 0.5 },
-  finishBtn: { marginTop: 16, marginBottom: 8 },
-  finishBtnGradient: { paddingVertical: 18, borderRadius: 18, alignItems: 'center' },
-  searchBar: { marginBottom: 16, marginTop: 8 },
-  searchInput: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, color: '#ffffff', fontSize: 15 },
   customBtn: { paddingVertical: 16, alignItems: 'center', marginTop: 8 },
   customBtnText: { color: 'rgba(157,78,221,0.7)', fontSize: 14, fontWeight: '600', letterSpacing: 0.5 },
+  finishBtn: { marginTop: 16, marginBottom: 8 },
+  finishBtnGradient: { paddingVertical: 18, borderRadius: 18, alignItems: 'center' },
+  finishBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
   modalBox: { backgroundColor: '#1a0035', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 28, paddingBottom: 48 },
   modalTitle: { fontSize: 20, fontWeight: '800', color: '#ffffff', marginBottom: 16 },
@@ -260,5 +266,4 @@ const styles = StyleSheet.create({
   modalBtnGradient: { paddingVertical: 18, borderRadius: 14, alignItems: 'center' },
   modalBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 2 },
   modalCancel: { color: 'rgba(255,255,255,0.3)', fontSize: 14, textAlign: 'center', paddingVertical: 8 },
-  finishBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
 });

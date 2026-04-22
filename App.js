@@ -21,14 +21,14 @@ export default function App() {
   const [onboardingDone, setOnboardingDone] = useState(null);
   const [userName, setUserName] = useState('');
 
-  useEffect(() => {
-    AsyncStorage.getItem('onboarding_complete').then(val => {
-      setOnboardingDone(val === 'true');
-    });
-    AsyncStorage.getItem('user_name').then(val => {
-      if (val) setUserName(val);
-    });
-  }, []);
+ useEffect(() => {
+  AsyncStorage.getItem('onboarding_complete').then(val => {
+    setOnboardingDone(val === 'true');
+  });
+  AsyncStorage.getItem('user_name').then(val => {
+    if (val) setUserName(val);
+  });
+}, []);
 
   if (onboardingDone === null) return null;
 
