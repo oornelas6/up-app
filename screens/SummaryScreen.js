@@ -8,6 +8,9 @@ const { width } = Dimensions.get('window');
 export default function SummaryScreen({ navigation, route }) {
   const { sets = [], split = 'Workout', duration = 0 } = route.params || {};
 
+  console.log('Summary params:', JSON.stringify(route.params));
+console.log('Sets count:', sets.length);
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(40)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;

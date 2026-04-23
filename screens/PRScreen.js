@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { useSettings } from '../context/SettingsContext';
 
@@ -176,17 +176,11 @@ const progress = timeLeft / (restTimer || 90);
 
         <TouchableOpacity
           style={styles.doneBtn}
-         onPress={() => navigation.navigate('Workout', { 
-              split,
-              lastLoggedExercise: exercise,
-              lastLoggedSet: {
-                exercise,
-                weight,
-                reps,
-                unit: route.params.unit || 'lbs',
-                isPR,
-              }
-            })}     >
+          onPress={() => navigation.navigate('Workout', { 
+            split,
+            lastLoggedExercise: exercise,
+          })}
+        >
           <Text style={styles.doneBtnText}>Back to Exercises</Text>
         </TouchableOpacity>
 

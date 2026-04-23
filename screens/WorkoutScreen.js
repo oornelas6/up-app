@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState, useEffect } from 'react';
 
 const EXERCISES = {
@@ -100,23 +100,24 @@ export default function WorkoutScreen({ navigation, route }) {
   }, []);
 
  useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-          const routes = navigation.getState()?.routes;
-          const workoutRoute = routes?.find(r => r.name === 'Workout');
-          const params = workoutRoute?.params;
-          if (params?.lastLoggedExercise) {
-            setLoggedExercises(prev =>
-              prev.includes(params.lastLoggedExercise)
-                ? prev
-                : [...prev, params.lastLoggedExercise]
-            );
-          }
-          if (params?.lastLoggedSet) {
-            setSessionSets(prev => [...prev, params.lastLoggedSet]);
-          }
-        });
-        return unsubscribe;
-      }, [navigation]);
+  const unsubscribe = navigation.addListener('focus', () => {
+    const routes = navigation.getState()?.routes;
+    const workoutRoute = routes?.find(r => r.name === 'Workout');
+    const params = workoutRoute?.params;
+    if (params?.lastLoggedExercise) {
+      setLoggedExercises(prev =>
+        prev.includes(params.lastLoggedExercise)
+          ? prev
+          : [...prev, params.lastLoggedExercise]
+      );
+    }
+    if (params?.lastLoggedSet) {
+      sessionSetsRef.current = [...sessionSetsRef.current, params.lastLoggedSet];
+      setSessionSets([...sessionSetsRef.current]);
+    }
+  });
+  return unsubscribe;
+}, [navigation]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -196,10 +197,14 @@ export default function WorkoutScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
 
-        <Modal visible={showCustomInput} transparent animationType="slide">
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalBox}>
+                <Modal visible={showCustomInput} transparent animationType="slide">
+                <KeyboardAvoidingView 
+                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                  style={{ flex: 1 }}
+                >
+                  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={styles.modalOverlay}>
+                      <View style={styles.modalBox}>
                 <Text style={styles.modalTitle}>Custom Exercise</Text>
                 <TextInput
                   style={styles.modalInput}
@@ -231,11 +236,12 @@ export default function WorkoutScreen({ navigation, route }) {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { setShowCustomInput(false); Keyboard.dismiss(); }}>
                   <Text style={styles.modalCancel}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
+                  </TouchableOpacity>
+                        </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              </KeyboardAvoidingView>
+           </Modal>
       </View>
     </TouchableWithoutFeedback>
   );
