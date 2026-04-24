@@ -100,7 +100,7 @@ export default function WorkoutScreen({ navigation, route }) {
     }
   }, []);
 
- useEffect(() => {
+useEffect(() => {
   const unsubscribe = navigation.addListener('focus', () => {
     const routes = navigation.getState()?.routes;
     const workoutRoute = routes?.find(r => r.name === 'Workout');
@@ -111,10 +111,6 @@ export default function WorkoutScreen({ navigation, route }) {
           ? prev
           : [...prev, params.lastLoggedExercise]
       );
-    }
-    if (params?.lastLoggedSet) {
-      sessionSetsRef.current = [...sessionSetsRef.current, params.lastLoggedSet];
-      setSessionSets([...sessionSetsRef.current]);
     }
   });
   return unsubscribe;
@@ -183,7 +179,8 @@ export default function WorkoutScreen({ navigation, route }) {
           <TouchableOpacity
             style={styles.finishBtn}
             activeOpacity={0.9}
-            onPress={() => {
+           onPress={() => {
+                alert('Sets: ' + sessionSets.length + ' | Split: ' + split);
                 navigation.navigate('Summary', {
                   sets: sessionSets,
                   split,
