@@ -92,7 +92,6 @@ export default function WorkoutScreen({ navigation, route }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [loggedExercises, setLoggedExercises] = useState([]);
   const { sessionSets, clearSession } = useSettings();
-  const [sessionSets, setSessionSets] = useState([]);
   const [sessionStartTime] = useState(Date.now());
 
   useEffect(() => {
