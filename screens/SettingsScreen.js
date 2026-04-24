@@ -3,6 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 
+
+
   export default function SettingsScreen({ navigation }) {
   const { isKg, setIsKg, restTimer, setRestTimer, showRPE, setShowRPE } = useSettings();
   const [notifications, setNotifications] = useState(true);

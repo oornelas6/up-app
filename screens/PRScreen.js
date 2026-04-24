@@ -24,7 +24,7 @@ export default function PRScreen({ navigation, route }) {
   const { exercise, weight, reps, setNum, split, isPR } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const { restTimer } = useSettings();
+const { restTimer, addSetToSession } = useSettings();  
   const [timeLeft, setTimeLeft] = useState(restTimer || 90);
   const [timerDone, setTimerDone] = useState(false);
   const timerRef = useRef(null);
@@ -38,6 +38,14 @@ export default function PRScreen({ navigation, route }) {
       Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
     ]).start();
 
+      addSetToSession({
+        exercise,
+        weight,
+        reps,
+        unit: route.params.unit || 'lbs',
+        isPR,
+      });
+    
     // Start rest timer
     timerRef.current = setInterval(() => {
       setTimeLeft(t => {
@@ -176,11 +184,8 @@ const progress = timeLeft / (restTimer || 90);
 
         <TouchableOpacity
           style={styles.doneBtn}
-          onPress={() => navigation.navigate('Workout', { 
-            split,
-            lastLoggedExercise: exercise,
-          })}
-        >
+           onPress={() => navigation.goBack()}
+                  >
           <Text style={styles.doneBtnText}>Back to Exercises</Text>
         </TouchableOpacity>
 

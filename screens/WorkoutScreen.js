@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState, useEffect } from 'react';
+import { useSettings } from '../context/SettingsContext';
 
 const EXERCISES = {
   Push: [
@@ -90,6 +91,7 @@ export default function WorkoutScreen({ navigation, route }) {
   const [customExercise, setCustomExercise] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loggedExercises, setLoggedExercises] = useState([]);
+  const { sessionSets, clearSession } = useSettings();
   const [sessionSets, setSessionSets] = useState([]);
   const [sessionStartTime] = useState(Date.now());
 
@@ -182,11 +184,14 @@ export default function WorkoutScreen({ navigation, route }) {
           <TouchableOpacity
             style={styles.finishBtn}
             activeOpacity={0.9}
-            onPress={() => navigation.navigate('Summary', {
-              sets: sessionSets,
-              split,
-              duration: Math.floor((Date.now() - sessionStartTime) / 1000)
-            })}
+            onPress={() => {
+                navigation.navigate('Summary', {
+                  sets: sessionSets,
+                  split,
+                  duration: Math.floor((Date.now() - sessionStartTime) / 1000)
+                });
+                clearSession();
+              }}
           >
             <LinearGradient
               colors={['#7b2cbf', '#4a0080']}
