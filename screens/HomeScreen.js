@@ -199,6 +199,9 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </Animated.View>
 
+        <TouchableOpacity style={styles.statsBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Stats')}>
+          <Text style={styles.statsBtnText}>📊 Stats</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7} onPress={() => navigation.navigate('History')}>
           <Text style={styles.historyBtnText}>View History</Text>
         </TouchableOpacity>
@@ -220,6 +223,8 @@ const styles = StyleSheet.create({
   greetingMain: { fontSize: 46, fontWeight: '800', color: '#ffffff', lineHeight: 52, letterSpacing: -1 },
   divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginBottom: 32 },
   lastSession: { marginBottom: 32 },
+  statsBtn: { width: '100%', paddingVertical: 12, alignItems: 'center' },
+  statsBtnText: { color: 'rgba(157,78,221,0.6)', fontSize: 13, fontWeight: '600', letterSpacing: 1 },
   lastSessionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.25)', marginBottom: 12 },
   lastSessionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 },
   lastSessionName: { fontSize: 22, fontWeight: '700', color: '#ffffff' },
