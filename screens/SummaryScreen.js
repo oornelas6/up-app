@@ -10,9 +10,7 @@ const rawParams = route.params || {};
 const sets = Array.isArray(rawParams.sets) ? rawParams.sets : [];
 const split = rawParams.split || 'Workout';
 const duration = rawParams.duration || 0;
-console.log('Summary hit, sets:', sets.length, 'split:', split);
-  console.log('Summary params:', JSON.stringify(route.params));
-console.log('Sets count:', sets.length);
+
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(40)).current;
