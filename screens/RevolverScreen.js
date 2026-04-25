@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, TextInput, Modal, Alert } from 'react-native';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
 
@@ -62,8 +62,9 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
       <ScrollView
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
-        snapToInterval={ITEM_HEIGHT}
-        decelerationRate={0.92}
+        snapToInterval={ITEM_HEIGHT} 
+        snapToAlignment="center"
+        decelerationRate="fast"        
         onMomentumScrollEnd={onMomentumScrollEnd}
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingVertical: ITEM_HEIGHT * 2 }}
@@ -98,7 +99,9 @@ export default function RevolverScreen({ navigation, route }) {
   const [lastReps, setLastReps] = useState(null);
   const [weightIdx, setWeightIdx] = useState(27);
   const [repsIdx, setRepsIdx] = useState(7);
-const { isKg, setIsKg, restTimer } = useSettings();
+  const { isKg, setIsKg, restTimer } = useSettings();
+  const [showWeightInput, setShowWeightInput] = useState(false);
+  const [weightInputVal, setWeightInputVal] = useState('');
   const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
   const unit = isKg ? 'kg' : 'lbs';
   const selectedWeight = WEIGHTS[weightIdx];
@@ -228,11 +231,17 @@ const { isKg, setIsKg, restTimer } = useSettings();
           </View>
         )}
 
-        <View style={styles.selectedDisplay}>
-          <View style={styles.selectedItem}>
+              <View style={styles.selectedDisplay}>
+          <TouchableOpacity 
+            style={styles.selectedItem}
+            onPress={() => {
+              setWeightInputVal(String(selectedWeight));
+              setShowWeightInput(true);
+            }}
+          >
             <Text style={styles.selectedValue}>{selectedWeight}</Text>
-            <Text style={styles.selectedUnit}>{unit}</Text>
-          </View>
+            <Text style={styles.selectedUnit}>{unit} ✎</Text>
+          </TouchableOpacity>
           <View style={styles.selectedDivider} />
           <View style={styles.selectedItem}>
             <Text style={styles.selectedValue}>{selectedReps}</Text>
@@ -282,9 +291,46 @@ const { isKg, setIsKg, restTimer } = useSettings();
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
+       <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
           <Text style={styles.doneBtnText}>Done with Exercise</Text>
         </TouchableOpacity>
+
+        <Modal visible={showWeightInput} transparent animationType="fade">
+          <View style={styles.weightModalOverlay}>
+            <View style={styles.weightModalBox}>
+              <Text style={styles.weightModalTitle}>Enter Weight</Text>
+              <TextInput
+                style={styles.weightModalInput}
+                value={weightInputVal}
+                onChangeText={setWeightInputVal}
+                keyboardType="decimal-pad"
+                autoFocus
+                selectTextOnFocus
+              />
+              <Text style={styles.weightModalUnit}>{unit}</Text>
+              <TouchableOpacity
+                style={styles.weightModalBtn}
+                onPress={() => {
+                  const val = parseFloat(weightInputVal);
+                  if (!isNaN(val) && val > 0) {
+                    const weights = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
+                    const closest = weights.reduce((prev, curr) =>
+                      Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev
+                    );
+                    setWeightIdx(weights.indexOf(closest));
+                  }
+                  setShowWeightInput(false);
+                }}
+              >
+                <Text style={styles.weightModalBtnText}>SET</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowWeightInput(false)}>
+                <Text style={styles.weightModalCancel}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
       </View>
     </View>
   );
@@ -322,6 +368,14 @@ const styles = StyleSheet.create({
   sameBtnText: { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '600' },
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
   suggestionContainer: { marginBottom: 12 },
+  weightModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' },
+  weightModalBox: { backgroundColor: '#1a0035', borderRadius: 24, padding: 28, width: '80%', alignItems: 'center' },
+  weightModalTitle: { fontSize: 16, fontWeight: '700', color: '#ffffff', marginBottom: 16, letterSpacing: 1 },
+  weightModalInput: { fontSize: 48, fontWeight: '900', color: '#ffffff', textAlign: 'center', borderBottomWidth: 2, borderBottomColor: '#7b2cbf', paddingBottom: 8, width: '100%', marginBottom: 8 },
+  weightModalUnit: { fontSize: 14, color: 'rgba(255,255,255,0.3)', marginBottom: 24 },
+  weightModalBtn: { backgroundColor: '#7b2cbf', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 14, marginBottom: 12 },
+  weightModalBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 2 },
+  weightModalCancel: { color: 'rgba(255,255,255,0.3)', fontSize: 14 },
   oneRM: { fontSize: 11, color: 'rgba(157,78,221,0.5)', fontWeight: '600', letterSpacing: 0.5, marginTop: 4 },
   suggestionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   suggestionTarget: { fontSize: 12, color: '#9d4edd', fontWeight: '800', letterSpacing: 0.3 },
