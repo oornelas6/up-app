@@ -22,6 +22,7 @@ export default function HomeScreen({ navigation }) {
   const [userName, setUserName] = useState('');
   const blob2X = useRef(new Animated.Value(0)).current;
   const [lastSession, setLastSession] = useState(null);
+  const [nextWorkout, setNextWorkout] = useState(null);
   const [stats, setStats] = useState({ streak: 0, sessions: 0, prs: 0 });
 
   useEffect(() => {
@@ -54,6 +55,14 @@ export default function HomeScreen({ navigation }) {
       Animated.timing(blob3Y, { toValue: -25, duration: 11000, useNativeDriver: true }),
       Animated.timing(blob3Y, { toValue: 35, duration: 11000, useNativeDriver: true }),
     ])).start();
+
+        AsyncStorage.getItem('active_split').then(val => {
+      if (val) {
+        const split = JSON.parse(val);
+        const dayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+        setNextWorkout(split.schedule[dayIndex]);
+      }
+    });
   }, []);
 
   const fetchHomeData = async () => {
@@ -212,8 +221,8 @@ export default function HomeScreen({ navigation }) {
             >
               <Text style={styles.startBtnText}>START WORKOUT</Text>
               <Text style={styles.startBtnSub}>
-                {lastSession ? `Last: ${lastSession.split}` : 'Begin your first session'}
-              </Text>
+        {nextWorkout ? `Today: ${nextWorkout}` : lastSession ? `Last: ${lastSession.split}` : 'Begin your first session'}
+      </Text>
             </LinearGradient>
           </TouchableOpacity>
         </Animated.View>

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -48,18 +49,19 @@ const DAY_COLORS = {
   'Rest': 'rgba(255,255,255,0.05)',
 };
 
-export default function SplitBuilderScreen({ navigation }) {
-  const [selected, setSelected] = useState(null);
+        export default function SplitBuilderScreen({ navigation }) {
+        const [selected, setSelected] = useState(null);
 
-  const handleSelect = (template) => {
-    setSelected(template);
-  };
+        const handleSelect = async (template) => {
+        setSelected(template);
+        };
 
-  const handleStart = () => {
-    if (selected) {
-      navigation.navigate('Workout', { split: selected.schedule[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1] });
-    }
-  };
+        const handleStart = async () => {
+        if (selected) {
+            await AsyncStorage.setItem('active_split', JSON.stringify(selected));
+            navigation.navigate('Split');
+        }
+        };
 
   return (
     <View style={styles.root}>
@@ -120,8 +122,8 @@ export default function SplitBuilderScreen({ navigation }) {
                 style={styles.startBtn}
               >
                 <Text style={styles.startBtnText}>START TODAY'S WORKOUT</Text>
-                <Text style={styles.startBtnSub}>
-                  {selected.schedule[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]} Day
+               <Text style={styles.startBtnSub}>
+                {selected.schedule[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]} Day
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
