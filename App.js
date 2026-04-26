@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeScreen from './screens/HomeScreen';
 import SplitScreen from './screens/SplitScreen';
+import SplitBuilderScreen from './screens/SplitBuilderScreen';
 import WorkoutScreen from './screens/WorkoutScreen';
 import RevolverScreen from './screens/RevolverScreen';
 import PRScreen from './screens/PRScreen';
@@ -60,6 +61,7 @@ export default function App() {
           <Stack.Screen name="Revolver" component={RevolverScreen} />
           <Stack.Screen name="PR" component={PRScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="SplitBuilder" component={SplitBuilderScreen} />
           <Stack.Screen name="Summary" component={SummaryScreen} />
           <Stack.Screen name="Stats" component={StatsScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />

@@ -77,9 +77,28 @@ export default function HomeScreen({ navigation }) {
           sets: sessionSets.length,
         });
 
-        const uniqueDates = [...new Set(sets.map(s => s.timestamp?.split('T')[0]))];
+       const uniqueDates = [...new Set(sets.map(s => s.timestamp?.split('T')[0]))].sort((a, b) => b.localeCompare(a));
+
+        const calculateStreak = (dates) => {
+          if (dates.length === 0) return 0;
+          let streak = 0;
+          let current = new Date();
+          current.setHours(0, 0, 0, 0);
+          
+          for (let i = 0; i < dates.length; i++) {
+            const date = new Date(dates[i] + 'T12:00:00');
+            const diff = Math.floor((current - date) / (1000 * 60 * 60 * 24));
+            if (diff === i) {
+              streak++;
+            } else {
+              break;
+            }
+          }
+          return streak;
+        };
+
         setStats({
-          streak: uniqueDates.length,
+          streak: calculateStreak(uniqueDates),
           sessions: sets.length,
         prs: sets.filter(s => s.isPR === true || s.isPR === 'true').length,
         });
@@ -199,9 +218,15 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </Animated.View>
 
-        <TouchableOpacity style={styles.statsBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Stats')}>
-          <Text style={styles.statsBtnText}>📊 Stats</Text>
-        </TouchableOpacity>
+            <View style={styles.bottomBtns}>
+      <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Stats')}>
+        <Text style={styles.bottomBtnText}>📊 Stats</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('SplitBuilder')}>
+        <Text style={styles.bottomBtnText}>🗓 Split</Text>
+      </TouchableOpacity>
+    </View>
+            
         <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7} onPress={() => navigation.navigate('History')}>
           <Text style={styles.historyBtnText}>View History</Text>
         </TouchableOpacity>
@@ -245,5 +270,8 @@ const styles = StyleSheet.create({
   startBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
   startBtnSub: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '400', letterSpacing: 0.5 },
   historyBtn: { width: '100%', paddingVertical: 16, alignItems: 'center' },
+  bottomBtns: { flexDirection: 'row', justifyContent: 'center', gap: 24, marginBottom: 4 },
+  bottomBtn: { paddingVertical: 12, paddingHorizontal: 20 },
+  bottomBtnText: { color: 'rgba(157,78,221,0.6)', fontSize: 13, fontWeight: '600', letterSpacing: 1 },
   historyBtnText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontWeight: '500', letterSpacing: 1 },
 });

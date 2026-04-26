@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
 
@@ -125,7 +125,20 @@ useEffect(() => {
         />
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+           <TouchableOpacity onPress={() => {
+              if (loggedExercises.length > 0) {
+                Alert.alert(
+                  'Leave Workout?',
+                  'Your progress will be lost.',
+                  [
+                    { text: 'Stay', style: 'cancel' },
+                    { text: 'Leave', style: 'destructive', onPress: () => navigation.goBack() }
+                  ]
+                );
+              } else {
+                navigation.goBack();
+              }
+            }}>
               <Text style={styles.back}>← Back</Text>
             </TouchableOpacity>
             <Text style={styles.logo}>UP</Text>
