@@ -95,8 +95,6 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
 export default function RevolverScreen({ navigation, route }) {
   const { exercise, split } = route.params;
   const [setNum, setSetNum] = useState(1);
-  const [lastWeight, setLastWeight] = useState(null);
-  const [lastReps, setLastReps] = useState(null);
   const [weightIdx, setWeightIdx] = useState(27);
   const [repsIdx, setRepsIdx] = useState(7);
   const { isKg, setIsKg, restTimer } = useSettings();
@@ -152,8 +150,6 @@ export default function RevolverScreen({ navigation, route }) {
 
       const isNewPR = result.isPR || false;
 
-      setLastWeight(selectedWeight);
-      setLastReps(selectedReps);
       setSetNum(s => s + 1);
       navigation.navigate('PR', {
         exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR,
@@ -162,13 +158,6 @@ export default function RevolverScreen({ navigation, route }) {
       console.error('logSet error:', err);
       alert('Error: ' + err.message);
     }
-  };
-
-  const sameAsLast = () => {
-    setSetNum(s => s + 1);
-    navigation.navigate('PR', {
-      exercise, weight: lastWeight, reps: lastReps, setNum, split, isPR: false,
-    });
   };
 
   return (
@@ -285,12 +274,6 @@ export default function RevolverScreen({ navigation, route }) {
           </LinearGradient>
         </TouchableOpacity>
 
-        {lastWeight !== null && (
-          <TouchableOpacity style={styles.sameBtn} onPress={sameAsLast}>
-            <Text style={styles.sameBtnText}>↩ Same · {lastWeight} {unit} × {lastReps} reps</Text>
-          </TouchableOpacity>
-        )}
-
        <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
           <Text style={styles.doneBtnText}>Done with Exercise</Text>
         </TouchableOpacity>
@@ -364,8 +347,7 @@ const styles = StyleSheet.create({
   logBtn: { paddingVertical: 22, borderRadius: 18, alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)' },
   logBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
   logBtnSub: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '400' },
-  sameBtn: { backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 14, paddingVertical: 14, alignItems: 'center', marginBottom: 10 },
-  sameBtnText: { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '600' },
+
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
   suggestionContainer: { marginBottom: 12 },
   weightModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' },
