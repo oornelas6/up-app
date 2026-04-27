@@ -184,17 +184,34 @@ const progress = timeLeft / (restTimer || 90);
 
         <TouchableOpacity
           style={styles.doneBtn}
-           onPress={() => navigation.goBack()}
-                  >
+          onPress={() => navigation.navigate('Workout', { split })}  
+                >
           <Text style={styles.doneBtnText}>Back to Exercises</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.finishBtn}
-          onPress={() => navigation.navigate('Home')}
-        >
-          <Text style={styles.finishBtnText}>Finish Workout</Text>
-        </TouchableOpacity>
+      style={styles.finishBtn}
+      onPress={async () => {
+        try {
+          const response = await fetch(
+            'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=user-test-001'
+          );
+          const data = await response.json();
+          const allSets = data.sets || [];
+          const today = new Date().toISOString().split('T')[0];
+          const todaySets = allSets.filter(s => s.timestamp?.startsWith(today));
+          navigation.navigate('Summary', {
+            sets: todaySets,
+            split,
+            duration: 0,
+          });
+        } catch (err) {
+          navigation.navigate('Summary', { sets: [], split, duration: 0 });
+        }
+      }}
+    >
+      <Text style={styles.finishBtnText}>Finish Workout</Text>
+    </TouchableOpacity>
 
       </Animated.View>
     </View>

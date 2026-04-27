@@ -21,6 +21,7 @@ export default function HomeScreen({ navigation }) {
   const blob1X = useRef(new Animated.Value(0)).current;
   const [userName, setUserName] = useState('');
   const blob2X = useRef(new Animated.Value(0)).current;
+  const [savedWorkout, setSavedWorkout] = useState(null);
   const [lastSession, setLastSession] = useState(null);
   const [nextWorkout, setNextWorkout] = useState(null);
   const [stats, setStats] = useState({ streak: 0, sessions: 0, prs: 0 });
@@ -28,6 +29,12 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     AsyncStorage.getItem('user_name').then(val => {
       if (val) setUserName(val);
+      AsyncStorage.getItem('saved_workout').then(val => {
+  if (val) {
+    const saved = JSON.parse(val);
+    setSavedWorkout(saved);
+  }
+});
     });
     fetchHomeData();
     Animated.timing(fadeAnim, { toValue: 1, duration: 1000, useNativeDriver: true }).start();
@@ -211,6 +218,19 @@ export default function HomeScreen({ navigation }) {
 
         <View style={{ flex: 1 }} />
 
+{savedWorkout && (
+            <TouchableOpacity 
+              style={styles.resumeBanner}
+              onPress={() => {
+                navigation.navigate('Workout', { split: savedWorkout.split });
+                AsyncStorage.removeItem('saved_workout');
+                setSavedWorkout(null);
+              }}
+            >
+              <Text style={styles.resumeText}>↩ Resume {savedWorkout.split} — {savedWorkout.loggedExercises.length} exercises logged</Text>
+            </TouchableOpacity>
+          )}
+
         <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
           <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.navigate('Split')}>
             <LinearGradient
@@ -269,6 +289,8 @@ const styles = StyleSheet.create({
   lastSessionMeta: { fontSize: 12, color: 'rgba(255,255,255,0.25)' },
   statsRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.02)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', borderRadius: 20, paddingVertical: 22, paddingHorizontal: 8 },
   statItem: { flex: 1, alignItems: 'center' },
+  resumeBanner: { backgroundColor: 'rgba(123,44,191,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 14, paddingVertical: 12, paddingHorizontal: 16, marginBottom: 12, alignItems: 'center' },
+  resumeText: { color: '#9d4edd', fontSize: 13, fontWeight: '600' },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   settingsBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center' },
   settingsBtnText: { fontSize: 16 },

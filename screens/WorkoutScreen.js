@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EXERCISES = {
   Push: [
@@ -125,20 +126,32 @@ useEffect(() => {
         />
         <View style={styles.container}>
           <View style={styles.header}>
+
            <TouchableOpacity onPress={() => {
               if (loggedExercises.length > 0) {
                 Alert.alert(
                   'Leave Workout?',
-                  'Your progress will be lost.',
+                  'Your progress will be saved.',
                   [
-                    { text: 'Stay', style: 'cancel' },
-                    { text: 'Leave', style: 'destructive', onPress: () => navigation.goBack() }
+                    { text: 'Keep Going', style: 'cancel' },
+                    { 
+                      text: 'Save & Leave', 
+                      onPress: async () => {
+                        await AsyncStorage.setItem('saved_workout', JSON.stringify({
+                          split,
+                          loggedExercises,
+                          savedAt: new Date().toISOString(),
+                        }));
+                        navigation.goBack();
+                      }
+                    }
                   ]
                 );
               } else {
                 navigation.goBack();
               }
             }}>
+
               <Text style={styles.back}>← Back</Text>
             </TouchableOpacity>
             <Text style={styles.logo}>UP</Text>
