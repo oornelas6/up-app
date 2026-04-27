@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -94,12 +94,21 @@ export default function WorkoutScreen({ navigation, route }) {
   const [loggedExercises, setLoggedExercises] = useState([]);
   const { sessionSets, clearSession } = useSettings();
   const [sessionStartTime] = useState(Date.now());
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     if (split === 'Custom') {
       setShowCustomInput(true);
     }
   }, []);
+
+  useEffect(() => {
+  timerRef.current = setInterval(() => {
+    setElapsedTime(t => t + 1);
+  }, 1000);
+  return () => clearInterval(timerRef.current);
+}, []);
 
 useEffect(() => {
   const unsubscribe = navigation.addListener('focus', () => {
@@ -116,6 +125,12 @@ useEffect(() => {
   });
   return unsubscribe;
 }, [navigation]);
+
+  const formatElapsed = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -154,7 +169,8 @@ useEffect(() => {
 
               <Text style={styles.back}>← Back</Text>
             </TouchableOpacity>
-            <Text style={styles.logo}>UP</Text>
+      <Text style={styles.timerDisplay}>{formatElapsed(elapsedTime)}</Text>
+      <Text style={styles.logo}>UP</Text>
           </View>
 
           <Text style={styles.title}>{split} Day</Text>
@@ -218,13 +234,13 @@ useEffect(() => {
                   navigation.navigate('Summary', {
                     sets: todaySets,
                     split,
-                    duration: Math.floor((Date.now() - sessionStartTime) / 1000)
+duration: elapsedTime
                   });
                 } catch (err) {
                   navigation.navigate('Summary', {
                     sets: [],
                     split,
-                    duration: Math.floor((Date.now() - sessionStartTime) / 1000)
+duration: elapsedTime
                   });
                 }
               }}
@@ -311,6 +327,7 @@ const styles = StyleSheet.create({
   finishBtn: { marginTop: 16, marginBottom: 8 },
   finishBtnGradient: { paddingVertical: 18, borderRadius: 18, alignItems: 'center' },
   finishBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
+  timerDisplay: { fontSize: 14, fontWeight: '700', color: 'rgba(157,78,221,0.7)', letterSpacing: 1 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
   modalBox: { backgroundColor: '#1a0035', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 28, paddingBottom: 48 },
   modalTitle: { fontSize: 20, fontWeight: '800', color: '#ffffff', marginBottom: 16 },
