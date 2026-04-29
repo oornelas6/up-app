@@ -38,10 +38,13 @@ const EXERCISES = {
     { name: 'Walking Lunges', tag: 'Quads' },
     { name: 'RDL', tag: 'Hamstrings' },
     { name: 'Seated Hamstring Curl', tag: 'Hamstrings' },
+    { name: 'Hip Thrust', tag: 'Glutes' },
+    { name: 'Bulgarian Split Squat', tag: 'Glutes' },
     { name: 'Calf Raises', tag: 'Calves' },
     { name: 'Hanging Leg Raises', tag: 'Abs' },
     { name: 'Stair Master', tag: 'Cardio' },
   ],
+
   Arms: [
     { name: 'Overhead Press', tag: 'Shoulders' },
     { name: 'Push Ups', tag: 'Chest' },
@@ -193,12 +196,13 @@ useEffect(() => {
               .map((ex, i) => {
                 const isLogged = loggedExercises.includes(ex.name);
                 return (
-                  <TouchableOpacity
-                    key={i}
-                    style={[styles.card, isLogged && styles.cardLogged]}
-                    activeOpacity={0.8}
-                    onPress={() => navigation.navigate('Revolver', { exercise: ex.name, split })}
-                  >
+                 <TouchableOpacity
+                key={i}
+                style={[styles.card, isLogged && styles.cardLogged]}
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('Revolver', { exercise: ex.name, split })}
+                onLongPress={() => navigation.navigate('PRHistory', { exercise: ex.name })}
+              >
                     <Text style={styles.exName}>{ex.name}</Text>
                     <View style={styles.cardRight}>
                       {isLogged && <Text style={styles.checkmark}>✓</Text>}
