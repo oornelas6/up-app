@@ -25,6 +25,7 @@ export default function App() {
   const [userName, setUserName] = useState('');
 
  useEffect(() => {
+  AsyncStorage.removeItem('onboarding_complete');
   AsyncStorage.getItem('onboarding_complete').then(val => {
     setOnboardingDone(val === 'true');
   });
