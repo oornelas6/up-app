@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, TextInput, Modal, Alert } from 'react-native';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
@@ -137,12 +138,10 @@ export default function RevolverScreen({ navigation, route }) {
   const logSet = async () => {
     try {
       let userId = 'user-test-001';
-      try {
-        const user = await getCurrentUser();
-        userId = user.userId;
-      } catch (e) {
-        console.log('No auth user, using default');
-      }
+try {
+  const storedId = await AsyncStorage.getItem('user_id');
+  if (storedId) userId = storedId;
+} catch (e) {}
 
       const result = await logSetToAPI(
         userId, exercise, selectedWeight, selectedReps, unit, split, setNum

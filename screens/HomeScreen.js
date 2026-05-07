@@ -73,12 +73,13 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   const fetchHomeData = async () => {
-    try {
-      const response = await fetch(
-        'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=user-test-001'
-      );
-      const data = await response.json();
-      const sets = data.sets || [];
+  try {
+    const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
+    const response = await fetch(
+      `https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=${userId}`
+    );
+    const data = await response.json();
+    const sets = data.sets || [];
 
       if (sets.length > 0) {
         const lastSet = sets[0];

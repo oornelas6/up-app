@@ -16,6 +16,7 @@ import SplashScreen from './screens/SplashScreen';
 import PRHistoryScreen from './screens/PRHistoryScreen';
 import StatsScreen from './screens/StatsScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
+import AuthScreen from './screens/AuthScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,18 +24,25 @@ export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [onboardingDone, setOnboardingDone] = useState(null);
   const [userName, setUserName] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
- useEffect(() => {
-  AsyncStorage.removeItem('onboarding_complete');
-  AsyncStorage.getItem('onboarding_complete').then(val => {
-    setOnboardingDone(val === 'true');
-  });
-  AsyncStorage.getItem('user_name').then(val => {
-    if (val) setUserName(val);
-  });
-}, []);
+  useEffect(() => {
+    AsyncStorage.getItem('onboarding_complete').then(val => {
+      setOnboardingDone(val === 'true');
+    });
+    AsyncStorage.getItem('user_name').then(val => {
+      if (val) setUserName(val);
+    });
+    AsyncStorage.getItem('auth_token').then(val => {
+      setIsAuthenticated(!!val);
+    });
+  }, []);
 
-  if (onboardingDone === null) return null;
+  if (isAuthenticated === null || onboardingDone === null) return null;
+
+  if (!isAuthenticated) {
+    return <AuthScreen onAuth={() => setIsAuthenticated(true)} />;
+  }
 
   if (!onboardingDone) {
     return (

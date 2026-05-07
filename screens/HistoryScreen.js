@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
 
@@ -12,18 +13,21 @@ export default function HistoryScreen({ navigation }) {
     fetchHistory();
   }, []);
 
-  const fetchHistory = async () => {
-    try {
-      const response = await fetch(`${API_BASE}/history?userId=user-test-001`);
-      const data = await response.json();
-      const sets = data.sets || [];
-      setSessions(groupIntoSessions(sets));
-    } catch (err) {
-      console.error('Failed to fetch history:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchHistory = async () => {
+  try {
+    const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
+    const response = await fetch(
+      `https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=${userId}`
+    );
+    const data = await response.json();
+    const sets = data.sets || [];
+    setSessions(groupIntoSessions(sets));
+  } catch (err) {
+    console.error('Failed to fetch history:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const groupIntoSessions = (sets) => {
     const groups = {};
