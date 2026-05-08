@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 
 const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
@@ -15,7 +16,8 @@ export default function PRHistoryScreen({ navigation, route }) {
 
   const fetchPRHistory = async () => {
     try {
-      const response = await fetch(`${API_BASE}/history?userId=user-test-001`);
+      const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
+      const response = await fetch(`${API_BASE}/history?userId=${userId}`);      
       const data = await response.json();
       const allSets = data.sets || [];
       const exerciseSets = allSets

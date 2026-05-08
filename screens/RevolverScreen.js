@@ -109,7 +109,8 @@ export default function RevolverScreen({ navigation, route }) {
 
  useEffect(() => {
   const loadSuggestion = async () => {
-    const lastSet = await getLastSet('user-test-001', exercise);
+const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
+const lastSet = await getLastSet(userId, exercise);   
     if (lastSet) {
       const lastWeight = parseFloat(lastSet.weight);
       const lastRepsVal = parseInt(lastSet.reps);
@@ -137,11 +138,7 @@ export default function RevolverScreen({ navigation, route }) {
 
   const logSet = async () => {
     try {
-      let userId = 'user-test-001';
-try {
-  const storedId = await AsyncStorage.getItem('user_id');
-  if (storedId) userId = storedId;
-} catch (e) {}
+    const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
 
       const result = await logSetToAPI(
         userId, exercise, selectedWeight, selectedReps, unit, split, setNum
