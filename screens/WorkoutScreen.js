@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Modal, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { useSettings } from '../context/SettingsContext';
@@ -173,7 +174,7 @@ useEffect(() => {
               <Text style={styles.back}>← Back</Text>
             </TouchableOpacity>
       <Text style={styles.timerDisplay}>{formatElapsed(elapsedTime)}</Text>
-      <Text style={styles.logo}>UP</Text>
+      <Logo size={36} />
           </View>
 
           <Text style={styles.title}>{split} Day</Text>

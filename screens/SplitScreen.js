@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 import { useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 
@@ -69,7 +70,7 @@ export default function SplitScreen({ navigation }) {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.back}>← Back</Text>
           </TouchableOpacity>
-          <Text style={styles.logo}>UP</Text>
+          <Logo size={36} />
         </View>
 
         <Text style={styles.title}>What are we{'\n'}training?</Text>

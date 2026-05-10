@@ -15,6 +15,7 @@ import SummaryScreen from './screens/SummaryScreen';
 import SplashScreen from './screens/SplashScreen';
 import PRHistoryScreen from './screens/PRHistoryScreen';
 import StatsScreen from './screens/StatsScreen';
+import ShareScreen from './screens/ShareScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import AuthScreen from './screens/AuthScreen';
 
@@ -70,6 +71,7 @@ export default function App() {
           <Stack.Screen name="Workout" component={WorkoutScreen} />
           <Stack.Screen name="Revolver" component={RevolverScreen} />
           <Stack.Screen name="PR" component={PRScreen} />
+          <Stack.Screen name="Share" component={ShareScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="SplitBuilder" component={SplitBuilderScreen} />
           <Stack.Screen name="Summary" component={SummaryScreen} />

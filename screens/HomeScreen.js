@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -154,7 +155,7 @@ export default function HomeScreen({ navigation }) {
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <View style={styles.header}>
-        <Text style={styles.logo}>UP</Text>
+        <Logo size={36} />
         <View style={styles.headerRight}>
           <TouchableOpacity
             style={styles.settingsBtn}

@@ -1,6 +1,7 @@
 import { View, Text, Animated, StyleSheet, Dimensions } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 
 const { width, height } = Dimensions.get('window');
 
@@ -46,7 +47,7 @@ export default function SplashScreen({ onFinish }) {
         opacity: opacityAnim,
         transform: [{ scale: scaleAnim }]
       }]}>
-        <Text style={styles.logo}>UP</Text>
+        <Logo size={36} />
         <Text style={styles.tagline}>train smarter.</Text>
       </Animated.View>
     </Animated.View>

@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, TextInput, Modal, Alert } from 'react-native';
 import { useRef, useState, useCallback, useEffect } from 'react';
@@ -167,7 +168,7 @@ const lastSet = await getLastSet(userId, exercise);
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.back}>← Back</Text>
           </TouchableOpacity>
-          <Text style={styles.logo}>UP</Text>
+          <Logo size={36} />
         </View>
 
        <Text style={styles.exName}>{exercise}</Text>

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -92,7 +93,7 @@ export default function AuthScreen({ onAuth }) {
       <View style={styles.root}>
         <LinearGradient colors={['#1a0035', '#0a000f']} style={StyleSheet.absoluteFillObject} />
         <View style={styles.container}>
-          <Text style={styles.logo}>UP</Text>
+          <Logo size={36} />
           <Text style={styles.tagline}>train smarter.</Text>
 
           {mode === 'confirm' ? (

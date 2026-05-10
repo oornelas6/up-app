@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 import { useEffect, useRef, useState } from 'react';
 import * as Haptics from 'expo-haptics';
 
@@ -161,6 +162,16 @@ const duration = rawParams.duration || 0;
 
         </Animated.View>
 
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => navigation.navigate('Share', { sets, split, duration })}
+          style={{ marginBottom: 12 }}
+        >
+          <View style={styles.shareBtn}>
+            <Text style={styles.shareBtnText}>📤 Share Workout</Text>
+          </View>
+        </TouchableOpacity>
+
         {/* Done button */}
         <TouchableOpacity
           activeOpacity={0.9}
@@ -205,6 +216,8 @@ const styles = StyleSheet.create({
   exerciseRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 14, padding: 16, marginBottom: 8 },
   exerciseRowPR: { borderColor: 'rgba(240,165,0,0.3)', backgroundColor: 'rgba(240,165,0,0.05)' },
   exerciseLeft: { flex: 1 },
+  shareBtn: { paddingVertical: 18, borderRadius: 18, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(157,78,221,0.4)', backgroundColor: 'rgba(157,78,221,0.08)' },
+  shareBtnText: { color: '#9d4edd', fontSize: 15, fontWeight: '700', letterSpacing: 2 },
   exerciseName: { fontSize: 15, fontWeight: '700', color: '#ffffff', marginBottom: 3 },
   exerciseMeta: { fontSize: 12, color: 'rgba(255,255,255,0.25)', fontWeight: '400' },
   prBadge: { backgroundColor: 'rgba(240,165,0,0.15)', borderWidth: 1, borderColor: 'rgba(240,165,0,0.4)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },

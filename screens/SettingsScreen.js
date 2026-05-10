@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, Switch, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../components/Logo';
 import { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 
@@ -22,7 +23,7 @@ import { useSettings } from '../context/SettingsContext';
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.back}>← Back</Text>
           </TouchableOpacity>
-          <Text style={styles.logo}>UP</Text>
+          <Logo size={36} />
         </View>
 
         <Text style={styles.title}>Settings</Text>
