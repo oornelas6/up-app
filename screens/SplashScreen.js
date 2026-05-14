@@ -6,27 +6,26 @@ import Logo from '../components/Logo';
 const { width, height } = Dimensions.get('window');
 
 export default function SplashScreen({ onFinish }) {
-  const scaleAnim = useRef(new Animated.Value(0.3)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
+  const taglineAnim = useRef(new Animated.Value(0)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
   const fadeOutAnim = useRef(new Animated.Value(1)).current;
-  const blob1 = useRef(new Animated.Value(0)).current;
-  const blob2 = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.sequence([
-      // Blobs fade in
+      // Glow blooms first
+      Animated.timing(glowAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+      // Logo appears through the glow
       Animated.parallel([
-        Animated.timing(blob1, { toValue: 1, duration: 600, useNativeDriver: true }),
-        Animated.timing(blob2, { toValue: 1, duration: 800, delay: 200, useNativeDriver: true }),
+        Animated.spring(scaleAnim, { toValue: 1, tension: 45, friction: 8, useNativeDriver: true }),
+        Animated.timing(opacityAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
       ]),
-      // UP logo pops in
-      Animated.parallel([
-        Animated.spring(scaleAnim, { toValue: 1, tension: 60, friction: 6, useNativeDriver: true }),
-        Animated.timing(opacityAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
-      ]),
+      // Tagline settles in
+      Animated.timing(taglineAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
       // Hold
       Animated.delay(800),
-      // Fade out everything
+      // Fade out
       Animated.timing(fadeOutAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
     ]).start(() => onFinish());
   }, []);
@@ -34,22 +33,27 @@ export default function SplashScreen({ onFinish }) {
   return (
     <Animated.View style={[styles.root, { opacity: fadeOutAnim }]}>
       <LinearGradient
-        colors={['#3c096c', '#240046', '#0a000f']}
+        colors={['#1a0035', '#0d0020', '#080010']}
+        start={{ x: 0.3, y: 0 }}
+        end={{ x: 0.7, y: 1 }}
         style={StyleSheet.absoluteFillObject}
       />
 
-      {/* Blobs */}
-      <Animated.View style={[styles.blob, styles.blob1, { opacity: blob1 }]} />
-      <Animated.View style={[styles.blob, styles.blob2, { opacity: blob2 }]} />
+      {/* Purple glow behind logo */}
+      <Animated.View style={[styles.glow, { opacity: glowAnim }]} />
 
       {/* Logo */}
-      <Animated.View style={[styles.logoContainer, {
+      <Animated.View style={[styles.logoWrap, {
         opacity: opacityAnim,
-        transform: [{ scale: scaleAnim }]
+        transform: [{ scale: scaleAnim }],
       }]}>
-        <Logo size={36} />
-        <Text style={styles.tagline}>train smarter.</Text>
+        <Logo size={110} />
       </Animated.View>
+
+      {/* Tagline pinned to lower third */}
+      <Animated.Text style={[styles.tagline, { opacity: taglineAnim }]}>
+        get UP.
+      </Animated.Text>
     </Animated.View>
   );
 }
@@ -63,35 +67,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  blob: {
+  glow: {
     position: 'absolute',
-    borderRadius: 999,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: 'rgba(123, 44, 191, 0.25)',
+    alignSelf: 'center',
+    top: height / 2 - 160,
   },
-  blob1: {
-    width: 400, height: 400,
-    backgroundColor: 'rgba(123, 44, 191, 0.35)',
-    top: -100, left: -100,
-  },
-  blob2: {
-    width: 300, height: 300,
-    backgroundColor: 'rgba(60, 9, 108, 0.4)',
-    bottom: 50, right: -80,
-  },
-  logoContainer: {
+  logoWrap: {
     alignItems: 'center',
   },
-  logo: {
-    fontSize: 80,
-    fontWeight: '900',
-    color: '#ffffff',
-    letterSpacing: 4,
-  },
   tagline: {
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.4)',
-    fontWeight: '400',
-    letterSpacing: 3,
-    marginTop: 8,
-    textTransform: 'lowercase',
+    position: 'absolute',
+    bottom: height * 0.14,
+    fontSize: 13,
+    color: 'rgba(157, 78, 221, 0.6)',
+    fontWeight: '600',
+    letterSpacing: 5,
   },
 });
