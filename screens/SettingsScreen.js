@@ -6,7 +6,9 @@ import { useSettings } from '../context/SettingsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleWorkoutReminder, cancelWorkoutReminder, getNotificationSettings, requestNotificationPermission } from '../utils/notifications';
 
+import { useTheme } from '../context/ThemeContext';
 export default function SettingsScreen({ navigation }) {
+  const theme = useTheme();
   const { isKg, setIsKg, restTimer, setRestTimer, showRPE, setShowRPE } = useSettings();
   const [notifications, setNotifications] = useState(false);
   const [notifHour, setNotifHour] = useState(18);
@@ -35,8 +37,8 @@ export default function SettingsScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.root}>
-      <LinearGradient colors={['rgba(50,0,90,0.5)', 'rgba(8,0,16,1)']} style={StyleSheet.absoluteFillObject} />
+    <View style={[styles.root, { backgroundColor: theme.bg }]}>
+      <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFillObject} />
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -45,7 +47,7 @@ export default function SettingsScreen({ navigation }) {
           <Logo size={36} />
         </View>
 
-        <Text style={styles.title}>Settings</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Settings</Text>
 
         <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 32 }}>
           <Text style={styles.sectionLabel}>UNITS</Text>

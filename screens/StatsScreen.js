@@ -3,11 +3,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
 
 export default function StatsScreen({ navigation }) {
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [sets, setSets] = useState([]);
   const [stats, setStats] = useState(null);
@@ -118,9 +120,9 @@ export default function StatsScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: theme.bg }]}>
       <LinearGradient
-        colors={['rgba(50,0,90,0.5)', 'rgba(8,0,16,1)']}
+        colors={theme.gradientBg}
         style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.container}>
@@ -131,7 +133,7 @@ export default function StatsScreen({ navigation }) {
           <Logo size={36} />
         </View>
 
-        <Text style={styles.title}>Stats</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Stats</Text>
 
         {loading ? (
           <ActivityIndicator color="#9d4edd" style={{ marginTop: 40 }} />

@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { useTheme } from '../context/ThemeContext';
 const EXERCISES = {
   Push: [
     { name: 'Flat Barbell Bench', tag: 'Chest' },
@@ -91,6 +92,7 @@ const EXERCISES = {
 
 export default function WorkoutScreen({ navigation, route }) {
   const { split } = route.params;
+  const theme = useTheme();
   const exercises = EXERCISES[split] || [];
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customExercise, setCustomExercise] = useState('');
@@ -138,9 +140,9 @@ useEffect(() => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: theme.bg }]}>
         <LinearGradient
-          colors={['rgba(60,0,100,0.4)', 'rgba(8,0,16,0.95)']}
+          colors={theme.gradientBg}
           style={StyleSheet.absoluteFillObject}
         />
         <View style={styles.container}>
@@ -177,7 +179,7 @@ useEffect(() => {
       <Logo size={36} />
           </View>
 
-          <Text style={styles.title}>{split} Day</Text>
+          <Text style={[styles.title, { color: theme.text }]}>{split} Day</Text>
           <Text style={styles.subtitle}>{exercises.length} exercises · Tap to log</Text>
 
           <View style={styles.searchBar}>
@@ -204,7 +206,7 @@ useEffect(() => {
                 onPress={() => navigation.navigate('Revolver', { exercise: ex.name, split })}
                 onLongPress={() => navigation.navigate('PRHistory', { exercise: ex.name })}
               >
-                    <Text style={styles.exName}>{ex.name}</Text>
+                    <Text style={[styles.exName, { color: theme.text }]}>{ex.name}</Text>
                     <View style={styles.cardRight}>
                       {isLogged && <Text style={styles.checkmark}>✓</Text>}
                       <View style={[styles.tag, isLogged && styles.tagLogged]}>
