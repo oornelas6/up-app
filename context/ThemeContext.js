@@ -17,17 +17,17 @@ const darkTheme = {
 };
 
 const lightTheme = {
-  bg: '#f0ebf8',
-  bgSecondary: '#e0d0f0',
+  bg: '#f5f0ff',
+  bgSecondary: '#ede5ff',
   bgCard: 'rgba(123,44,191,0.06)',
   bgCardBorder: 'rgba(123,44,191,0.15)',
   text: '#1a0035',
-  textSecondary: 'rgba(26,0,53,0.5)',
-  textTertiary: 'rgba(26,0,53,0.3)',
+  textSecondary: 'rgba(26,0,53,0.6)',
+  textTertiary: 'rgba(26,0,53,0.4)',
   accent: '#7b2cbf',
   accentDark: '#5a189a',
   accentDeep: '#3c096c',
-  gradientBg: ['rgba(200,150,255,0.3)', 'rgba(240,235,248,1)'],
+  gradientBg: ['#f5f0ff', '#ede5ff'],
   gradientBtn: ['#7b2cbf', '#4a0080'],
 };
 
