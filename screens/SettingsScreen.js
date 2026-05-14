@@ -1,13 +1,22 @@
 import { StyleSheet, Text, View, TouchableOpacity, Switch, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { scheduleWorkoutReminder, cancelWorkoutReminder, getNotificationSettings, requestNotificationPermission } from '../utils/notifications';
 
 export default function SettingsScreen({ navigation }) {
   const { isKg, setIsKg, restTimer, setRestTimer, showRPE, setShowRPE } = useSettings();
-  const [notifications, setNotifications] = useState(true);
+  const [notifications, setNotifications] = useState(false);
+  const [notifHour, setNotifHour] = useState(18);
+
+  useEffect(() => {
+    getNotificationSettings().then(settings => {
+      setNotifications(settings.enabled);
+      setNotifHour(settings.hour);
+    });
+  }, []);
 
   const restOptions = [60, 90, 120, 180, 240];
 
@@ -79,10 +88,49 @@ export default function SettingsScreen({ navigation }) {
             <View style={[styles.row, { marginTop: 16 }]}>
               <View>
                 <Text style={styles.rowTitle}>Workout Reminders</Text>
-                <Text style={styles.rowSub}>Daily push notification</Text>
+                <Text style={styles.rowSub}>{notifications ? `Daily at ${notifHour}:00` : 'Opt in for a friendly nudge'}</Text>
               </View>
-              <Switch value={notifications} onValueChange={setNotifications} trackColor={{ false: 'rgba(157,78,221,0.3)', true: '#7b2cbf' }} thumbColor={'#ffffff'} />
+              <Switch
+                value={notifications}
+                onValueChange={async (val) => {
+                  if (val) {
+                    const granted = await requestNotificationPermission();
+                    if (granted) {
+                      await scheduleWorkoutReminder(notifHour, 0);
+                      setNotifications(true);
+                    } else {
+                      Alert.alert('Permission needed', 'Enable notifications in your iPhone Settings to use this feature.');
+                    }
+                  } else {
+                    await cancelWorkoutReminder();
+                    setNotifications(false);
+                  }
+                }}
+                trackColor={{ false: 'rgba(157,78,221,0.3)', true: '#7b2cbf' }}
+                thumbColor={'#ffffff'}
+              />
             </View>
+            {notifications && (
+              <View style={{ marginTop: 12 }}>
+                <Text style={styles.rowSub}>Reminder time</Text>
+                <View style={styles.timeRow}>
+                  {[6, 9, 12, 15, 17, 18, 19, 20].map(h => (
+                    <TouchableOpacity
+                      key={h}
+                      style={[styles.timeBtn, notifHour === h && styles.timeBtnActive]}
+                      onPress={async () => {
+                        setNotifHour(h);
+                        await scheduleWorkoutReminder(h, 0);
+                      }}
+                    >
+                      <Text style={[styles.timeBtnText, notifHour === h && styles.timeBtnTextActive]}>
+                        {h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            )}
           </View>
 
           <Text style={styles.sectionLabel}>ACCOUNT</Text>
@@ -98,7 +146,7 @@ export default function SettingsScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.version}>UP v1.6</Text>
+          <Text style={styles.version}>UP v1.8</Text>
           <View style={{ height: 40 }} />
         </ScrollView>
       </View>
@@ -125,6 +173,11 @@ const styles = StyleSheet.create({
   optionBtnActive: { backgroundColor: 'rgba(123,44,191,0.3)', borderColor: '#7b2cbf' },
   optionText: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.3)' },
   optionTextActive: { color: '#ffffff' },
+  timeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
+  timeBtn: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 100, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)' },
+  timeBtnActive: { backgroundColor: 'rgba(123,44,191,0.3)', borderColor: '#7b2cbf' },
+  timeBtnText: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.3)' },
+  timeBtnTextActive: { color: '#ffffff' },
   cardDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginVertical: 16 },
   chevron: { color: 'rgba(255,255,255,0.2)', fontSize: 16 },
   version: { fontSize: 12, color: 'rgba(255,255,255,0.15)', textAlign: 'center', marginTop: 24, letterSpacing: 1 },
