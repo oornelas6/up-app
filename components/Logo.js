@@ -4,11 +4,7 @@ export default function Logo({ size = 40 }) {
   return (
     <Image
       source={require('../assets/icon.png')}
-      style={[styles.logo, { width: size, height: size, borderRadius: size * 0.22 }]}
+      style={[styles.logo, { width: size, height: size, borderRadius: size * 0.22, marginRight: 4 }]}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  logo: { resizeMode: 'contain' },
-});

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
+import { useTheme } from '../context/ThemeContext';
 import { useState, useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { useSettings } from '../context/SettingsContext';
@@ -25,7 +26,8 @@ export default function PRScreen({ navigation, route }) {
   const { exercise, weight, reps, setNum, split, isPR } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-const { restTimer, addSetToSession } = useSettings();  
+  const { restTimer, addSetToSession } = useSettings(); 
+  const theme = useTheme(); 
   const [timeLeft, setTimeLeft] = useState(restTimer || 90);
   const [timerDone, setTimerDone] = useState(false);
   const timerRef = useRef(null);
@@ -81,9 +83,9 @@ const { restTimer, addSetToSession } = useSettings();
 const progress = timeLeft / (restTimer || 90);
 
   return (
-    <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: theme.bg }]}>      
       <LinearGradient
-        colors={['rgba(40,0,80,0.8)', 'rgba(8,0,16,1)']}
+        colors={[theme.gradientBg]}
         style={StyleSheet.absoluteFillObject}
       />
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>

@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Animated, Dimensions } from '
 import { useEffect, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
+import { useTheme } from '../context/ThemeContext';
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -21,6 +22,7 @@ export default function HomeScreen({ navigation }) {
   const blob3Y = useRef(new Animated.Value(0)).current;
   const blob1X = useRef(new Animated.Value(0)).current;
   const [userName, setUserName] = useState('');
+  const theme = useTheme();
   const blob2X = useRef(new Animated.Value(0)).current;
   const [savedWorkout, setSavedWorkout] = useState(null);
   const [lastSession, setLastSession] = useState(null);
@@ -127,7 +129,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: theme.bg }]}>
       <Animated.View style={[styles.blob, {
         width: 320, height: 320, borderRadius: 160,
         backgroundColor: 'rgba(60, 0, 100, 0.5)',
@@ -147,9 +149,8 @@ export default function HomeScreen({ navigation }) {
         transform: [{ translateY: blob3Y }]
       }]} />
 
-      <LinearGradient
-        colors={['rgba(8,0,16,0.55)', 'rgba(8,0,16,0.2)', 'rgba(8,0,16,0.65)', 'rgba(8,0,16,1)']}
-        locations={[0, 0.3, 0.65, 1]}
+            <LinearGradient
+        colors={theme.gradientBg}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -174,7 +175,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.greetingSub}>
             {new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}
           </Text>
-            <Text style={styles.greetingMain}>
+            <Text style={[styles.greetingMain, { color: theme.text }]}>
               {userName ? `Hey ${userName}.\nLet's work.` : `Let's get\nafter it.`}
             </Text>       
             </View>
@@ -186,7 +187,7 @@ export default function HomeScreen({ navigation }) {
           {lastSession ? (
             <>
               <View style={styles.lastSessionRow}>
-                <Text style={styles.lastSessionName}>{lastSession.split}</Text>
+                <Text style={[styles.lastSessionName, { color: theme.text }]}>{lastSession.split}</Text>                
                 <Text style={styles.lastSessionTime}>{lastSession.sets} sets</Text>
               </View>
               <View style={styles.prRow}>

@@ -215,12 +215,19 @@ useEffect(() => {
                 );
               })}
             <View style={{ height: 16 }} />
-            <TouchableOpacity
-              style={styles.customBtn}
-              onPress={() => setShowCustomInput(true)}
-            >
-              <Text style={styles.customBtnText}>+ Add Custom Exercise</Text>
-            </TouchableOpacity>
+
+                  <TouchableOpacity
+          style={styles.customBtn}
+          onPress={() => {
+            setCustomExercise(searchQuery);
+            setShowCustomInput(true);
+          }}
+        >
+          <Text style={styles.customBtnText}>
+            {searchQuery.trim() ? `+ Add "${searchQuery}"` : '+ Add Custom Exercise'}
+          </Text>
+        </TouchableOpacity>
+
           </ScrollView>
 
          <TouchableOpacity

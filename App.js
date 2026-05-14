@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SettingsProvider } from './context/SettingsContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeScreen from './screens/HomeScreen';
@@ -55,7 +56,9 @@ export default function App() {
   }
 
   return (
-    <SettingsProvider>
+
+     <ThemeProvider>
+      <SettingsProvider>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -81,6 +84,8 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+
     </SettingsProvider>
+    </ThemeProvider>    
   );
 }

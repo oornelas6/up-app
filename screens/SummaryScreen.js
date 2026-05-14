@@ -72,7 +72,7 @@ const duration = rawParams.duration || 0;
   return (
     <View style={styles.root}>
       <LinearGradient
-        colors={['#1a0035', '#0a000f']}
+        colors={theme.gradientBg}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -85,7 +85,7 @@ const duration = rawParams.duration || 0;
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.completedLabel}>WORKOUT COMPLETE</Text>
-            <Animated.Text style={[styles.splitTitle, { transform: [{ scale: scaleAnim }] }]}>
+            <Animated.Text style={[styles.splitTitle, { transform: [{ scale: scaleAnim }], color: theme.text }]}>           
               {split}
             </Animated.Text>
             {duration > 0 && (

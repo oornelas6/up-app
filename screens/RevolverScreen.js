@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
+import { useTheme } from '../context/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, TextInput, Modal, Alert } from 'react-native';
 import { useRef, useState, useCallback, useEffect } from 'react';
@@ -74,8 +75,8 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
       >
         {data.map((item, index) => {
           const distance = Math.abs(index - selectedIndex);
-          const opacity = distance === 0 ? 1 : distance === 1 ? 0.45 : distance === 2 ? 0.2 : 0.08;
-          const fontSize = distance === 0 ? 28 : distance === 1 ? 20 : 16;
+          const opacity = distance === 0 ? 1 : distance === 1 ? 0.6 : distance === 2 ? 0.35 : 0.15;         
+          const fontSize = distance === 0 ? 36 : distance === 1 ? 26 : 18;          
           const fontWeight = distance === 0 ? '800' : '500';
           return (
             <View key={index} style={styles.wheelItem}>
@@ -104,6 +105,7 @@ export default function RevolverScreen({ navigation, route }) {
   const [weightInputVal, setWeightInputVal] = useState('');
   const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
   const unit = isKg ? 'kg' : 'lbs';
+  const theme = useTheme();
   const selectedWeight = WEIGHTS[weightIdx];
   const selectedReps = REPS[repsIdx];
   const [suggestion, setSuggestion] = useState(null);
@@ -158,9 +160,9 @@ const lastSet = await getLastSet(userId, exercise);
   };
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: theme.bg }]}>
       <LinearGradient
-        colors={['rgba(60,0,100,0.4)', 'rgba(8,0,16,0.98)']}
+      colors={theme.gradientBg}       
         style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.container}>
@@ -171,7 +173,7 @@ const lastSet = await getLastSet(userId, exercise);
           <Logo size={36} />
         </View>
 
-       <Text style={styles.exName}>{exercise}</Text>
+        <Text style={[styles.exName, { color: theme.text }]}>{exercise}</Text>        
         <View style={styles.setRow}>
           <Text style={styles.setLabel}>SET {setNum}</Text>
           <TouchableOpacity
