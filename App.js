@@ -64,9 +64,31 @@ export default function App() {
           screenOptions={{
             headerShown: false,
             cardStyle: { backgroundColor: '#080010' },
-            cardStyleInterpolator: ({ current }) => ({
-              cardStyle: { opacity: current.progress },
-            }),
+            
+           cardStyleInterpolator: ({ current, next, layouts }) => ({
+  cardStyle: {
+    opacity: current.progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 1],
+    }),
+    transform: [
+      {
+        translateX: current.progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [layouts.screen.width * 0.08, 0],
+        }),
+      },
+      {
+        scale: next
+          ? next.progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 0.97],
+            })
+          : 1,
+      },
+    ],
+  },
+}),
           }}
         >
           <Stack.Screen name="Home" component={HomeScreen} />
