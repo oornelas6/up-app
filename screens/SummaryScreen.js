@@ -3,10 +3,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useEffect, useRef, useState } from 'react';
 import * as Haptics from 'expo-haptics';
+import { useTheme } from '../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
 export default function SummaryScreen({ navigation, route }) {
+  const theme = useTheme();
 const rawParams = route.params || {};
 const sets = Array.isArray(rawParams.sets) ? rawParams.sets : [];
 const split = rawParams.split || 'Workout';

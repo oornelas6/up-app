@@ -85,7 +85,7 @@ const progress = timeLeft / (restTimer || 90);
   return (
       <View style={[styles.root, { backgroundColor: theme.bg }]}>      
       <LinearGradient
-        colors={[theme.gradientBg]}
+        colors={theme.gradientBg}
         style={StyleSheet.absoluteFillObject}
       />
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
