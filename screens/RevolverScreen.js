@@ -75,7 +75,7 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
       >
         {data.map((item, index) => {
           const distance = Math.abs(index - selectedIndex);
-          const opacity = distance === 0 ? 1 : distance === 1 ? 0.6 : distance === 2 ? 0.35 : 0.15;         
+          const opacity = distance === 0 ? 1 : distance === 1 ? 0.75 : distance === 2 ? 0.5 : 0.3;         
           const fontSize = distance === 0 ? 36 : distance === 1 ? 26 : 18;          
           const fontWeight = distance === 0 ? '800' : '500';
           return (
