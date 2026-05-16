@@ -204,18 +204,31 @@ const lastSet = await getLastSet(userId, exercise);
         </View>
 
           {suggestion && (
-          <View style={styles.suggestionContainer}>
-            <View style={styles.suggestionRow}>
-              <Text style={styles.suggestion}>
-                Last: {suggestion.weight} {suggestion.unit} × {suggestion.reps} reps
+          <View style={styles.suggestionCard}>
+            <View style={styles.suggestionLeft}>
+              <Text style={styles.suggestionLabel}>LAST SESSION</Text>
+              <Text style={styles.suggestionMain}>
+                {suggestion.weight} {suggestion.unit} × {suggestion.reps}
               </Text>
-              <Text style={styles.suggestionTarget}>
-                Target: {parseFloat(suggestion.weight) + 5} {suggestion.unit}
+              <Text style={styles.suggestionRM}>
+                1RM ≈ {Math.round(parseFloat(suggestion.weight) * (1 + suggestion.reps / 30))} {suggestion.unit}
               </Text>
             </View>
-            <Text style={styles.oneRM}>
-              Est. 1RM: {Math.round(parseFloat(suggestion.weight) * (1 + suggestion.reps / 30))} {suggestion.unit}
-            </Text>
+            <View style={styles.suggestionDivider} />
+            <View style={styles.suggestionRight}>
+              <Text style={styles.suggestionLabel}>TARGET</Text>
+              <Text style={styles.suggestionTarget}>
+                {suggestion.reps >= 12
+                  ? parseFloat(suggestion.weight) + (suggestion.unit === 'kg' ? 2.5 : 5)
+                  : suggestion.reps <= 5
+                  ? parseFloat(suggestion.weight) + (suggestion.unit === 'kg' ? 5 : 10)
+                  : parseFloat(suggestion.weight) + (suggestion.unit === 'kg' ? 2.5 : 5)
+                } {suggestion.unit}
+              </Text>
+              <Text style={styles.suggestionRM}>
+                {suggestion.reps >= 12 ? 'add weight' : suggestion.reps <= 5 ? 'strength jump' : 'progressive'}
+              </Text>
+            </View>
           </View>
         )}
 
@@ -348,7 +361,13 @@ const styles = StyleSheet.create({
   logBtnSub: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '400' },
 
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
-  suggestionContainer: { marginBottom: 12 },
+  suggestionCard: { flexDirection: 'row', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.25)', borderRadius: 16, paddingVertical: 14, paddingHorizontal: 18, marginBottom: 14, alignItems: 'center' },
+  suggestionLeft: { flex: 1, alignItems: 'flex-start' },
+  suggestionRight: { flex: 1, alignItems: 'flex-end' },
+  suggestionDivider: { width: 1, height: 40, backgroundColor: 'rgba(157,78,221,0.2)', marginHorizontal: 16 },
+  suggestionLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: 'rgba(157,78,221,0.5)', marginBottom: 4 },
+  suggestionMain: { fontSize: 16, fontWeight: '800', color: '#ffffff', letterSpacing: -0.3 },
+  suggestionRM: { fontSize: 10, color: 'rgba(255,255,255,0.25)', fontWeight: '500', marginTop: 2 },
   weightModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' },
   weightModalBox: { backgroundColor: '#1a0035', borderRadius: 24, padding: 28, width: '80%', alignItems: 'center' },
   weightModalTitle: { fontSize: 16, fontWeight: '700', color: '#ffffff', marginBottom: 16, letterSpacing: 1 },
@@ -358,8 +377,6 @@ const styles = StyleSheet.create({
   weightModalBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 2 },
   weightModalCancel: { color: 'rgba(255,255,255,0.3)', fontSize: 14 },
   oneRM: { fontSize: 11, color: 'rgba(157,78,221,0.5)', fontWeight: '600', letterSpacing: 0.5, marginTop: 4 },
-  suggestionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  suggestionTarget: { fontSize: 12, color: '#9d4edd', fontWeight: '800', letterSpacing: 0.3 },
-  suggestion: { fontSize: 12, color: 'rgba(157,78,221,0.6)', fontWeight: '600', marginBottom: 12, letterSpacing: 0.3 },
+  suggestionTarget: { fontSize: 16, fontWeight: '800', color: '#9d4edd', letterSpacing: -0.3 },
   doneBtnText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontWeight: '500', letterSpacing: 1 },
 });
