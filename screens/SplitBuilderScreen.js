@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '../context/ThemeContext';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -51,6 +52,7 @@ const DAY_COLORS = {
 };
 
         export default function SplitBuilderScreen({ navigation }) {
+  const theme = useTheme();
         const [selected, setSelected] = useState(null);
 
         const handleSelect = async (template) => {
@@ -65,20 +67,20 @@ const DAY_COLORS = {
         };
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: theme.bg }]}>
       <LinearGradient
-        colors={['rgba(50,0,90,0.5)', 'rgba(8,0,16,1)']}
+        colors={theme.gradientBg}
         style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.back}>← Back</Text>
+            <Text style={[styles.back, { color: theme.textSecondary }]}>← Back</Text>
           </TouchableOpacity>
           <Logo size={36} />
         </View>
 
-        <Text style={styles.title}>Build Your{'\n'}Split</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Build Your{'\n'}Split</Text>
         <Text style={styles.subtitle}>Choose a template to get started</Text>
 
         <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 24 }}>
@@ -90,12 +92,12 @@ const DAY_COLORS = {
               onPress={() => handleSelect(template)}
             >
               <View style={styles.cardHeader}>
-                <Text style={styles.cardName}>{template.name}</Text>
+                <Text style={[styles.cardName, { color: theme.text }]}>{template.name}</Text>
                 {selected?.name === template.name && (
                   <Text style={styles.checkmark}>✓</Text>
                 )}
               </View>
-              <Text style={styles.cardDesc}>{template.description}</Text>
+              <Text style={[styles.cardDesc, { color: theme.textTertiary }]}>{template.description}</Text>
 
               {/* Weekly schedule */}
               <View style={styles.scheduleRow}>

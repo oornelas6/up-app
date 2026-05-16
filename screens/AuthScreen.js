@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '../context/ThemeContext';
 
 const REGION = 'us-east-1';
 const CLIENT_ID = '2og2vg8nn27svmjlpo4ah6j1na';
@@ -22,6 +23,7 @@ const cognitoRequest = async (action, body) => {
 };
 
 export default function AuthScreen({ onAuth }) {
+  const theme = useTheme();
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -90,8 +92,8 @@ export default function AuthScreen({ onAuth }) {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <View style={styles.root}>
-        <LinearGradient colors={['#1a0035', '#0a000f']} style={StyleSheet.absoluteFillObject} />
+      <View style={[styles.root, { backgroundColor: theme.bg }]}>
+        <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFillObject} />
         <View style={styles.container}>
           <Logo size={36} />
           <Text style={styles.tagline}>train smarter.</Text>

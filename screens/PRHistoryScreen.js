@@ -3,10 +3,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
 
 export default function PRHistoryScreen({ navigation, route }) {
+  const theme = useTheme();
   const { exercise } = route.params;
   const [sets, setSets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,20 +44,20 @@ export default function PRHistoryScreen({ navigation, route }) {
     : 0;
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: theme.bg }]}>
       <LinearGradient
-        colors={['rgba(50,0,90,0.5)', 'rgba(8,0,16,1)']}
+        colors={theme.gradientBg}
         style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.back}>← Back</Text>
+            <Text style={[styles.back, { color: theme.textSecondary }]}>← Back</Text>
           </TouchableOpacity>
           <Logo size={36} />
         </View>
 
-        <Text style={styles.title}>{exercise}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{exercise}</Text>
         <Text style={styles.subtitle}>{sets.length} sets logged</Text>
 
         {/* Best set banner */}
