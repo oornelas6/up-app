@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, AppState } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useTheme } from '../context/ThemeContext';
 import { useState, useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { useSettings } from '../context/SettingsContext';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MESSAGES = [
   { title: "Set locked in.", sub: "Every rep is a deposit into your future self." },
@@ -15,25 +15,33 @@ const MESSAGES = [
   { title: "Noted.", sub: "Your body is adapting. Show up again tomorrow." },
 ];
 
-const REST_TIMES = {
-  default: 90,
-  heavy: 180,    // squats, deadlifts, bench
-  moderate: 120, // most exercises
-  light: 60,     // isolation movements
-};
-
 export default function PRScreen({ navigation, route }) {
   const { exercise, weight, reps, setNum, split, isPR } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const { restTimer, addSetToSession } = useSettings(); 
-  const theme = useTheme(); 
-  const [timeLeft, setTimeLeft] = useState(restTimer || 90);
+  const { restTimer, addSetToSession } = useSettings();
+  const theme = useTheme();
+
+  const duration = restTimer || 90;
+  const endTimeRef = useRef(Date.now() + duration * 1000);
+  const [timeLeft, setTimeLeft] = useState(duration);
   const [timerDone, setTimerDone] = useState(false);
   const timerRef = useRef(null);
-  
+  const appStateRef = useRef(AppState.currentState);
 
   const msg = MESSAGES[(setNum - 1) % MESSAGES.length];
+
+  const tick = () => {
+    const remaining = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
+    setTimeLeft(remaining);
+    if (remaining <= 0) {
+      clearInterval(timerRef.current);
+      setTimerDone(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else if (remaining === 10) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+  };
 
   useEffect(() => {
     Animated.parallel([
@@ -41,31 +49,24 @@ export default function PRScreen({ navigation, route }) {
       Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
     ]).start();
 
-      addSetToSession({
-        exercise,
-        weight,
-        reps,
-        unit: route.params.unit || 'lbs',
-        isPR,
-      });
-    
-    // Start rest timer
-    timerRef.current = setInterval(() => {
-      setTimeLeft(t => {
-        if (t <= 1) {
-          clearInterval(timerRef.current);
-          setTimerDone(true);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          return 0;
-        }
-        if (t === 10) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }
-        return t - 1;
-      });
-    }, 1000);
+    addSetToSession({ exercise, weight, reps, unit: route.params.unit || 'lbs', isPR });
 
-    return () => clearInterval(timerRef.current);
+    // Start timer
+    endTimeRef.current = Date.now() + duration * 1000;
+    timerRef.current = setInterval(tick, 500);
+
+    // When app comes back from background, recalculate from end time
+    const sub = AppState.addEventListener('change', nextState => {
+      if (appStateRef.current.match(/inactive|background/) && nextState === 'active') {
+        tick(); // immediate recalc on resume
+      }
+      appStateRef.current = nextState;
+    });
+
+    return () => {
+      clearInterval(timerRef.current);
+      sub.remove();
+    };
   }, []);
 
   const skipTimer = () => {
@@ -74,23 +75,24 @@ export default function PRScreen({ navigation, route }) {
     setTimeLeft(0);
   };
 
+  const adjustTimer = (delta) => {
+    endTimeRef.current = endTimeRef.current + delta * 1000;
+    setTimeLeft(t => Math.max(0, t + delta));
+  };
+
   const formatTime = (s) => {
     const m = Math.floor(s / 60);
     const sec = s % 60;
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
-const progress = timeLeft / (restTimer || 90);
+  const progress = timeLeft / duration;
 
   return (
-      <View style={[styles.root, { backgroundColor: theme.bg }]}>      
-      <LinearGradient
-        colors={theme.gradientBg}
-        style={StyleSheet.absoluteFillObject}
-      />
+    <View style={[styles.root, { backgroundColor: theme.bg }]}>
+      <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFillObject} />
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
 
-        {/* Badge */}
         <Animated.View style={[styles.badge, { transform: [{ scale: scaleAnim }] }]}>
           {isPR ? (
             <LinearGradient colors={['#f0a500', '#e07000']} style={styles.badgeInner}>
@@ -103,11 +105,10 @@ const progress = timeLeft / (restTimer || 90);
           )}
         </Animated.View>
 
-        {/* Stats */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={styles.statVal}>{weight}</Text>
-            <Text style={styles.statLbl}>lbs</Text>
+            <Text style={styles.statLbl}>{route.params.unit || 'lbs'}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statBox}>
@@ -116,13 +117,12 @@ const progress = timeLeft / (restTimer || 90);
           </View>
         </View>
 
-        {/* Message */}
         <View style={styles.msgContainer}>
           {isPR ? (
             <>
               <Text style={styles.prTitle}>New personal{'\n'}record.</Text>
               <Text style={styles.msgSub}>
-                {weight} lbs × {reps} reps on {exercise}.{'\n'}
+                {weight} {route.params.unit || 'lbs'} × {reps} reps on {exercise}.{'\n'}
                 That's what the work is for.
               </Text>
             </>
@@ -136,31 +136,24 @@ const progress = timeLeft / (restTimer || 90);
 
         <View style={{ flex: 1 }} />
 
-            <View style={styles.timerContainer}>
-        <View style={styles.timerHeader}>
-          <Text style={styles.timerLabel}>REST</Text>
-          <View style={styles.timerAdjust}>
-            <TouchableOpacity
-              style={styles.adjustBtn}
-              onPress={() => setTimeLeft(t => Math.max(t - 15, 0))}
-            >
-              <Text style={styles.adjustBtnText}>−15</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.adjustBtn}
-              onPress={() => setTimeLeft(t => t + 15)}
-            >
-              <Text style={styles.adjustBtnText}>+15</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={skipTimer}>
-              <Text style={styles.skipText}>Skip</Text>
-            </TouchableOpacity>
+        <View style={styles.timerContainer}>
+          <View style={styles.timerHeader}>
+            <Text style={styles.timerLabel}>REST</Text>
+            <View style={styles.timerAdjust}>
+              <TouchableOpacity style={styles.adjustBtn} onPress={() => adjustTimer(-15)}>
+                <Text style={styles.adjustBtnText}>−15</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.adjustBtn} onPress={() => adjustTimer(15)}>
+                <Text style={styles.adjustBtnText}>+15</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={skipTimer}>
+                <Text style={styles.skipText}>Skip</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-          {/* Progress bar */}
           <View style={styles.progressBar}>
-            <Animated.View style={[styles.progressFill, {
+            <View style={[styles.progressFill, {
               width: `${progress * 100}%`,
               backgroundColor: timerDone ? '#4caf50' : timeLeft <= 10 ? '#f0a500' : '#7b2cbf',
             }]} />
@@ -169,54 +162,45 @@ const progress = timeLeft / (restTimer || 90);
           <Text style={[styles.timerCount, {
             color: timerDone ? '#4caf50' : timeLeft <= 10 ? '#f0a500' : '#ffffff'
           }]}>
-            {timerDone ? "REST DONE" : formatTime(timeLeft)}
+            {timerDone ? 'REST DONE' : formatTime(timeLeft)}
           </Text>
         </View>
 
-        {/* Actions */}
         <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.goBack()}>
           <LinearGradient
             colors={timerDone ? ['#4caf50', '#2e7d32'] : ['#7b2cbf', '#4a0080']}
             style={styles.continueBtn}
           >
             <Text style={styles.continueBtnText}>
-              {timerDone ? "LET'S GO" : "NEXT SET"}
+              {timerDone ? "LET'S GO" : 'NEXT SET'}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.doneBtn}
-          onPress={() => navigation.navigate('Workout', { split })}  
-                >
+        <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
           <Text style={styles.doneBtnText}>Back to Exercises</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-      style={styles.finishBtn}
-      onPress={async () => {
-        try {
-         const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
-          const response = await fetch(
-            `https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=${userId}`
-          );
-
-          const data = await response.json();
-          const allSets = data.sets || [];
-          const today = new Date().toISOString().split('T')[0];
-          const todaySets = allSets.filter(s => s.timestamp?.startsWith(today));
-          navigation.navigate('Summary', {
-            sets: todaySets,
-            split,
-            duration: 0,
-          });
-        } catch (err) {
-          navigation.navigate('Summary', { sets: [], split, duration: 0 });
-        }
-      }}
-    >
-      <Text style={styles.finishBtnText}>Finish Workout</Text>
-    </TouchableOpacity>
+          style={styles.finishBtn}
+          onPress={async () => {
+            try {
+              const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
+              const response = await fetch(
+                `https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=${userId}`
+              );
+              const data = await response.json();
+              const allSets = data.sets || [];
+              const today = new Date().toISOString().split('T')[0];
+              const todaySets = allSets.filter(s => s.timestamp?.startsWith(today));
+              navigation.navigate('Summary', { sets: todaySets, split, duration: 0 });
+            } catch (err) {
+              navigation.navigate('Summary', { sets: [], split, duration: 0 });
+            }
+          }}
+        >
+          <Text style={styles.finishBtnText}>Finish Workout</Text>
+        </TouchableOpacity>
 
       </Animated.View>
     </View>
