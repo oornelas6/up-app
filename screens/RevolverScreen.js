@@ -308,7 +308,7 @@ export default function RevolverScreen({ navigation, route }) {
           </View>
         </View>
 
-        <View style={{ flex: 1 }} />
+        <View style={{ flex: 1, minHeight: 16 }} />
 
         <TouchableOpacity activeOpacity={0.9} onPress={logSet}>
           <LinearGradient
@@ -375,7 +375,7 @@ export default function RevolverScreen({ navigation, route }) {
 
 const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010' },
-  container: { flex: 1, paddingHorizontal: 28, paddingTop: 64, paddingBottom: 40 },
+  container: { flex: 1, paddingHorizontal: 28, paddingTop: 64, paddingBottom: 60 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
   back: { color: theme.textSecondary, fontSize: 15, fontWeight: '600' },
   exName: { fontSize: 26, fontWeight: '800', color: theme.text, letterSpacing: -0.5, marginBottom: 4 },
