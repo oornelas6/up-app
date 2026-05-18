@@ -113,6 +113,29 @@ export default function ShareScreen({ navigation, route }) {
         )}
       </View>
 
+      {/* Stats strip */}
+      <View style={styles.sharedStrip}>
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{totalSets}</Text>
+          <Text style={styles.sharedLbl}>SETS</Text>
+        </View>
+        <View style={styles.sharedDiv} />
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{totalReps}</Text>
+          <Text style={styles.sharedLbl}>REPS</Text>
+        </View>
+        <View style={styles.sharedDiv} />
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{formatVolume(totalVolume)}</Text>
+          <Text style={styles.sharedLbl}>VOLUME</Text>
+        </View>
+        <View style={styles.sharedDiv} />
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{uniqueExercises.length}</Text>
+          <Text style={styles.sharedLbl}>EXERCISES</Text>
+        </View>
+      </View>
+
       {/* Footer */}
       <View style={styles.recapFooter}>
         {prs > 0 && <Text style={styles.recapPRBadge}>🏆 {prs} PR{prs > 1 ? 's' : ''}</Text>}
@@ -142,6 +165,27 @@ export default function ShareScreen({ navigation, route }) {
         <Text style={styles.prExercise}>{heroSet?.exercise}</Text>
       </View>
 
+      <View style={[styles.sharedStrip, { borderTopColor: 'rgba(255,255,255,0.1)', marginBottom: 16 }]}>
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{totalSets}</Text>
+          <Text style={styles.sharedLbl}>SETS</Text>
+        </View>
+        <View style={styles.sharedDiv} />
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{totalReps}</Text>
+          <Text style={styles.sharedLbl}>REPS</Text>
+        </View>
+        <View style={styles.sharedDiv} />
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{formatVolume(totalVolume)}</Text>
+          <Text style={styles.sharedLbl}>VOLUME</Text>
+        </View>
+        <View style={styles.sharedDiv} />
+        <View style={styles.sharedStat}>
+          <Text style={styles.sharedVal}>{uniqueExercises.length}</Text>
+          <Text style={styles.sharedLbl}>EXERCISES</Text>
+        </View>
+      </View>
       <View style={styles.prBottom}>
         <Text style={styles.prSplit}>{split}</Text>
         <Text style={styles.prSlogan}>get UP.</Text>
@@ -359,4 +403,9 @@ const styles = StyleSheet.create({
   primaryBtnText: { color: '#ffffff', fontSize: 14, fontWeight: '800', letterSpacing: 2 },
   secondaryBtn: { paddingVertical: 16, alignItems: 'center' },
   secondaryBtnText: { color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: '600', letterSpacing: 0.5 },
+  sharedStrip: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, paddingTop: 16, marginTop: 16 },
+  sharedStat: { flex: 1, alignItems: 'center' },
+  sharedVal: { fontSize: 16, fontWeight: '900', color: '#ffffff', letterSpacing: -0.3 },
+  sharedLbl: { fontSize: 7, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginTop: 3 },
+  sharedDiv: { width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.08)' },
 });

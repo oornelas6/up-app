@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { useSettings } from '../context/SettingsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MESSAGES = [
   { title: "Set locked in.", sub: "Every rep is a deposit into your future self." },
@@ -19,7 +20,7 @@ export default function PRScreen({ navigation, route }) {
   const { exercise, weight, reps, setNum, split, isPR } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const { restTimer, addSetToSession } = useSettings();
+  const { restTimer, addSetToSession, sessionSets, clearSession } = useSettings();
   const theme = useTheme();
   const styles = getStyles(theme);
 
@@ -185,8 +186,9 @@ export default function PRScreen({ navigation, route }) {
         <TouchableOpacity
           style={styles.finishBtn}
           onPress={() => {
+            clearSession();
             navigation.navigate('Summary', {
-              sets: route.params.sessionSets || [],
+              sets: sessionSets,
               split,
               duration: 0,
             });
