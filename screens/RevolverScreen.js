@@ -45,7 +45,7 @@ const WEIGHTS_LBS = Array.from({ length: 161 }, (_, i) => i * 2.5);
 const WEIGHTS_KG = Array.from({ length: 121 }, (_, i) => i * 1.25);
 const REPS = Array.from({ length: 30 }, (_, i) => i + 1);
 
-const WheelPicker = ({ data, unit, selectedIndex, onIndexChange }) => {
+const WheelPicker = ({ data, unit, selectedIndex, onIndexChange, styles }) => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -255,6 +255,7 @@ const lastSet = await getLastSet(userId, exercise);
           <View style={styles.wheelContainer}>
             <Text style={styles.wheelLabel}>WEIGHT</Text>
             <WheelPicker
+              styles={styles}
               data={WEIGHTS}
               unit={` ${unit}`}
               selectedIndex={weightIdx}
@@ -265,6 +266,7 @@ const lastSet = await getLastSet(userId, exercise);
           <View style={styles.wheelContainer}>
             <Text style={styles.wheelLabel}>REPS</Text>
             <WheelPicker
+              styles={styles}
               data={REPS}
               unit=" reps"
               selectedIndex={repsIdx}
