@@ -236,11 +236,14 @@ export default function ShareScreen({ navigation, route }) {
   const CARD_COMPONENTS = [DarkCard, GlowCard, LightCard, ClearCard];
   const ActiveCardComponent = CARD_COMPONENTS[activeCard];
 
-  // For Clear card, primary action is copy image. For others, save to camera roll.
   const primaryAction = isTransparent ? handleCopyImage : handleSave;
   const primaryLabel = isTransparent
-    ? (copied ? '✓ COPIED' : 'COPY TO CLIPBOARD')
-    : (saved ? '✓ SAVED' : 'SAVE TO CAMERA ROLL');
+    ? (copied ? '✓ Saved to Clipboard' : 'Copy to Clipboard')
+    : (saved ? '✓ Saved to Camera Roll' : 'Save to Camera Roll');
+  const secondaryLabel = isTransparent
+    ? (saved ? '✓ Saved' : 'Save to Camera Roll')
+    : (copied ? '✓ Copied' : 'Copy to Clipboard');
+  const secondaryAction = isTransparent ? handleSave : handleCopyImage;
   const primaryColors = isTransparent
     ? (copied ? ['#4caf50', '#2e7d32'] : ['#ffffff', '#e8e0ff'])
     : ['#7b2cbf', '#4a0080'];
@@ -309,7 +312,7 @@ export default function ShareScreen({ navigation, route }) {
           {CARDS.map((name, i) => (
             <TouchableOpacity key={i} style={styles.selectorBtn} onPress={() => {
               setActiveCard(i);
-              flatListRef.current?.scrollToIndex({ index: i, animated: true });
+              flatListRef.current?.scrollToIndex({ index: i, animated: true, viewPosition: 0.5 });
             }}>
               <View style={[styles.selectorDot, activeCard === i && styles.selectorDotActive]} />
               <Text style={[styles.selectorLabel, activeCard === i && styles.selectorLabelActive]}>{name}</Text>
@@ -325,16 +328,9 @@ export default function ShareScreen({ navigation, route }) {
         </TouchableOpacity>
 
         {/* Secondary action */}
-        {!isTransparent && (
-          <TouchableOpacity style={styles.secondaryBtn} onPress={handleCopyText} activeOpacity={0.8}>
-            <Text style={styles.secondaryBtnText}>{copied ? '✓ Copied' : 'Copy as text'}</Text>
-          </TouchableOpacity>
-        )}
-        {isTransparent && (
-          <TouchableOpacity style={styles.secondaryBtn} onPress={handleSave} activeOpacity={0.8}>
-            <Text style={styles.secondaryBtnText}>{saved ? '✓ Saved' : 'Save to camera roll'}</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity style={styles.secondaryBtn} onPress={secondaryAction} activeOpacity={0.8}>
+          <Text style={styles.secondaryBtnText}>{secondaryLabel}</Text>
+        </TouchableOpacity>
 
         <View style={{ height: 48 }} />
       </ScrollView>
