@@ -235,30 +235,13 @@ useEffect(() => {
          <TouchableOpacity
               style={styles.finishBtn}
               activeOpacity={0.9}
-              onPress={async () => {
-                try {
-                 const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
-                  const response = await fetch(
-                    `https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/history?userId=${userId}`
-                  );
-
-                  const data = await response.json();
-                  const allSets = data.sets || [];
-                  const today = new Date().toISOString().split('T')[0];
-                  const todaySets = allSets.filter(s => s.timestamp?.startsWith(today));
-                  
-                  navigation.navigate('Summary', {
-                    sets: todaySets,
-                    split,
-duration: elapsedTime
-                  });
-                } catch (err) {
-                  navigation.navigate('Summary', {
-                    sets: [],
-                    split,
-duration: elapsedTime
-                  });
-                }
+              onPress={() => {
+                clearSession();
+                navigation.navigate('Summary', {
+                  sets: sessionSets,
+                  split,
+                  duration: elapsedTime,
+                });
               }}
           >
             <LinearGradient
