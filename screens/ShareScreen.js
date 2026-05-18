@@ -63,8 +63,7 @@ export default function ShareScreen({ navigation, route }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch (err) {
-      // fallback to text copy
-      handleCopyText();
+      Alert.alert('Could not copy image', 'Try saving to camera roll instead.');
     }
   };
 
@@ -264,6 +263,14 @@ export default function ShareScreen({ navigation, route }) {
           </ViewShot>
         )}
 
+        {/* Hidden capture view - always renders active card for saving */}
+        <ViewShot ref={cardRef} options={{ format: 'png', quality: 1.0 }} style={{ position: 'absolute', top: -9999, left: 24, right: 24, width: CARD_WIDTH }}>
+          {activeCard === 0 && <DarkCard />}
+          {activeCard === 1 && <GlowCard />}
+          {activeCard === 2 && <LightCard />}
+          {activeCard === 3 && <ClearCardCapture />}
+        </ViewShot>
+
         {/* Swipeable cards */}
         <FlatList
           style={{ marginHorizontal: -24 }}
@@ -284,13 +291,7 @@ export default function ShareScreen({ navigation, route }) {
           keyExtractor={(_, i) => i.toString()}
           renderItem={({ item: CardComponent, index }) => (
             <View style={{ width: width, paddingHorizontal: 24 }}>
-              {index !== 3 ? (
-                <ViewShot ref={activeCard === index ? cardRef : null} options={{ format: 'png', quality: 1.0 }}>
-                  <CardComponent />
-                </ViewShot>
-              ) : (
-                <CardComponent />
-              )}
+              <CardComponent />
             </View>
           )}
         />
