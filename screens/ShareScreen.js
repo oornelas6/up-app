@@ -236,18 +236,12 @@ export default function ShareScreen({ navigation, route }) {
   const CARD_COMPONENTS = [DarkCard, GlowCard, LightCard, ClearCard];
   const ActiveCardComponent = CARD_COMPONENTS[activeCard];
 
-  const primaryAction = isTransparent ? handleCopyImage : handleSave;
-  const primaryLabel = isTransparent
-    ? (copied ? '✓ Saved to Clipboard' : 'Copy to Clipboard')
-    : (saved ? '✓ Saved to Camera Roll' : 'Save to Camera Roll');
-  const secondaryLabel = isTransparent
-    ? (saved ? '✓ Saved' : 'Save to Camera Roll')
-    : (copied ? '✓ Copied' : 'Copy to Clipboard');
-  const secondaryAction = isTransparent ? handleSave : handleCopyImage;
-  const primaryColors = isTransparent
-    ? (copied ? ['#4caf50', '#2e7d32'] : ['#ffffff', '#e8e0ff'])
-    : ['#7b2cbf', '#4a0080'];
-  const primaryTextColor = isTransparent ? '#1a0035' : '#ffffff';
+  const primaryAction = handleSave;
+  const primaryLabel = saved ? '✓ Saved to Camera Roll' : 'Save to Camera Roll';
+  const secondaryLabel = copied ? '✓ Copied to Clipboard' : 'Copy to Clipboard';
+  const secondaryAction = handleCopyImage;
+  const primaryColors = saved ? ['#4caf50', '#2e7d32'] : ['#7b2cbf', '#4a0080'];
+  const primaryTextColor = '#ffffff';
 
   return (
     <View style={styles.root}>
@@ -280,7 +274,7 @@ export default function ShareScreen({ navigation, route }) {
           snapToAlignment="center"
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
-          onLayout={() => setTimeout(() => flatListRef.current?.scrollToIndex({ index: 3, animated: false }), 50)}
+          onLayout={() => setTimeout(() => flatListRef.current?.scrollToIndex({ index: 3, animated: false, viewPosition: 0 }), 100)}
           onMomentumScrollEnd={(e) => {
             const index = Math.round(e.nativeEvent.contentOffset.x / width);
             setActiveCard(index);
