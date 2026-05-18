@@ -278,7 +278,7 @@ export default function ShareScreen({ navigation, route }) {
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
           initialScrollIndex={3}
-          initialOffset={{ x: width * 3, y: 0 }}
+          contentOffset={{ x: width * 3, y: 0 }}
           getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
           onMomentumScrollEnd={(e) => {
             const index = Math.round(e.nativeEvent.contentOffset.x / width);
