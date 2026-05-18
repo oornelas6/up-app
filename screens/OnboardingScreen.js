@@ -1,24 +1,24 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Animated, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Animated, Dimensions, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useState, useRef, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const GOALS = [
-  { id: 'strength', emoji: '🏋️', label: 'Get Stronger', sub: 'Build raw strength and move more weight.' },
-  { id: 'muscle', emoji: '💪', label: 'Build Muscle', sub: 'Hypertrophy focus. Progressive overload.' },
-  { id: 'endurance', emoji: '⚡', label: 'Endurance', sub: 'Last longer. Go harder. Never gas out.' },
-  { id: 'general', emoji: '🎯', label: 'General Fitness', sub: 'Look good. Feel good. Stay consistent.' },
+  { id: 'strength', label: 'Get stronger.', sub: 'I want to move more weight. Simple.' },
+  { id: 'muscle', label: 'Build muscle.', sub: 'I want to look the part. Progressive overload.' },
+  { id: 'performance', label: 'Perform better.', sub: 'I train to compete, not just look good.' },
+  { id: 'consistency', label: 'Stay consistent.', sub: 'I just want to show up. Every week.' },
 ];
 
 const SPLITS = [
-  { id: 'PPL', label: 'PPL', sub: 'Push Pull Legs — 6 days' },
-  { id: 'Upper/Lower', label: 'Upper / Lower', sub: '4 days — balanced' },
-  { id: 'Full Body', label: 'Full Body', sub: '3 days — efficient' },
-  { id: 'Arnold', label: 'Arnold Split', sub: '6 days — classic' },
-  { id: 'Custom', label: 'My Own', sub: 'I know what I\'m doing' },
+  { id: 'PPL', label: 'Push / Pull / Legs', sub: '6 days — the classic' },
+  { id: 'Upper/Lower', label: 'Upper / Lower', sub: '4 days — balanced and efficient' },
+  { id: 'Full Body', label: 'Full Body', sub: '3 days — simple, effective' },
+  { id: 'Custom', label: 'My own thing', sub: 'I know what works for me' },
 ];
 
 export default function OnboardingScreen({ onFinish }) {
@@ -27,155 +27,197 @@ export default function OnboardingScreen({ onFinish }) {
   const [goal, setGoal] = useState(null);
   const [split, setSplit] = useState(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
+  const slideAnim = useRef(new Animated.Value(24)).current;
 
   useEffect(() => {
-    animateIn();
+    fadeAnim.setValue(0);
+    slideAnim.setValue(24);
+    Animated.parallel([
+      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+      Animated.spring(slideAnim, { toValue: 0, tension: 55, friction: 9, useNativeDriver: true }),
+    ]).start();
   }, [step]);
 
-  const animateIn = () => {
-    fadeAnim.setValue(0);
-    slideAnim.setValue(30);
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
-      Animated.spring(slideAnim, { toValue: 0, tension: 60, friction: 8, useNativeDriver: true }),
-    ]).start();
+  const advance = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setStep(s => s + 1);
   };
-
-  const nextStep = () => setStep(s => s + 1);
 
   const finish = async () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await AsyncStorage.setItem('onboarding_complete', 'true');
-    await AsyncStorage.setItem('user_name', name);
+    await AsyncStorage.setItem('user_name', name.trim());
     await AsyncStorage.setItem('user_goal', goal);
     await AsyncStorage.setItem('user_split', split);
-    onFinish({ name, goal, split });
+    onFinish({ name: name.trim(), goal, split });
   };
 
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-      <View style={styles.root}>
-        <LinearGradient
-          colors={['#1a0035', '#0a000f']}
-          style={StyleSheet.absoluteFillObject}
-        />
+  const firstName = name.trim().split(' ')[0];
 
-        {/* Progress bar */}
-        <View style={styles.progressContainer}>
-          {[0, 1, 2].map(i => (
-            <View key={i} style={[styles.progressDot, step >= i && styles.progressDotActive, step === i && styles.progressDotCurrent]} />
+  return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+      <View style={styles.root}>
+        <LinearGradient colors={['#1a0035', '#080010']} style={StyleSheet.absoluteFillObject} />
+
+        {/* Progress */}
+        <View style={styles.progress}>
+          {[0, 1, 2, 3].map(i => (
+            <View key={i} style={[
+              styles.progressSeg,
+              { backgroundColor: i < step ? '#7b2cbf' : i === step ? '#9d4edd' : 'rgba(255,255,255,0.08)' },
+              i === step && { opacity: 1 }
+            ]} />
           ))}
         </View>
 
         <Animated.View style={[styles.container, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
 
-          {/* STEP 0 — Name */}
+          {/* ── STEP 0: Name ── */}
           {step === 0 && (
-            <View style={styles.stepContainer}>
-              <Text style={styles.eyebrow}>WELCOME TO UP</Text>
-              <Text style={styles.headline}>What do we{'\n'}call you?</Text>
-              <Text style={styles.body}>Your coach needs a name.</Text>
-              <TextInput
-                style={styles.nameInput}
-                placeholder="First name..."
-                placeholderTextColor="rgba(255,255,255,0.2)"
-                value={name}
-                onChangeText={setName}
-                autoFocus
-                autoCorrect={false}
-                returnKeyType="done"
-                onSubmitEditing={() => name.trim() && nextStep()}
-              />
-              <TouchableOpacity
-                style={[styles.primaryBtn, !name.trim() && styles.primaryBtnDisabled]}
-                onPress={() => name.trim() && nextStep()}
-                activeOpacity={0.8}
-              >
-                <LinearGradient
-                  colors={name.trim() ? ['#7b2cbf', '#4a0080'] : ['#1a0035', '#0f0020']}
-                  style={styles.primaryBtnGradient}
-                >
-                  <Text style={styles.primaryBtnText}>CONTINUE</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* STEP 1 — Goal */}
-          {step === 1 && (
-            <View style={styles.stepContainer}>
-              <Text style={styles.eyebrow}>YOUR GOAL</Text>
-              <Text style={styles.headline}>What are you{'\n'}training for?</Text>
-              <Text style={styles.body}>Be honest. UP will push you accordingly.</Text>
-              <View style={styles.optionsGrid}>
-                {GOALS.map(g => (
-                  <TouchableOpacity
-                    key={g.id}
-                    style={[styles.goalCard, goal === g.id && styles.goalCardActive]}
-                    onPress={() => setGoal(g.id)}
-                    activeOpacity={0.8}
-                  >
-                    <Text style={styles.goalEmoji}>{g.emoji}</Text>
-                    <Text style={[styles.goalLabel, goal === g.id && styles.goalLabelActive]}>{g.label}</Text>
-                    <Text style={styles.goalSub}>{g.sub}</Text>
-                  </TouchableOpacity>
-                ))}
+            <View style={styles.step}>
+              <View style={styles.logoRow}>
+                <Logo size={32} />
+              </View>
+              <View style={styles.copyBlock}>
+                <Text style={styles.eyebrow}>WELCOME</Text>
+                <Text style={styles.headline}>The app you've{'\n'}been waiting for.</Text>
+                <Text style={styles.body}>
+                  No more typing between sets.{'\n'}No excuses not to track.{'\n'}Just you, the bar, and UP.
+                </Text>
+              </View>
+              <View style={styles.inputBlock}>
+                <Text style={styles.inputLabel}>First, what's your name?</Text>
+                <TextInput
+                  style={styles.nameInput}
+                  placeholder="Your name..."
+                  placeholderTextColor="rgba(255,255,255,0.2)"
+                  value={name}
+                  onChangeText={setName}
+                  autoFocus
+                  autoCorrect={false}
+                  autoCapitalize="words"
+                  returnKeyType="done"
+                  onSubmitEditing={() => name.trim() && advance()}
+                />
               </View>
               <TouchableOpacity
-                style={[styles.primaryBtn, !goal && styles.primaryBtnDisabled]}
-                onPress={() => goal && nextStep()}
-                activeOpacity={0.8}
+                style={[styles.btn, !name.trim() && { opacity: 0.3 }]}
+                onPress={() => name.trim() && advance()}
+                activeOpacity={0.85}
               >
-                <LinearGradient
-                  colors={goal ? ['#7b2cbf', '#4a0080'] : ['#1a0035', '#0f0020']}
-                  style={styles.primaryBtnGradient}
-                >
-                  <Text style={styles.primaryBtnText}>CONTINUE</Text>
+                <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.btnGradient}>
+                  <Text style={styles.btnText}>CONTINUE</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
           )}
 
-          {/* STEP 2 — Split */}
+          {/* ── STEP 1: Goal ── */}
+          {step === 1 && (
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+              <View style={styles.step}>
+                <View style={styles.copyBlock}>
+                  <Text style={styles.eyebrow}>YOUR WHY</Text>
+                  <Text style={styles.headline}>What are you{'\n'}chasing, {firstName}?</Text>
+                  <Text style={styles.body}>Be honest with yourself. This is just between you and UP.</Text>
+                </View>
+                <View style={styles.optionList}>
+                  {GOALS.map(g => (
+                    <TouchableOpacity
+                      key={g.id}
+                      style={[styles.optionCard, goal === g.id && styles.optionCardActive]}
+                      onPress={() => { setGoal(g.id); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                      activeOpacity={0.8}
+                    >
+                      <View style={styles.optionLeft}>
+                        <Text style={[styles.optionLabel, goal === g.id && styles.optionLabelActive]}>{g.label}</Text>
+                        <Text style={styles.optionSub}>{g.sub}</Text>
+                      </View>
+                      {goal === g.id && (
+                        <View style={styles.optionCheck}>
+                          <Text style={styles.optionCheckText}>✓</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <TouchableOpacity
+                  style={[styles.btn, !goal && { opacity: 0.3 }, { marginTop: 24, marginBottom: 40 }]}
+                  onPress={() => goal && advance()}
+                  activeOpacity={0.85}
+                >
+                  <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.btnGradient}>
+                    <Text style={styles.btnText}>CONTINUE</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          )}
+
+          {/* ── STEP 2: Split ── */}
           {step === 2 && (
-            <View style={styles.stepContainer}>
-              <Text style={styles.eyebrow}>YOUR SPLIT</Text>
-              <Text style={styles.headline}>How do you{'\n'}like to train?</Text>
-              <Text style={styles.body}>You can always change this later.</Text>
-              <View style={styles.splitList}>
+            <View style={styles.step}>
+              <View style={styles.copyBlock}>
+                <Text style={styles.eyebrow}>YOUR TRAINING</Text>
+                <Text style={styles.headline}>How do you{'\n'}like to train?</Text>
+                <Text style={styles.body}>You can change this any time. No commitment.</Text>
+              </View>
+              <View style={styles.optionList}>
                 {SPLITS.map(s => (
                   <TouchableOpacity
                     key={s.id}
-                    style={[styles.splitCard, split === s.id && styles.splitCardActive]}
-                    onPress={() => setSplit(s.id)}
+                    style={[styles.optionCard, split === s.id && styles.optionCardActive]}
+                    onPress={() => { setSplit(s.id); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
                     activeOpacity={0.8}
                   >
-                    <View style={styles.splitLeft}>
-                      <Text style={[styles.splitLabel, split === s.id && styles.splitLabelActive]}>{s.label}</Text>
-                      <Text style={styles.splitSub}>{s.sub}</Text>
+                    <View style={styles.optionLeft}>
+                      <Text style={[styles.optionLabel, split === s.id && styles.optionLabelActive]}>{s.label}</Text>
+                      <Text style={styles.optionSub}>{s.sub}</Text>
                     </View>
                     {split === s.id && (
-                      <View style={styles.splitCheck}>
-                        <Text style={styles.splitCheckText}>✓</Text>
+                      <View style={styles.optionCheck}>
+                        <Text style={styles.optionCheckText}>✓</Text>
                       </View>
                     )}
                   </TouchableOpacity>
                 ))}
               </View>
               <TouchableOpacity
-                style={[styles.primaryBtn, !split && styles.primaryBtnDisabled]}
-                onPress={() => split && finish()}
-                activeOpacity={0.8}
+                style={[styles.btn, !split && { opacity: 0.3 }]}
+                onPress={() => split && advance()}
+                activeOpacity={0.85}
               >
-                <LinearGradient
-                  colors={split ? ['#7b2cbf', '#4a0080'] : ['#1a0035', '#0f0020']}
-                  style={styles.primaryBtnGradient}
-                >
-                  <Text style={styles.primaryBtnText}>LET'S GO</Text>
+                <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.btnGradient}>
+                  <Text style={styles.btnText}>CONTINUE</Text>
                 </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* ── STEP 3: Sendoff ── */}
+          {step === 3 && (
+            <View style={[styles.step, { justifyContent: 'center', alignItems: 'center' }]}>
+              <Logo size={64} />
+              <View style={[styles.copyBlock, { alignItems: 'center', marginTop: 32 }]}>
+                <Text style={[styles.eyebrow, { textAlign: 'center' }]}>YOU'RE ALL SET</Text>
+                <Text style={[styles.headline, { textAlign: 'center', fontSize: 40 }]}>
+                  Let's get to work,{'\n'}{firstName}.
+                </Text>
+                <Text style={[styles.body, { textAlign: 'center' }]}>
+                  Every set logged is one step further{'\n'}than you were yesterday.{'\n'}That's all this is.
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={[styles.btn, { marginTop: 48 }]}
+                onPress={finish}
+                activeOpacity={0.85}
+              >
+                <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.btnGradient}>
+                  <Text style={styles.btnText}>I'M READY</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              <TouchableOpacity style={{ marginTop: 16, paddingVertical: 12 }} onPress={finish}>
+                <Text style={styles.skipText}>Skip for now</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -187,35 +229,40 @@ export default function OnboardingScreen({ onFinish }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0a000f' },
-  progressContainer: { flexDirection: 'row', justifyContent: 'center', gap: 8, paddingTop: 64, marginBottom: 8 },
-  progressDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.15)' },
-  progressDotActive: { backgroundColor: 'rgba(157,78,221,0.5)' },
-  progressDotCurrent: { width: 24, backgroundColor: '#9d4edd' },
-  container: { flex: 1, paddingHorizontal: 28, paddingTop: 24, paddingBottom: 48 },
-  stepContainer: { flex: 1 },
-  eyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 4, color: '#9d4edd', marginBottom: 12 },
-  headline: { fontSize: 44, fontWeight: '900', color: '#ffffff', letterSpacing: -1, lineHeight: 50, marginBottom: 12 },
-  body: { fontSize: 14, color: 'rgba(255,255,255,0.35)', marginBottom: 32, fontWeight: '400' },
-  nameInput: { backgroundColor: 'rgba(255,255,255,0.05)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 16, paddingHorizontal: 20, paddingVertical: 20, color: '#ffffff', fontSize: 22, marginBottom: 24, fontWeight: '700' },
-  optionsGrid: { gap: 10, marginBottom: 24 },
-  goalCard: { backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 },
-  goalCardActive: { backgroundColor: 'rgba(123,44,191,0.2)', borderColor: '#7b2cbf' },
-  goalEmoji: { fontSize: 24, width: 32 },
-  goalLabel: { fontSize: 16, fontWeight: '700', color: 'rgba(255,255,255,0.5)', marginBottom: 2 },
-  goalLabelActive: { color: '#ffffff' },
-  goalSub: { fontSize: 11, color: 'rgba(255,255,255,0.25)', fontWeight: '400', flex: 1 },
-  splitList: { gap: 8, marginBottom: 24 },
-  splitCard: { backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', borderRadius: 14, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  splitCardActive: { backgroundColor: 'rgba(123,44,191,0.2)', borderColor: '#7b2cbf' },
-  splitLeft: { flex: 1 },
-  splitLabel: { fontSize: 16, fontWeight: '700', color: 'rgba(255,255,255,0.5)', marginBottom: 2 },
-  splitLabelActive: { color: '#ffffff' },
-  splitSub: { fontSize: 11, color: 'rgba(255,255,255,0.25)' },
-  splitCheck: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#7b2cbf', alignItems: 'center', justifyContent: 'center' },
-  splitCheckText: { color: 'white', fontSize: 12, fontWeight: '800' },
-  primaryBtn: { marginTop: 'auto' },
-  primaryBtnDisabled: { opacity: 0.4 },
-  primaryBtnGradient: { paddingVertical: 22, borderRadius: 18, alignItems: 'center' },
-  primaryBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
+  root: { flex: 1, backgroundColor: '#080010' },
+  progress: { flexDirection: 'row', gap: 4, paddingHorizontal: 28, paddingTop: 60, marginBottom: 4 },
+  progressSeg: { flex: 1, height: 3, borderRadius: 2 },
+  container: { flex: 1, paddingHorizontal: 28, paddingBottom: 48 },
+  step: { flex: 1, paddingTop: 20 },
+  logoRow: { marginBottom: 32 },
+  copyBlock: { marginBottom: 32 },
+  eyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 4, color: '#9d4edd', marginBottom: 14 },
+  headline: { fontSize: 42, fontWeight: '900', color: '#ffffff', letterSpacing: -1, lineHeight: 48, marginBottom: 14 },
+  body: { fontSize: 15, color: 'rgba(255,255,255,0.35)', lineHeight: 24, fontWeight: '400' },
+  inputLabel: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.4)', marginBottom: 12, letterSpacing: 0.3 },
+  inputBlock: { marginBottom: 24 },
+  nameInput: {
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)',
+    borderRadius: 16, paddingHorizontal: 20, paddingVertical: 18,
+    color: '#ffffff', fontSize: 24, fontWeight: '700',
+  },
+  optionList: { gap: 10, marginBottom: 8 },
+  optionCard: {
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+    borderRadius: 16, padding: 18,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  optionCardActive: { backgroundColor: 'rgba(123,44,191,0.18)', borderColor: '#7b2cbf' },
+  optionLeft: { flex: 1 },
+  optionLabel: { fontSize: 17, fontWeight: '700', color: 'rgba(255,255,255,0.4)', marginBottom: 3 },
+  optionLabelActive: { color: '#ffffff' },
+  optionSub: { fontSize: 12, color: 'rgba(255,255,255,0.22)', fontWeight: '400', lineHeight: 17 },
+  optionCheck: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#7b2cbf', alignItems: 'center', justifyContent: 'center', marginLeft: 12 },
+  optionCheckText: { color: 'white', fontSize: 13, fontWeight: '800' },
+  btn: { marginTop: 'auto' },
+  btnGradient: { paddingVertical: 22, borderRadius: 18, alignItems: 'center' },
+  btnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
+  skipText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontWeight: '500', textAlign: 'center' },
 });
