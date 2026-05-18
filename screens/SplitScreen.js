@@ -207,10 +207,14 @@ export default function SplitScreen({ navigation }) {
           >
             <LinearGradient colors={theme.gradientBtn} style={styles.loadoutOptionGradient}>
               <Text style={[styles.loadoutOptionTitle, { color: theme.btnText }]}>
-                {isLastSplit ? 'Beat Last Session' : "Let's Get It"}
+                {selectedSplit === recommendedSplit
+                  ? "Start Today's Session"
+                  : isLastSplit
+                  ? 'Pick Up Where You Left Off'
+                  : "Let's Work"}
               </Text>
               <Text style={[styles.loadoutOptionSub, { color: theme.btnText === '#1a0035' ? 'rgba(26,0,53,0.55)' : 'rgba(255,255,255,0.55)' }]}>
-                {isLastSplit ? 'Progressive overload loaded' : 'Start workout now'}
+                {isLastSplit ? 'Last session loaded · push further today' : 'Your weights are ready'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -220,7 +224,7 @@ export default function SplitScreen({ navigation }) {
             activeOpacity={0.7}
             onPress={closeLoadout}
           >
-            <Text style={[styles.loadoutSecondaryText, { color: theme.textSecondary }]}>Not today</Text>
+            <Text style={[styles.loadoutSecondaryText, { color: theme.textSecondary }]}>Maybe later</Text>
           </TouchableOpacity>
 
         </Animated.View>
