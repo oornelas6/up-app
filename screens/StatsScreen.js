@@ -10,6 +10,7 @@ const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
 
 export default function StatsScreen({ navigation }) {
   const theme = useTheme();
+  const styles = getStyles(theme);
   const [loading, setLoading] = useState(true);
   const [sets, setSets] = useState([]);
   const [stats, setStats] = useState(null);
@@ -201,28 +202,28 @@ export default function StatsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010' },
   container: { flex: 1, paddingHorizontal: 24, paddingTop: 64 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
-  back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },
-  logo: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: 4 },
-  title: { fontSize: 38, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
-  empty: { fontSize: 16, color: 'rgba(255,255,255,0.3)', marginTop: 40, textAlign: 'center' },
-  sectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.25)', marginBottom: 12, marginTop: 24 },
+  back: { color: theme.textSecondary, fontSize: 15, fontWeight: '600' },
+  logo: { fontSize: 26, fontWeight: '900', color: theme.text, letterSpacing: 4 },
+  title: { fontSize: 38, fontWeight: '900', color: theme.text, letterSpacing: -1 },
+  empty: { fontSize: 16, color: theme.textSecondary, marginTop: 40, textAlign: 'center' },
+  sectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: theme.textTertiary, marginBottom: 12, marginTop: 24 },
   overviewGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   overviewCard: { flex: 1, minWidth: '45%', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 20, paddingVertical: 20, alignItems: 'center' },
-  overviewVal: { fontSize: 32, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
-  overviewLbl: { fontSize: 9, color: 'rgba(255,255,255,0.25)', fontWeight: '700', letterSpacing: 2, marginTop: 4 },
+  overviewVal: { fontSize: 32, fontWeight: '900', color: theme.text, letterSpacing: -1 },
+  overviewLbl: { fontSize: 9, color: theme.textTertiary, fontWeight: '700', letterSpacing: 2, marginTop: 4 },
   card: { backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 20, padding: 20 },
   muscleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
-  muscleName: { fontSize: 13, fontWeight: '600', color: '#ffffff', width: 80 },
+  muscleName: { fontSize: 13, fontWeight: '600', color: theme.text, width: 80 },
   muscleBarContainer: { flex: 1, height: 6, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 3, marginHorizontal: 12, overflow: 'hidden' },
   muscleBar: { height: '100%', borderRadius: 3 },
-  muscleCount: { fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: '600', width: 24, textAlign: 'right' },
+  muscleCount: { fontSize: 12, color: theme.textSecondary, fontWeight: '600', width: 24, textAlign: 'right' },
   exerciseRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
   exerciseRank: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(157,78,221,0.2)', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   exerciseRankText: { fontSize: 11, fontWeight: '800', color: '#9d4edd' },
-  exerciseName: { flex: 1, fontSize: 14, fontWeight: '600', color: '#ffffff' },
+  exerciseName: { flex: 1, fontSize: 14, fontWeight: '600', color: theme.text },
   exerciseVolume: { fontSize: 13, fontWeight: '700', color: 'rgba(157,78,221,0.8)' },
 });
