@@ -2,10 +2,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useTheme } from '../context/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, TextInput, Modal, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions, TextInput, Modal, PanResponder, Animated } from 'react-native';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
-
+import * as Haptics from 'expo-haptics';
 
 const API_URL = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com/log-set';
 
@@ -65,9 +65,9 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange, styles }) => {
       <ScrollView
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
-        snapToInterval={ITEM_HEIGHT} 
+        snapToInterval={ITEM_HEIGHT}
         snapToAlignment="center"
-        decelerationRate="fast"        
+        decelerationRate="fast"
         onMomentumScrollEnd={onMomentumScrollEnd}
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingVertical: ITEM_HEIGHT * 2 }}
@@ -75,8 +75,8 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange, styles }) => {
       >
         {data.map((item, index) => {
           const distance = Math.abs(index - selectedIndex);
-          const opacity = distance === 0 ? 1 : distance === 1 ? 0.75 : distance === 2 ? 0.5 : 0.3;         
-          const fontSize = distance === 0 ? 28 : distance === 1 ? 20 : 15;          
+          const opacity = distance === 0 ? 1 : distance === 1 ? 0.75 : distance === 2 ? 0.5 : 0.3;
+          const fontSize = distance === 0 ? 28 : distance === 1 ? 20 : 15;
           const fontWeight = distance === 0 ? '800' : '500';
           return (
             <View key={index} style={styles.wheelItem}>
@@ -93,66 +93,82 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange, styles }) => {
   );
 };
 
-
-
 export default function RevolverScreen({ navigation, route }) {
   const { exercise, split } = route.params;
   const [setNum, setSetNum] = useState(1);
   const [weightIdx, setWeightIdx] = useState(27);
   const [repsIdx, setRepsIdx] = useState(7);
+  const [fineWeight, setFineWeight] = useState(0); // offset in lbs/kg for precision
   const { isKg, setIsKg, restTimer } = useSettings();
   const [showWeightInput, setShowWeightInput] = useState(false);
   const [weightInputVal, setWeightInputVal] = useState('');
   const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
   const unit = isKg ? 'kg' : 'lbs';
+  const fineStep = isKg ? 0.25 : 0.5;
   const theme = useTheme();
   const styles = getStyles(theme);
-  const selectedWeight = WEIGHTS[weightIdx];
+  const baseWeight = WEIGHTS[weightIdx];
+  const selectedWeight = Math.round((baseWeight + fineWeight) * 100) / 100;
   const selectedReps = REPS[repsIdx];
   const [suggestion, setSuggestion] = useState(null);
+  const hasFineOffset = fineWeight !== 0;
 
- useEffect(() => {
-  const loadSuggestion = async () => {
-const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
-const lastSet = await getLastSet(userId, exercise);   
-    if (lastSet) {
-      const lastWeight = parseFloat(lastSet.weight);
-      const lastRepsVal = parseInt(lastSet.reps);
-      const lastUnit = lastSet.unit || 'lbs';
+  useEffect(() => {
+    const loadSuggestion = async () => {
+      const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
+      const lastSet = await getLastSet(userId, exercise);
+      if (lastSet) {
+        const lastWeight = parseFloat(lastSet.weight);
+        const lastRepsVal = parseInt(lastSet.reps);
+        const lastUnit = lastSet.unit || 'lbs';
+        setSuggestion({ weight: lastWeight, reps: lastRepsVal, unit: lastUnit });
+        const targetWeights = lastUnit === 'kg' ? WEIGHTS_KG : WEIGHTS_LBS;
+        const idx = targetWeights.findIndex(w => w >= lastWeight);
+        const rIdx = REPS.findIndex(r => r >= lastRepsVal);
+        setTimeout(() => {
+          if (idx !== -1) setWeightIdx(idx);
+          if (rIdx !== -1) setRepsIdx(rIdx);
+        }, 500);
+      }
+    };
+    loadSuggestion();
+  }, [exercise]);
 
-      setSuggestion({
-        weight: lastWeight,
-        reps: lastRepsVal,
-        unit: lastUnit,
-      });
-
-      // Set wheel to last weight (not +5, just last used)
-      const targetWeights = lastUnit === 'kg' ? WEIGHTS_KG : WEIGHTS_LBS;
-      const idx = targetWeights.findIndex(w => w >= lastWeight);
-      const repsIdx = REPS.findIndex(r => r >= lastRepsVal);
-
-      setTimeout(() => {
-        if (idx !== -1) setWeightIdx(idx);
-        if (repsIdx !== -1) setRepsIdx(repsIdx);
-      }, 500);
-    }
+  // Reset fine offset when wheel changes
+  const handleWeightIdxChange = (idx) => {
+    setWeightIdx(idx);
+    setFineWeight(0);
   };
-  loadSuggestion();
-}, [exercise]);
+
+  const adjustFine = (delta) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setFineWeight(prev => {
+      const next = Math.round((prev + delta) * 100) / 100;
+      // If we cross a full increment, move the wheel instead
+      const step = isKg ? 1.25 : 2.5;
+      if (next >= step) {
+        setWeightIdx(i => Math.min(i + 1, WEIGHTS.length - 1));
+        return next - step;
+      }
+      if (next <= -step) {
+        setWeightIdx(i => Math.max(i - 1, 0));
+        return next + step;
+      }
+      return next;
+    });
+  };
 
   const logSet = async () => {
     try {
-    const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
-
+      const userId = await AsyncStorage.getItem('user_id') || 'user-test-001';
       const result = await logSetToAPI(
         userId, exercise, selectedWeight, selectedReps, unit, split, setNum
       );
-
       const isNewPR = result.isPR || false;
-
       setSetNum(s => s + 1);
+      setFineWeight(0);
       navigation.navigate('PR', {
-        exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR,
+        exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR, unit,
       });
     } catch (err) {
       console.error('logSet error:', err);
@@ -162,10 +178,7 @@ const lastSet = await getLastSet(userId, exercise);
 
   return (
     <View style={[styles.root, { backgroundColor: theme.bg }]}>
-      <LinearGradient
-      colors={theme.gradientBg}       
-        style={StyleSheet.absoluteFillObject}
-      />
+      <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFillObject} />
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -174,7 +187,7 @@ const lastSet = await getLastSet(userId, exercise);
           <Logo size={36} />
         </View>
 
-        <Text style={[styles.exName, { color: theme.text }]}>{exercise}</Text>        
+        <Text style={[styles.exName, { color: theme.text }]}>{exercise}</Text>
         <View style={styles.setRow}>
           <Text style={styles.setLabel}>SET {setNum}</Text>
           <TouchableOpacity
@@ -196,6 +209,7 @@ const lastSet = await getLastSet(userId, exercise);
                   );
                   setWeightIdx(WEIGHTS_LBS.indexOf(closest));
                 }
+                setFineWeight(0);
                 return newIsKg;
               });
             }}
@@ -204,7 +218,7 @@ const lastSet = await getLastSet(userId, exercise);
           </TouchableOpacity>
         </View>
 
-          {suggestion && (
+        {suggestion && (
           <View style={styles.suggestionCard}>
             <View style={styles.suggestionLeft}>
               <Text style={styles.suggestionLabel}>LAST SESSION</Text>
@@ -233,17 +247,36 @@ const lastSet = await getLastSet(userId, exercise);
           </View>
         )}
 
-              <View style={styles.selectedDisplay}>
-          <TouchableOpacity 
-            style={styles.selectedItem}
-            onPress={() => {
-              setWeightInputVal(String(selectedWeight));
-              setShowWeightInput(true);
-            }}
-          >
-            <Text style={styles.selectedValue}>{selectedWeight}</Text>
-            <Text style={styles.selectedUnit}>{unit} ✎</Text>
-          </TouchableOpacity>
+        {/* Selected display + precision controls */}
+        <View style={styles.selectedDisplay}>
+          <View style={styles.selectedWeightCol}>
+            <TouchableOpacity
+              style={styles.selectedItem}
+              onPress={() => {
+                setWeightInputVal(String(selectedWeight));
+                setShowWeightInput(true);
+              }}
+            >
+              <Text style={styles.selectedValue}>{selectedWeight}</Text>
+              <Text style={styles.selectedUnit}>{unit} ✎</Text>
+            </TouchableOpacity>
+            {/* Precision fine-tune buttons */}
+            <View style={styles.fineTuneRow}>
+              <TouchableOpacity style={styles.fineTuneBtn} onPress={() => adjustFine(-fineStep)}>
+                <Text style={styles.fineTuneBtnText}>−{fineStep}</Text>
+              </TouchableOpacity>
+              {hasFineOffset && (
+                <TouchableOpacity onPress={() => setFineWeight(0)}>
+                  <Text style={styles.fineOffsetLabel}>
+                    {fineWeight > 0 ? `+${fineWeight}` : fineWeight}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity style={styles.fineTuneBtn} onPress={() => adjustFine(fineStep)}>
+                <Text style={styles.fineTuneBtnText}>+{fineStep}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           <View style={styles.selectedDivider} />
           <View style={styles.selectedItem}>
             <Text style={styles.selectedValue}>{selectedReps}</Text>
@@ -259,7 +292,7 @@ const lastSet = await getLastSet(userId, exercise);
               data={WEIGHTS}
               unit={` ${unit}`}
               selectedIndex={weightIdx}
-              onIndexChange={setWeightIdx}
+              onIndexChange={handleWeightIdxChange}
             />
           </View>
           <View style={styles.wheelDivider} />
@@ -289,13 +322,13 @@ const lastSet = await getLastSet(userId, exercise);
           </LinearGradient>
         </TouchableOpacity>
 
-       <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
+        <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
           <Text style={styles.doneBtnText}>Done with Exercise</Text>
         </TouchableOpacity>
 
         <Modal visible={showWeightInput} transparent animationType="fade">
           <View style={styles.weightModalOverlay}>
-            <View style={styles.weightModalBox}>
+            <View style={[styles.weightModalBox, { backgroundColor: theme.bgSecondary }]}>
               <Text style={styles.weightModalTitle}>Enter Weight</Text>
               <TextInput
                 style={styles.weightModalInput}
@@ -312,15 +345,22 @@ const lastSet = await getLastSet(userId, exercise);
                   const val = parseFloat(weightInputVal);
                   if (!isNaN(val) && val > 0) {
                     const weights = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
+                    // Find closest base weight
+                    const baseVal = Math.floor(val / (isKg ? 1.25 : 2.5)) * (isKg ? 1.25 : 2.5);
                     const closest = weights.reduce((prev, curr) =>
-                      Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev
+                      Math.abs(curr - baseVal) < Math.abs(prev - baseVal) ? curr : prev
                     );
                     setWeightIdx(weights.indexOf(closest));
+                    // Set fine offset for remainder
+                    const remainder = Math.round((val - closest) * 100) / 100;
+                    setFineWeight(remainder);
                   }
                   setShowWeightInput(false);
                 }}
               >
-                <Text style={[styles.weightModalBtnText, { color: theme.btnText }]}>SET</Text>
+                <LinearGradient colors={theme.gradientBtn} style={styles.weightModalBtnGradient}>
+                  <Text style={[styles.weightModalBtnText, { color: theme.btnText }]}>SET</Text>
+                </LinearGradient>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setShowWeightInput(false)}>
                 <Text style={styles.weightModalCancel}>Cancel</Text>
@@ -328,7 +368,6 @@ const lastSet = await getLastSet(userId, exercise);
             </View>
           </View>
         </Modal>
-
       </View>
     </View>
   );
@@ -339,17 +378,23 @@ const getStyles = (theme) => ({
   container: { flex: 1, paddingHorizontal: 28, paddingTop: 64, paddingBottom: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
   back: { color: theme.textSecondary, fontSize: 15, fontWeight: '600' },
-  logo: { fontSize: 26, fontWeight: '900', color: theme.text, letterSpacing: 4 },
   exName: { fontSize: 26, fontWeight: '800', color: theme.text, letterSpacing: -0.5, marginBottom: 4 },
-  setRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
+  setRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
   setLabel: { fontSize: 12, fontWeight: '700', letterSpacing: 3, color: '#9d4edd' },
   unitToggle: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 100, paddingHorizontal: 14, paddingVertical: 6 },
   unitToggleText: { color: '#9d4edd', fontSize: 12, fontWeight: '800', letterSpacing: 2 },
-  selectedDisplay: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 20, paddingVertical: 16, marginBottom: 16, gap: 32 },
+  selectedDisplay: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 20, paddingVertical: 12, marginBottom: 16, gap: 32 },
+  selectedWeightCol: { alignItems: 'center' },
   selectedItem: { alignItems: 'center' },
   selectedValue: { fontSize: 36, fontWeight: '900', color: theme.text, letterSpacing: -1 },
   selectedUnit: { fontSize: 11, color: theme.textSecondary, fontWeight: '600', letterSpacing: 1, marginTop: 2 },
-  selectedDivider: { width: 1, height: 40, backgroundColor: 'rgba(255,255,255,0.08)' },
+  selectedDivider: { width: 1, height: 60, backgroundColor: 'rgba(157,78,221,0.15)' },
+  // Fine tune
+  fineTuneRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
+  fineTuneBtn: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.25)', borderRadius: 100, paddingHorizontal: 12, paddingVertical: 5 },
+  fineTuneBtnText: { color: '#9d4edd', fontSize: 12, fontWeight: '700', letterSpacing: 0.5 },
+  fineOffsetLabel: { fontSize: 11, color: '#9d4edd', fontWeight: '800', minWidth: 30, textAlign: 'center' },
+  // Wheels
   wheelsRow: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.02)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.15)', borderRadius: 24, overflow: 'hidden' },
   wheelContainer: { flex: 1, alignItems: 'center', paddingTop: 12 },
   wheelLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: theme.textTertiary, marginBottom: 4 },
@@ -359,11 +404,13 @@ const getStyles = (theme) => ({
   selectorTop: { position: 'absolute', top: ITEM_HEIGHT * 2, left: 8, right: 8, height: 1, backgroundColor: 'rgba(157,78,221,0.3)' },
   selectorBottom: { position: 'absolute', top: ITEM_HEIGHT * 3, left: 8, right: 8, height: 1, backgroundColor: 'rgba(157,78,221,0.3)' },
   wheelDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginVertical: 16 },
+  // Log button
   logBtn: { paddingVertical: 22, borderRadius: 18, alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)' },
-  logBtnText: { color: theme.text, fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
+  logBtnText: { fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
   logBtnSub: { color: theme.textSecondary, fontSize: 12, fontWeight: '400' },
-
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
+  doneBtnText: { color: theme.textTertiary, fontSize: 13, fontWeight: '500', letterSpacing: 1 },
+  // Suggestion card
   suggestionCard: { flexDirection: 'row', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.25)', borderRadius: 16, paddingVertical: 14, paddingHorizontal: 18, marginBottom: 14, alignItems: 'center' },
   suggestionLeft: { flex: 1, alignItems: 'flex-start' },
   suggestionRight: { flex: 1, alignItems: 'flex-end' },
@@ -371,15 +418,15 @@ const getStyles = (theme) => ({
   suggestionLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: 'rgba(157,78,221,0.5)', marginBottom: 4 },
   suggestionMain: { fontSize: 16, fontWeight: '800', color: theme.text, letterSpacing: -0.3 },
   suggestionRM: { fontSize: 10, color: theme.textTertiary, fontWeight: '500', marginTop: 2 },
+  suggestionTarget: { fontSize: 16, fontWeight: '800', color: '#9d4edd', letterSpacing: -0.3 },
+  // Modal
   weightModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' },
-  weightModalBox: { backgroundColor: '#1a0035', borderRadius: 24, padding: 28, width: '80%', alignItems: 'center' },
+  weightModalBox: { borderRadius: 24, padding: 28, width: '80%', alignItems: 'center' },
   weightModalTitle: { fontSize: 16, fontWeight: '700', color: theme.text, marginBottom: 16, letterSpacing: 1 },
   weightModalInput: { fontSize: 48, fontWeight: '900', color: theme.text, textAlign: 'center', borderBottomWidth: 2, borderBottomColor: '#7b2cbf', paddingBottom: 8, width: '100%', marginBottom: 8 },
   weightModalUnit: { fontSize: 14, color: theme.textSecondary, marginBottom: 24 },
-  weightModalBtn: { backgroundColor: '#7b2cbf', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 14, marginBottom: 12 },
-  weightModalBtnText: { color: theme.text, fontSize: 15, fontWeight: '800', letterSpacing: 2 },
+  weightModalBtn: { marginBottom: 12, width: '100%' },
+  weightModalBtnGradient: { paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
+  weightModalBtnText: { fontSize: 15, fontWeight: '800', letterSpacing: 2 },
   weightModalCancel: { color: theme.textSecondary, fontSize: 14 },
-  oneRM: { fontSize: 11, color: 'rgba(157,78,221,0.5)', fontWeight: '600', letterSpacing: 0.5, marginTop: 4 },
-  suggestionTarget: { fontSize: 16, fontWeight: '800', color: '#9d4edd', letterSpacing: -0.3 },
-  doneBtnText: { color: theme.textTertiary, fontSize: 13, fontWeight: '500', letterSpacing: 1 },
 });
