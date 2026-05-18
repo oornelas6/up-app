@@ -1,5 +1,5 @@
-import { createContext, useContext } from 'react';
-import { useColorScheme } from 'react-native';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { Appearance } from 'react-native';
 
 const darkTheme = {
   bg: '#080010',
@@ -34,8 +34,17 @@ const lightTheme = {
 const ThemeContext = createContext(darkTheme);
 
 export function ThemeProvider({ children }) {
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === 'light' ? lightTheme : darkTheme;
+  const [scheme, setScheme] = useState(Appearance.getColorScheme());
+
+  useEffect(() => {
+    const sub = Appearance.addChangeListener(({ colorScheme }) => {
+      setScheme(colorScheme);
+    });
+    return () => sub.remove();
+  }, []);
+
+  const theme = scheme === 'light' ? lightTheme : darkTheme;
+
   return (
     <ThemeContext.Provider value={theme}>
       {children}

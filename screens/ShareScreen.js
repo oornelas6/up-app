@@ -93,22 +93,20 @@ export default function ShareScreen({ navigation, route }) {
     </View>
   );
 
-  const ExerciseRow = ({ ex, textColor, subColor, dividerColor }) => {
-    const exSets = sets.filter(s => s.exercise === ex);
-    const best = exSets.reduce((b, s) => parseFloat(s.weight) > parseFloat(b.weight) ? s : b, exSets[0]);
-    const hasPR = exSets.some(s => s.isPR === true || s.isPR === 'true');
-    return (
-      <View style={[styles.exerciseRow, { borderBottomColor: dividerColor }]}>
-        <View style={styles.exerciseLeft}>
-          {hasPR && <Text style={styles.prPill}>PR</Text>}
-          <Text style={[styles.exerciseName, { color: textColor }]} numberOfLines={1}>{ex}</Text>
+  const ExercisePills = ({ textColor, subColor }) => (
+    <View style={styles.pillRow}>
+      {uniqueExercises.slice(0, 4).map((ex, i) => (
+        <View key={i} style={[styles.pill, { borderColor: subColor }]}>
+          <Text style={[styles.pillText, { color: textColor }]} numberOfLines={1}>{ex}</Text>
         </View>
-        <Text style={[styles.exerciseMeta, { color: subColor }]}>
-          {best?.weight} {best?.unit} × {best?.reps}
-        </Text>
-      </View>
-    );
-  };
+      ))}
+      {uniqueExercises.length > 4 && (
+        <View style={[styles.pill, { borderColor: subColor }]}>
+          <Text style={[styles.pillText, { color: subColor }]}>+{uniqueExercises.length - 4}</Text>
+        </View>
+      )}
+    </View>
+  );
 
   // CARD 0 — DARK
   const DarkCard = () => (
@@ -129,10 +127,7 @@ export default function ShareScreen({ navigation, route }) {
         <View style={[styles.statDivider, { backgroundColor: 'rgba(255,255,255,0.07)' }]} />
         <StatBlock val={formatVolume(totalVolume)} label="VOLUME" textColor="#fff" subColor="rgba(255,255,255,0.3)" />
       </View>
-      <View style={styles.exerciseList}>
-        {uniqueExercises.slice(0, 5).map((ex, i) => <ExerciseRow key={i} ex={ex} textColor="#fff" subColor="rgba(255,255,255,0.35)" dividerColor="rgba(255,255,255,0.06)" />)}
-        {uniqueExercises.length > 5 && <Text style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11, marginTop: 6 }}>+{uniqueExercises.length - 5} more</Text>}
-      </View>
+      <ExercisePills textColor="rgba(255,255,255,0.8)" subColor="rgba(255,255,255,0.2)" />
       <Text style={[styles.cardTag, { color: 'rgba(157,78,221,0.5)' }]}>get UP.</Text>
     </View>
   );
@@ -158,10 +153,7 @@ export default function ShareScreen({ navigation, route }) {
         <View style={[styles.statDivider, { backgroundColor: 'rgba(255,255,255,0.1)' }]} />
         <StatBlock val={formatVolume(totalVolume)} label="VOLUME" textColor="#fff" subColor="rgba(255,255,255,0.45)" />
       </View>
-      <View style={styles.exerciseList}>
-        {uniqueExercises.slice(0, 5).map((ex, i) => <ExerciseRow key={i} ex={ex} textColor="#fff" subColor="rgba(255,255,255,0.45)" dividerColor="rgba(255,255,255,0.08)" />)}
-        {uniqueExercises.length > 5 && <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 11, marginTop: 6 }}>+{uniqueExercises.length - 5} more</Text>}
-      </View>
+      <ExercisePills textColor="rgba(255,255,255,0.8)" subColor="rgba(255,255,255,0.2)" />
       <Text style={[styles.cardTag, { color: '#c77dff' }]}>get UP.</Text>
     </View>
   );
@@ -185,10 +177,7 @@ export default function ShareScreen({ navigation, route }) {
         <View style={[styles.statDivider, { backgroundColor: 'rgba(0,0,0,0.08)' }]} />
         <StatBlock val={formatVolume(totalVolume)} label="VOLUME" textColor="#1a0035" subColor="rgba(0,0,0,0.35)" />
       </View>
-      <View style={styles.exerciseList}>
-        {uniqueExercises.slice(0, 5).map((ex, i) => <ExerciseRow key={i} ex={ex} textColor="#1a0035" subColor="rgba(0,0,0,0.4)" dividerColor="rgba(0,0,0,0.07)" />)}
-        {uniqueExercises.length > 5 && <Text style={{ color: 'rgba(0,0,0,0.25)', fontSize: 11, marginTop: 6 }}>+{uniqueExercises.length - 5} more</Text>}
-      </View>
+      <ExercisePills textColor="rgba(26,0,53,0.7)" subColor="rgba(123,44,191,0.25)" />
       <Text style={[styles.cardTag, { color: 'rgba(123,44,191,0.4)' }]}>get UP.</Text>
     </View>
   );
@@ -214,10 +203,7 @@ export default function ShareScreen({ navigation, route }) {
         <View style={[styles.statDivider, { backgroundColor: 'rgba(255,255,255,0.15)' }]} />
         <StatBlock val={formatVolume(totalVolume)} label="VOLUME" textColor="#fff" subColor="rgba(255,255,255,0.6)" />
       </View>
-      <View style={styles.exerciseList}>
-        {uniqueExercises.slice(0, 5).map((ex, i) => <ExerciseRow key={i} ex={ex} textColor="#fff" subColor="rgba(255,255,255,0.6)" dividerColor="rgba(255,255,255,0.12)" />)}
-        {uniqueExercises.length > 5 && <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginTop: 6 }}>+{uniqueExercises.length - 5} more</Text>}
-      </View>
+      <ExercisePills textColor="rgba(255,255,255,0.8)" subColor="rgba(255,255,255,0.2)" />
       <Text style={[styles.cardTag, { color: 'rgba(255,255,255,0.5)' }]}>get UP.</Text>
     </View>
   );
@@ -241,10 +227,7 @@ export default function ShareScreen({ navigation, route }) {
         <View style={[styles.statDivider, { backgroundColor: 'rgba(255,255,255,0.15)' }]} />
         <StatBlock val={formatVolume(totalVolume)} label="VOLUME" textColor="#fff" subColor="rgba(255,255,255,0.6)" />
       </View>
-      <View style={styles.exerciseList}>
-        {uniqueExercises.slice(0, 5).map((ex, i) => <ExerciseRow key={i} ex={ex} textColor="#fff" subColor="rgba(255,255,255,0.6)" dividerColor="rgba(255,255,255,0.12)" />)}
-        {uniqueExercises.length > 5 && <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, marginTop: 6 }}>+{uniqueExercises.length - 5} more</Text>}
-      </View>
+      <ExercisePills textColor="rgba(255,255,255,0.8)" subColor="rgba(255,255,255,0.2)" />
       <Text style={[styles.cardTag, { color: 'rgba(255,255,255,0.5)' }]}>get UP.</Text>
     </View>
   );
@@ -255,7 +238,7 @@ export default function ShareScreen({ navigation, route }) {
   // For Clear card, primary action is copy image. For others, save to camera roll.
   const primaryAction = isTransparent ? handleCopyImage : handleSave;
   const primaryLabel = isTransparent
-    ? (copied ? '✓ COPIED — PASTE INTO IG' : 'COPY TO CLIPBOARD')
+    ? (copied ? '✓ COPIED' : 'COPY TO CLIPBOARD')
     : (saved ? '✓ SAVED TO CAMERA ROLL' : 'SAVE TO CAMERA ROLL');
   const primaryColors = isTransparent
     ? (copied ? ['#4caf50', '#2e7d32'] : ['#ffffff', '#e8e0ff'])
@@ -319,7 +302,7 @@ export default function ShareScreen({ navigation, route }) {
         {/* Secondary action */}
         {!isTransparent && (
           <TouchableOpacity style={styles.secondaryBtn} onPress={handleCopyText} activeOpacity={0.8}>
-            <Text style={styles.secondaryBtnText}>{copied ? '✓ Copied as text' : 'Copy as text'}</Text>
+            <Text style={styles.secondaryBtnText}>{copied ? '✓ Copied' : 'Copy as text'}</Text>
           </TouchableOpacity>
         )}
         {isTransparent && (
@@ -355,12 +338,9 @@ const styles = StyleSheet.create({
   statVal: { fontSize: 26, fontWeight: '900', letterSpacing: -0.5 },
   statLbl: { fontSize: 9, fontWeight: '700', letterSpacing: 2, marginTop: 3 },
   statDivider: { width: 1, height: 28 },
-  exerciseList: { gap: 0 },
-  exerciseRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1 },
-  exerciseLeft: { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 },
-  exerciseName: { fontSize: 13, fontWeight: '600', flex: 1 },
-  exerciseMeta: { fontSize: 12, fontWeight: '500' },
-  prPill: { fontSize: 8, fontWeight: '800', color: '#f0a500', backgroundColor: 'rgba(240,165,0,0.15)', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, letterSpacing: 0.5 },
+  pillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 4 },
+  pill: { borderWidth: 1, borderRadius: 100, paddingHorizontal: 10, paddingVertical: 5 },
+  pillText: { fontSize: 11, fontWeight: '600', letterSpacing: 0.3 },
   cardTag: { fontSize: 10, fontWeight: '700', letterSpacing: 3, marginTop: 18, textAlign: 'right' },
   clearHint: { marginBottom: 8 },
   clearHintText: { fontSize: 12, color: 'rgba(255,255,255,0.3)', textAlign: 'center', letterSpacing: 0.5 },
