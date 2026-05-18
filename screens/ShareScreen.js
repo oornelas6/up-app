@@ -8,7 +8,6 @@ import * as Haptics from 'expo-haptics';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
-const CARD_HEIGHT = CARD_WIDTH * 1.6;
 
 export default function ShareScreen({ navigation, route }) {
   const { sets = [], split = 'Workout', duration = 0 } = route.params || {};
@@ -34,35 +33,20 @@ export default function ShareScreen({ navigation, route }) {
   const prSet = sets.find(s => s.isPR === true || s.isPR === 'true') || bestSet;
   const heroSet = isPRSession ? prSet : bestSet;
 
-  const formatDuration = (s) => {
-    if (!s) return null;
-    return `${Math.floor(s / 60)}m`;
-  };
-
-  const formatVolume = (vol) => {
-    if (vol >= 1000) return `${(vol / 1000).toFixed(1)}k`;
-    return Math.round(vol).toString();
-  };
-
-  const today = new Date().toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric'
-  }).toUpperCase();
+  const formatDuration = (s) => { if (!s) return null; return `${Math.floor(s / 60)}m`; };
+  const formatVolume = (vol) => { if (vol >= 1000) return `${(vol / 1000).toFixed(1)}k`; return Math.round(vol).toString(); };
+  const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
 
   const handleSave = async () => {
     try {
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'Allow access to save to your camera roll.');
-        return;
-      }
+      if (status !== 'granted') { Alert.alert('Permission needed', 'Allow access to save to your camera roll.'); return; }
       const uri = await cardRef.current.capture();
       await MediaLibrary.saveToLibraryAsync(uri);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
-    } catch (err) {
-      Alert.alert('Error', 'Failed to save: ' + err.message);
-    }
+    } catch (err) { Alert.alert('Error', 'Failed to save: ' + err.message); }
   };
 
   const handleCopyImage = async () => {
@@ -73,108 +57,157 @@ export default function ShareScreen({ navigation, route }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch (err) {
-      Alert.alert('Could not copy image', 'Try saving to camera roll instead.');
+      // In Expo Go, image copy isn't supported — save instead
+      await handleSave();
     }
   };
 
-  const CARDS = ['Dark', 'Glow', 'Light', 'Clear'];
+  const CARDS = ['Recap', 'PR', 'Minimal', 'Clear'];
 
-  const CardContent = ({ textColor, subColor, accentColor, dividerColor }) => (
-    <View style={[styles.cardInner, { height: CARD_HEIGHT }]}>
+  // ─── CARD 1: RECAP ────────────────────────────────────────────
+  // Clean scorecard. Works for everyone, every workout.
+  const RecapCard = ({ forCapture = false }) => (
+    <View style={[styles.recapCard, forCapture && { margin: 0 }]}>
+      <LinearGradient colors={['#1a0035', '#080010']} style={StyleSheet.absoluteFillObject} borderRadius={24} />
 
-      {/* Top — date + split */}
-      <View style={styles.cardTop}>
+      {/* Header */}
+      <View style={styles.recapHeader}>
         <View>
-          <Text style={[styles.cardDate, { color: subColor }]}>{today}</Text>
-          <Text style={[styles.cardSplit, { color: textColor }]}>{split}</Text>
+          <Text style={styles.recapDate}>{today}</Text>
+          <Text style={styles.recapSplit}>{split} Day</Text>
         </View>
-        <Image
-          source={require('../assets/logo.png')}
-          style={[styles.cardLogo, { tintColor: textColor }]}
-          resizeMode="contain"
-        />
+        <Image source={require('../assets/logo.png')} style={[styles.recapLogo, { tintColor: '#ffffff' }]} resizeMode="contain" />
       </View>
 
-      {/* Hero — the flex */}
-      <View style={styles.heroSection}>
-        {isPRSession && (
-          <View style={[styles.prBadge, { borderColor: accentColor }]}>
-            <Text style={[styles.prBadgeText, { color: accentColor }]}>PERSONAL RECORD</Text>
+      {/* 2x2 stats grid */}
+      <View style={styles.recapGrid}>
+        <View style={styles.recapGridItem}>
+          <Text style={styles.recapGridVal}>{totalSets}</Text>
+          <Text style={styles.recapGridLbl}>SETS</Text>
+        </View>
+        <View style={styles.recapGridItem}>
+          <Text style={styles.recapGridVal}>{totalReps}</Text>
+          <Text style={styles.recapGridLbl}>REPS</Text>
+        </View>
+        <View style={styles.recapGridItem}>
+          <Text style={styles.recapGridVal}>{formatVolume(totalVolume)}</Text>
+          <Text style={styles.recapGridLbl}>VOLUME</Text>
+        </View>
+        <View style={styles.recapGridItem}>
+          <Text style={styles.recapGridVal}>{uniqueExercises.length}</Text>
+          <Text style={styles.recapGridLbl}>EXERCISES</Text>
+        </View>
+      </View>
+
+      {/* Exercise pills */}
+      <View style={styles.recapPills}>
+        {uniqueExercises.slice(0, 5).map((ex, i) => (
+          <View key={i} style={styles.recapPill}>
+            <Text style={styles.recapPillText}>{ex}</Text>
+          </View>
+        ))}
+        {uniqueExercises.length > 5 && (
+          <View style={styles.recapPill}>
+            <Text style={styles.recapPillText}>+{uniqueExercises.length - 5}</Text>
           </View>
         )}
-        {!isPRSession && (
-          <Text style={[styles.heroLabel, { color: subColor }]}>BEST SET</Text>
-        )}
-        <Text style={[styles.heroWeight, { color: textColor }]}>{heroSet?.weight}</Text>
-        <Text style={[styles.heroMeta, { color: subColor }]}>
-          {heroSet?.unit}  ·  {heroSet?.reps} reps
-        </Text>
-        <Text style={[styles.heroExercise, { color: subColor }]}>{heroSet?.exercise}</Text>
       </View>
 
-      {/* Stats strip */}
-      <View style={[styles.statsStrip, { borderTopColor: dividerColor }]}>
-        <View style={styles.stripStat}>
-          <Text style={[styles.stripVal, { color: textColor }]}>{totalSets}</Text>
-          <Text style={[styles.stripLbl, { color: subColor }]}>SETS</Text>
-        </View>
-        <View style={[styles.stripDivider, { backgroundColor: dividerColor }]} />
-        <View style={styles.stripStat}>
-          <Text style={[styles.stripVal, { color: textColor }]}>{formatVolume(totalVolume)}</Text>
-          <Text style={[styles.stripLbl, { color: subColor }]}>VOLUME</Text>
-        </View>
-        <View style={[styles.stripDivider, { backgroundColor: dividerColor }]} />
-        <View style={styles.stripStat}>
-          <Text style={[styles.stripVal, { color: textColor }]}>{uniqueExercises.length}</Text>
-          <Text style={[styles.stripLbl, { color: subColor }]}>EXERCISES</Text>
-        </View>
-        {formatDuration(duration) && (
-          <>
-            <View style={[styles.stripDivider, { backgroundColor: dividerColor }]} />
-            <View style={styles.stripStat}>
-              <Text style={[styles.stripVal, { color: textColor }]}>{formatDuration(duration)}</Text>
-              <Text style={[styles.stripLbl, { color: subColor }]}>TIME</Text>
-            </View>
-          </>
-        )}
-      </View>
-
-      {/* Brand footer */}
-      <View style={styles.cardFooter}>
-        <Text style={[styles.cardSlogan, { color: subColor }]}>get UP.</Text>
+      {/* Footer */}
+      <View style={styles.recapFooter}>
+        {prs > 0 && <Text style={styles.recapPRBadge}>🏆 {prs} PR{prs > 1 ? 's' : ''}</Text>}
+        <Text style={styles.recapSlogan}>get UP.</Text>
       </View>
     </View>
   );
 
-  const DarkCard = () => (
-    <View style={[styles.card, { backgroundColor: '#08000f', borderColor: 'rgba(157,78,221,0.25)' }]}>
-      <CardContent textColor="#ffffff" subColor="rgba(255,255,255,0.35)" accentColor="#f0a500" dividerColor="rgba(255,255,255,0.08)" />
+  // ─── CARD 2: PR ───────────────────────────────────────────────
+  // The flex card. Big number. For when you hit something real.
+  const PRCard = ({ forCapture = false }) => (
+    <View style={[styles.prCard, forCapture && { margin: 0 }]}>
+      <LinearGradient colors={['#3c096c', '#10002b']} start={{ x: 0.1, y: 0 }} end={{ x: 0.9, y: 1 }} style={StyleSheet.absoluteFillObject} borderRadius={24} />
+      <View style={styles.prGlowOrb} />
+
+      <View style={styles.prTop}>
+        <Text style={styles.prDate}>{today}</Text>
+        <Image source={require('../assets/logo.png')} style={[styles.prLogo, { tintColor: '#e0aaff' }]} resizeMode="contain" />
+      </View>
+
+      <View style={styles.prHero}>
+        <View style={styles.prBadgeRow}>
+          <Text style={styles.prBadgeLabel}>{isPRSession ? 'PERSONAL RECORD' : 'BEST SET'}</Text>
+        </View>
+        <Text style={styles.prNumber}>{heroSet?.weight}</Text>
+        <Text style={styles.prUnit}>{heroSet?.unit} × {heroSet?.reps} reps</Text>
+        <Text style={styles.prExercise}>{heroSet?.exercise}</Text>
+      </View>
+
+      <View style={styles.prBottom}>
+        <Text style={styles.prSplit}>{split}</Text>
+        <Text style={styles.prSlogan}>get UP.</Text>
+      </View>
     </View>
   );
 
-  const GlowCard = () => (
-    <View style={[styles.card, { borderColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' }]}>
-      <LinearGradient colors={['#2d0060', '#08000f']} start={{ x: 0.2, y: 0 }} end={{ x: 0.8, y: 1 }} style={StyleSheet.absoluteFillObject} />
-      <View style={styles.glowOrb} />
-      <View style={styles.glowOrb2} />
-      <CardContent textColor="#ffffff" subColor="rgba(255,255,255,0.4)" accentColor="#f0a500" dividerColor="rgba(255,255,255,0.1)" />
+  // ─── CARD 3: MINIMAL ──────────────────────────────────────────
+  // For the aesthetic crowd. Almost nothing. Luxury brand energy.
+  const MinimalCard = ({ forCapture = false }) => (
+    <View style={[styles.minimalCard, forCapture && { margin: 0 }]}>
+      <View style={styles.minimalInner}>
+        <View style={styles.minimalTop}>
+          <Text style={styles.minimalDate}>{today}</Text>
+          <Image source={require('../assets/logo.png')} style={[styles.minimalLogo, { tintColor: '#1a0035' }]} resizeMode="contain" />
+        </View>
+
+        <View style={styles.minimalCenter}>
+          <Text style={styles.minimalSplit}>{split}</Text>
+          <View style={styles.minimalLine} />
+          <Text style={styles.minimalStats}>
+            {totalSets} sets  ·  {formatVolume(totalVolume)} lbs
+            {formatDuration(duration) ? `  ·  ${formatDuration(duration)}` : ''}
+          </Text>
+        </View>
+
+        <View style={styles.minimalBottom}>
+          <Text style={styles.minimalSlogan}>get UP.</Text>
+        </View>
+      </View>
     </View>
   );
 
-  const LightCard = () => (
-    <View style={[styles.card, { backgroundColor: '#f8f5ff', borderColor: 'rgba(0,0,0,0.05)' }]}>
-      <CardContent textColor="#0d001a" subColor="rgba(13,0,26,0.38)" accentColor="#7b2cbf" dividerColor="rgba(0,0,0,0.07)" />
+  // ─── CARD 4: CLEAR ────────────────────────────────────────────
+  // Transparent. Paste into IG story over your gym photo.
+  const ClearCard = ({ forCapture = false }) => (
+    <View style={[styles.clearCard, forCapture && { margin: 0, borderWidth: 0 }]}>
+      <View style={styles.clearInner}>
+        <View style={styles.clearTop}>
+          <Text style={styles.clearDate}>{today}</Text>
+          <Image source={require('../assets/logo.png')} style={[styles.clearLogo, { tintColor: '#ffffff' }]} resizeMode="contain" />
+        </View>
+
+        <View style={styles.clearCenter}>
+          <Text style={styles.clearSplit}>{split}</Text>
+          <Text style={styles.clearStats}>
+            {totalSets} sets  ·  {formatVolume(totalVolume)} lbs
+          </Text>
+          {isPRSession && <Text style={styles.clearPR}>{prs} PR{prs > 1 ? 's' : ''} today</Text>}
+        </View>
+
+        <View style={styles.clearBottom}>
+          <Text style={styles.clearSlogan}>get UP.</Text>
+        </View>
+      </View>
     </View>
   );
 
-  const ClearCard = () => (
-    <View style={[styles.card, { backgroundColor: 'rgba(0,0,0,0.12)', borderColor: 'rgba(255,255,255,0.18)' }]}>
-      <CardContent textColor="#ffffff" subColor="rgba(255,255,255,0.55)" accentColor="#f0a500" dividerColor="rgba(255,255,255,0.15)" />
-    </View>
-  );
-
-  const CARD_COMPONENTS = [DarkCard, GlowCard, LightCard, ClearCard];
-  const ActiveCaptureCard = CARD_COMPONENTS[activeCard];
+  const CARD_COMPONENTS = [RecapCard, PRCard, MinimalCard, ClearCard];
+  const CAPTURE_MAP = {
+    0: () => <RecapCard forCapture />,
+    1: () => <PRCard forCapture />,
+    2: () => <MinimalCard forCapture />,
+    3: () => <ClearCard forCapture />,
+  };
+  const ActiveCaptureCard = CAPTURE_MAP[activeCard];
 
   return (
     <View style={styles.root}>
@@ -195,7 +228,6 @@ export default function ShareScreen({ navigation, route }) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-
         <FlatList
           ref={flatListRef}
           data={CARD_COMPONENTS}
@@ -253,39 +285,74 @@ const styles = StyleSheet.create({
   back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600', width: 60 },
   headerTitle: { fontSize: 12, fontWeight: '800', color: 'rgba(255,255,255,0.6)', letterSpacing: 3 },
   scrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
-  card: { width: CARD_WIDTH, borderRadius: 28, borderWidth: 1, overflow: 'hidden', marginBottom: 24 },
-  cardInner: { padding: 28, justifyContent: 'space-between' },
-  glowOrb: { position: 'absolute', width: 300, height: 300, borderRadius: 150, backgroundColor: 'rgba(123,44,191,0.45)', top: -100, right: -80 },
-  glowOrb2: { position: 'absolute', width: 200, height: 200, borderRadius: 100, backgroundColor: 'rgba(60,0,120,0.3)', bottom: -60, left: -60 },
-  // Card top
-  cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  cardDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, marginBottom: 5 },
-  cardSplit: { fontSize: 28, fontWeight: '900', letterSpacing: -0.5 },
-  cardLogo: { width: 32, height: 32, opacity: 0.85 },
-  // Hero
-  heroSection: { flex: 1, justifyContent: 'center', paddingVertical: 8 },
-  prBadge: { borderWidth: 1, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 16 },
-  prBadgeText: { fontSize: 9, fontWeight: '800', letterSpacing: 2.5 },
-  heroLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 3, marginBottom: 10 },
-  heroWeight: { fontSize: 96, fontWeight: '900', letterSpacing: -5, lineHeight: 96, marginBottom: 10 },
-  heroMeta: { fontSize: 17, fontWeight: '600', letterSpacing: -0.3, marginBottom: 6 },
-  heroExercise: { fontSize: 12, fontWeight: '500', letterSpacing: 0.5 },
-  // Stats strip
-  statsStrip: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, paddingTop: 18 },
-  stripStat: { flex: 1, alignItems: 'center' },
-  stripVal: { fontSize: 17, fontWeight: '900', letterSpacing: -0.5 },
-  stripLbl: { fontSize: 7, fontWeight: '700', letterSpacing: 2, marginTop: 3 },
-  stripDivider: { width: 1, height: 22 },
-  // Brand footer
-  cardFooter: { alignItems: 'flex-end', marginTop: 16 },
-  cardSlogan: { fontSize: 14, fontWeight: '700', letterSpacing: 2 },
+
+  // ── RECAP card
+  recapCard: { width: CARD_WIDTH, borderRadius: 24, padding: 24, overflow: 'hidden', marginBottom: 24, minHeight: 320 },
+  recapHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 },
+  recapDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginBottom: 4 },
+  recapSplit: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: -0.5 },
+  recapLogo: { width: 30, height: 30, opacity: 0.7 },
+  recapGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
+  recapGridItem: { width: '47%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, padding: 16 },
+  recapGridVal: { fontSize: 28, fontWeight: '900', color: '#ffffff', letterSpacing: -0.5, marginBottom: 3 },
+  recapGridLbl: { fontSize: 8, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.3)' },
+  recapPills: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 20 },
+  recapPill: { borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 5 },
+  recapPillText: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
+  recapFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  recapPRBadge: { fontSize: 11, color: '#f0a500', fontWeight: '700' },
+  recapSlogan: { fontSize: 12, fontWeight: '700', color: 'rgba(157,78,221,0.5)', letterSpacing: 1.5 },
+
+  // ── PR card
+  prCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, minHeight: 360, padding: 24 },
+  prGlowOrb: { position: 'absolute', width: 280, height: 280, borderRadius: 140, backgroundColor: 'rgba(123,44,191,0.5)', top: -100, right: -80 },
+  prTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
+  prDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(224,170,255,0.6)' },
+  prLogo: { width: 30, height: 30, opacity: 0.8 },
+  prHero: { flex: 1, justifyContent: 'center', marginBottom: 32 },
+  prBadgeRow: { marginBottom: 12 },
+  prBadgeLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 3, color: '#f0a500' },
+  prNumber: { fontSize: 96, fontWeight: '900', color: '#ffffff', letterSpacing: -5, lineHeight: 96, marginBottom: 8 },
+  prUnit: { fontSize: 18, fontWeight: '600', color: 'rgba(255,255,255,0.5)', letterSpacing: -0.3, marginBottom: 6 },
+  prExercise: { fontSize: 12, fontWeight: '500', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 },
+  prBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  prSplit: { fontSize: 13, fontWeight: '700', color: 'rgba(255,255,255,0.3)', letterSpacing: 1 },
+  prSlogan: { fontSize: 13, fontWeight: '700', color: 'rgba(224,170,255,0.5)', letterSpacing: 1.5 },
+
+  // ── MINIMAL card
+  minimalCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, backgroundColor: '#f5f2ff' },
+  minimalInner: { padding: 28, minHeight: 280, justifyContent: 'space-between' },
+  minimalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 },
+  minimalDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(26,0,53,0.35)' },
+  minimalLogo: { width: 28, height: 28, opacity: 0.6 },
+  minimalCenter: { flex: 1, justifyContent: 'center' },
+  minimalSplit: { fontSize: 52, fontWeight: '900', color: '#1a0035', letterSpacing: -2, lineHeight: 52, marginBottom: 20 },
+  minimalLine: { height: 1, backgroundColor: 'rgba(26,0,53,0.12)', marginBottom: 16 },
+  minimalStats: { fontSize: 13, fontWeight: '500', color: 'rgba(26,0,53,0.4)', letterSpacing: 0.3 },
+  minimalBottom: { marginTop: 40, alignItems: 'flex-end' },
+  minimalSlogan: { fontSize: 13, fontWeight: '700', color: 'rgba(123,44,191,0.4)', letterSpacing: 2 },
+
+  // ── CLEAR card
+  clearCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, backgroundColor: 'transparent', borderWidth: 0 },
+  clearInner: { padding: 28, minHeight: 280, justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 24 },
+  clearTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 },
+  clearDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.7)' },
+  clearLogo: { width: 28, height: 28, opacity: 0.8 },
+  clearCenter: { flex: 1, justifyContent: 'center' },
+  clearSplit: { fontSize: 48, fontWeight: '900', color: '#ffffff', letterSpacing: -1.5, lineHeight: 48, marginBottom: 14 },
+  clearStats: { fontSize: 14, fontWeight: '500', color: 'rgba(255,255,255,0.6)', letterSpacing: 0.3, marginBottom: 8 },
+  clearPR: { fontSize: 12, fontWeight: '700', color: '#f0a500', letterSpacing: 1 },
+  clearBottom: { marginTop: 40, alignItems: 'flex-end' },
+  clearSlogan: { fontSize: 13, fontWeight: '700', color: 'rgba(255,255,255,0.4)', letterSpacing: 2 },
+
   // Selector
-  selectorRow: { flexDirection: 'row', justifyContent: 'center', gap: 28, marginBottom: 32 },
+  selectorRow: { flexDirection: 'row', justifyContent: 'center', gap: 24, marginBottom: 32 },
   selectorBtn: { alignItems: 'center', gap: 6 },
   selectorDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.15)' },
   selectorDotActive: { backgroundColor: '#9d4edd', width: 20, borderRadius: 3 },
   selectorLabel: { fontSize: 11, color: 'rgba(255,255,255,0.25)', fontWeight: '600', letterSpacing: 1 },
   selectorLabelActive: { color: '#ffffff' },
+
   // Buttons
   primaryBtn: { marginBottom: 12 },
   primaryBtnGradient: { paddingVertical: 18, borderRadius: 16, alignItems: 'center' },

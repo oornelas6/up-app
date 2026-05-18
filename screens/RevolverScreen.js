@@ -99,7 +99,7 @@ export default function RevolverScreen({ navigation, route }) {
   const [weightIdx, setWeightIdx] = useState(27);
   const [repsIdx, setRepsIdx] = useState(7);
   const [fineWeight, setFineWeight] = useState(0); // offset in lbs/kg for precision
-  const { isKg, setIsKg, restTimer } = useSettings();
+  const { isKg, setIsKg, restTimer, sessionSets } = useSettings();
   const [showWeightInput, setShowWeightInput] = useState(false);
   const [weightInputVal, setWeightInputVal] = useState('');
   const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
@@ -168,7 +168,7 @@ export default function RevolverScreen({ navigation, route }) {
       setSetNum(s => s + 1);
       setFineWeight(0);
       navigation.navigate('PR', {
-        exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR, unit,
+        exercise, weight: selectedWeight, reps: selectedReps, setNum, split, isPR: isNewPR, unit, sessionSets,
       });
     } catch (err) {
       console.error('logSet error:', err);
