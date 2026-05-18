@@ -19,7 +19,7 @@ const SPLITS = [
   { name: 'Custom', label: 'Build your own', count: 0 },
 ];
 
-const SplitCard = ({ split, index, onPress, recommended }) => {
+const SplitCard = ({ split, index, onPress, styles, recommended }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
@@ -139,6 +139,7 @@ export default function SplitScreen({ navigation }) {
               index={index}
               recommended={split.name === recommendedSplit}
               onPress={() => navigation.navigate('Workout', { split: split.name })}
+              styles={styles}
             />
           ))}
         </ScrollView>
