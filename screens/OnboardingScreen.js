@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Animated, Dimensions, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Animated, Dimensions, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useState, useRef, useEffect } from 'react';
@@ -74,6 +74,7 @@ export default function OnboardingScreen({ onFinish }) {
 
           {/* ── STEP 0: Name ── */}
           {step === 0 && (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.step}>
               <View style={styles.logoRow}>
                 <Logo size={32} />
@@ -110,6 +111,7 @@ export default function OnboardingScreen({ onFinish }) {
                 </LinearGradient>
               </TouchableOpacity>
             </View>
+            </TouchableWithoutFeedback>
           )}
 
           {/* ── STEP 1: Goal ── */}
@@ -216,9 +218,7 @@ export default function OnboardingScreen({ onFinish }) {
                   <Text style={styles.btnText}>I'M READY</Text>
                 </LinearGradient>
               </TouchableOpacity>
-              <TouchableOpacity style={{ marginTop: 16, paddingVertical: 12 }} onPress={finish}>
-                <Text style={styles.skipText}>Skip for now</Text>
-              </TouchableOpacity>
+
             </View>
           )}
 
