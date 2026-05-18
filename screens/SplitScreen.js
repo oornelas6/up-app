@@ -10,14 +10,14 @@ import * as Haptics from 'expo-haptics';
 const { width } = Dimensions.get('window');
 
 const SPLITS = [
-  { name: 'Push', label: 'Chest · Shoulders · Triceps', count: 12, emoji: '💪' },
-  { name: 'Pull', label: 'Back · Biceps · Rear Delts', count: 11, emoji: '🔙' },
-  { name: 'Legs', label: 'Quads · Hamstrings · Glutes · Calves', count: 11, emoji: '🦵' },
-  { name: 'Arms', label: 'Biceps · Triceps · Shoulders', count: 10, emoji: '💪' },
-  { name: 'Upper', label: 'Full Upper Body', count: 7, emoji: '🏋️' },
-  { name: 'Lower', label: 'Full Lower Body', count: 7, emoji: '🦵' },
-  { name: 'Full Body', label: 'Everything', count: 8, emoji: '⚡' },
-  { name: 'Custom', label: 'Build your own', count: 0, emoji: '✏️' },
+  { name: 'Push', label: 'Chest · Shoulders · Triceps', count: 12 },
+  { name: 'Pull', label: 'Back · Biceps · Rear Delts', count: 11 },
+  { name: 'Legs', label: 'Quads · Hamstrings · Glutes · Calves', count: 11 },
+  { name: 'Arms', label: 'Biceps · Triceps · Shoulders', count: 10 },
+  { name: 'Upper', label: 'Full Upper Body', count: 7 },
+  { name: 'Lower', label: 'Full Lower Body', count: 7 },
+  { name: 'Full Body', label: 'Everything', count: 8 },
+  { name: 'Custom', label: 'Build your own', count: 0 },
 ];
 
 const SplitCard = ({ split, index, onPress, styles, recommended }) => {
@@ -207,7 +207,7 @@ export default function SplitScreen({ navigation }) {
           >
             <LinearGradient colors={theme.gradientBtn} style={styles.loadoutOptionGradient}>
               <Text style={[styles.loadoutOptionTitle, { color: theme.btnText }]}>
-                {isLastSplit ? 'Beat Last Session 🔥' : "Let's Get It 🔥"}
+                {isLastSplit ? 'Beat Last Session' : "Let's Get It"}
               </Text>
               <Text style={[styles.loadoutOptionSub, { color: theme.btnText === '#1a0035' ? 'rgba(26,0,53,0.55)' : 'rgba(255,255,255,0.55)' }]}>
                 {isLastSplit ? 'Progressive overload loaded' : 'Start workout now'}
