@@ -238,12 +238,12 @@ export default function HomeScreen({ navigation }) {
         <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
           <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.navigate('Split')}>
             <LinearGradient
-              colors={['#7b2cbf', '#4a0080']}
+              colors={theme.gradientBtn}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.startBtn}
             >
-              <Text style={styles.startBtnText}>START WORKOUT</Text>
+              <Text style={[styles.startBtnText, { color: theme.btnText }]}>START WORKOUT</Text>
               <Text style={styles.startBtnSub}>
         {nextWorkout ? `Today: ${nextWorkout}` : lastSession ? `Last: ${lastSession.split}` : 'Begin your first session'}
       </Text>

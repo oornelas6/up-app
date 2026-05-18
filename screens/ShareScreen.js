@@ -272,18 +272,21 @@ export default function ShareScreen({ navigation, route }) {
           ref={flatListRef}
           data={CARD_COMPONENTS}
           horizontal
-          pagingEnabled
+          pagingEnabled={false}
+          snapToInterval={width}
+          snapToAlignment="center"
+          decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
           initialScrollIndex={3}
-          getItemLayout={(_, index) => ({ length: CARD_WIDTH + 48, offset: (CARD_WIDTH + 48) * index, index })}
+          getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
           onMomentumScrollEnd={(e) => {
-            const index = Math.round(e.nativeEvent.contentOffset.x / (CARD_WIDTH + 48));
+            const index = Math.round(e.nativeEvent.contentOffset.x / width);
             setActiveCard(index);
           }}
-          contentContainerStyle={{ paddingHorizontal: 24 }}
+          contentContainerStyle={{ paddingHorizontal: (width - CARD_WIDTH) / 2 }}
           keyExtractor={(_, i) => i.toString()}
           renderItem={({ item: CardComponent, index }) => (
-            <View style={{ width: CARD_WIDTH + 48, paddingHorizontal: 0, paddingRight: 0 }}>
+            <View style={{ width: CARD_WIDTH, marginHorizontal: (width - CARD_WIDTH) / 2 }}>
               {index !== 3 ? (
                 <ViewShot ref={activeCard === index ? cardRef : null} options={{ format: 'png', quality: 1.0 }}>
                   <CardComponent />

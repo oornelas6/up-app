@@ -181,7 +181,7 @@ const duration = rawParams.duration || 0;
           onPress={() => navigation.navigate('Home')}
         >
           <LinearGradient
-            colors={['#7b2cbf', '#4a0080']}
+            colors={theme.gradientBtn}
             style={styles.doneBtn}
           >
             <Text style={styles.doneBtnText}>DONE</Text>

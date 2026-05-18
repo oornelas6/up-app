@@ -15,6 +15,7 @@ const darkTheme = {
   gradientBg: ['rgba(50,0,90,0.5)', 'rgba(8,0,16,1)'],
   gradientBtn: ['#7b2cbf', '#4a0080'],
   gradientBtnLight: false,
+  btnText: '#ffffff',
 };
 
 const lightTheme = {
@@ -29,8 +30,9 @@ const lightTheme = {
   accentDark: '#5a189a',
   accentDeep: '#3c096c',
   gradientBg: ['#f5f0ff', '#ede5ff'],
-  gradientBtn: ['#9d4edd', '#7b2cbf'],
+  gradientBtn: ['#c77dff', '#9d4edd'],
   gradientBtnLight: true,
+  btnText: '#1a0035',
 };
 
 const ThemeContext = createContext(darkTheme);

@@ -100,7 +100,7 @@ export default function PRScreen({ navigation, route }) {
               <Text style={styles.badgeText}>NEW PR</Text>
             </LinearGradient>
           ) : (
-            <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.badgeInner}>
+            <LinearGradient colors={theme.gradientBtn} style={styles.badgeInner}>
               <Text style={styles.badgeText}>SET {setNum} LOGGED</Text>
             </LinearGradient>
           )}
@@ -172,7 +172,7 @@ export default function PRScreen({ navigation, route }) {
             colors={timerDone ? ['#4caf50', '#2e7d32'] : ['#7b2cbf', '#4a0080']}
             style={styles.continueBtn}
           >
-            <Text style={styles.continueBtnText}>
+            <Text style={[styles.continueBtnText, { color: theme.btnText }]}>
               {timerDone ? "LET'S GO" : 'NEXT SET'}
             </Text>
           </LinearGradient>
@@ -200,7 +200,7 @@ export default function PRScreen({ navigation, route }) {
             }
           }}
         >
-          <Text style={styles.finishBtnText}>Finish Workout</Text>
+          <Text style={[styles.finishBtnText, { color: theme.btnText }]}>Finish Workout</Text>
         </TouchableOpacity>
 
       </Animated.View>

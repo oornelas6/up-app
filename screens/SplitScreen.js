@@ -112,7 +112,7 @@ export default function SplitScreen({ navigation }) {
             activeOpacity={0.8}
             onPress={() => navigation.navigate('Workout', { split: recommendedSplit })}
           >
-            <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.recommendBannerGradient}>
+            <LinearGradient colors={theme.gradientBtn} style={styles.recommendBannerGradient}>
               <View>
                 <Text style={styles.recommendLabel}>RECOMMENDED FOR TODAY</Text>
                 <Text style={styles.recommendSplit}>{recommendedSplit} Day →</Text>

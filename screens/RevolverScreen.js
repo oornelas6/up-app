@@ -279,12 +279,12 @@ const lastSet = await getLastSet(userId, exercise);
 
         <TouchableOpacity activeOpacity={0.9} onPress={logSet}>
           <LinearGradient
-            colors={['#7b2cbf', '#4a0080']}
+            colors={theme.gradientBtn}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.logBtn}
           >
-            <Text style={styles.logBtnText}>LOG SET</Text>
+            <Text style={[styles.logBtnText, { color: theme.btnText }]}>LOG SET</Text>
             <Text style={styles.logBtnSub}>{selectedWeight} {unit} × {selectedReps} reps</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -320,7 +320,7 @@ const lastSet = await getLastSet(userId, exercise);
                   setShowWeightInput(false);
                 }}
               >
-                <Text style={styles.weightModalBtnText}>SET</Text>
+                <Text style={[styles.weightModalBtnText, { color: theme.btnText }]}>SET</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setShowWeightInput(false)}>
                 <Text style={styles.weightModalCancel}>Cancel</Text>

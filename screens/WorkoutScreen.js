@@ -262,10 +262,10 @@ duration: elapsedTime
               }}
           >
             <LinearGradient
-              colors={['#7b2cbf', '#4a0080']}
+              colors={theme.gradientBtn}
               style={styles.finishBtnGradient}
             >
-              <Text style={styles.finishBtnText}>FINISH WORKOUT</Text>
+              <Text style={[styles.finishBtnText, { color: theme.btnText }]}>FINISH WORKOUT</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -303,8 +303,8 @@ duration: elapsedTime
                     }
                   }}
                 >
-                  <LinearGradient colors={['#7b2cbf', '#4a0080']} style={styles.modalBtnGradient}>
-                    <Text style={styles.modalBtnText}>START LOGGING</Text>
+                  <LinearGradient colors={theme.gradientBtn} style={styles.modalBtnGradient}>
+                    <Text style={[styles.modalBtnText, { color: theme.btnText }]}>START LOGGING</Text>
                   </LinearGradient>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { setShowCustomInput(false); Keyboard.dismiss(); }}>
