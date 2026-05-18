@@ -169,7 +169,7 @@ export default function PRScreen({ navigation, route }) {
 
         <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.goBack()}>
           <LinearGradient
-            colors={timerDone ? ['#4caf50', '#2e7d32'] : ['#7b2cbf', '#4a0080']}
+            colors={timerDone ? ['#4caf50', '#2e7d32'] : theme.gradientBtn}
             style={styles.continueBtn}
           >
             <Text style={[styles.continueBtnText, { color: theme.btnText }]}>
