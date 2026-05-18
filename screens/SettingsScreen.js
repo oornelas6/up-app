@@ -9,6 +9,7 @@ import { scheduleWorkoutReminder, cancelWorkoutReminder, getNotificationSettings
 import { useTheme } from '../context/ThemeContext';
 export default function SettingsScreen({ navigation }) {
   const theme = useTheme();
+  const styles = getStyles(theme);
   const { isKg, setIsKg, restTimer, setRestTimer, showRPE, setShowRPE } = useSettings();
   const [notifications, setNotifications] = useState(false);
   const [notifHour, setNotifHour] = useState(18);
@@ -156,31 +157,31 @@ export default function SettingsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010' },
   container: { flex: 1, paddingHorizontal: 24, paddingTop: 64 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
-  back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },
-  title: { fontSize: 38, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
-  sectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.25)', marginBottom: 10, marginTop: 24 },
+  back: { color: theme.textSecondary, fontSize: 15, fontWeight: '600' },
+  title: { fontSize: 38, fontWeight: '900', color: theme.text, letterSpacing: -1 },
+  sectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: theme.textTertiary, marginBottom: 10, marginTop: 24 },
   card: { backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 18, padding: 20, marginBottom: 4 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  rowTitle: { fontSize: 16, fontWeight: '600', color: '#ffffff', marginBottom: 2 },
-  rowSub: { fontSize: 12, color: 'rgba(255,255,255,0.25)', fontWeight: '400' },
+  rowTitle: { fontSize: 16, fontWeight: '600', color: theme.text, marginBottom: 2 },
+  rowSub: { fontSize: 12, color: theme.textTertiary, fontWeight: '400' },
   toggleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  unitLabel: { fontSize: 12, fontWeight: '700', color: 'rgba(255,255,255,0.25)', letterSpacing: 1 },
+  unitLabel: { fontSize: 12, fontWeight: '700', color: theme.textTertiary, letterSpacing: 1 },
   unitActive: { color: '#9d4edd' },
   optionsRow: { flexDirection: 'row', gap: 8, marginTop: 16, flexWrap: 'wrap' },
   optionBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 100, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)' },
   optionBtnActive: { backgroundColor: 'rgba(123,44,191,0.3)', borderColor: '#7b2cbf' },
-  optionText: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.3)' },
-  optionTextActive: { color: '#ffffff' },
+  optionText: { fontSize: 13, fontWeight: '600', color: theme.textSecondary },
+  optionTextActive: { color: theme.text },
   timeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
   timeBtn: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 100, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)' },
   timeBtnActive: { backgroundColor: 'rgba(123,44,191,0.3)', borderColor: '#7b2cbf' },
-  timeBtnText: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.3)' },
-  timeBtnTextActive: { color: '#ffffff' },
+  timeBtnText: { fontSize: 11, fontWeight: '600', color: theme.textSecondary },
+  timeBtnTextActive: { color: theme.text },
   cardDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginVertical: 16 },
-  chevron: { color: 'rgba(255,255,255,0.2)', fontSize: 16 },
-  version: { fontSize: 12, color: 'rgba(255,255,255,0.15)', textAlign: 'center', marginTop: 24, letterSpacing: 1 },
+  chevron: { color: theme.textTertiary, fontSize: 16 },
+  version: { fontSize: 12, color: theme.textTertiary, textAlign: 'center', marginTop: 24, letterSpacing: 1 },
 });

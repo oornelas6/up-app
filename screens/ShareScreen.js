@@ -283,10 +283,10 @@ export default function ShareScreen({ navigation, route }) {
             const index = Math.round(e.nativeEvent.contentOffset.x / width);
             setActiveCard(index);
           }}
-          contentContainerStyle={{ paddingHorizontal: (width - CARD_WIDTH) / 2 }}
+          contentContainerStyle={{ paddingHorizontal: 0 }}
           keyExtractor={(_, i) => i.toString()}
           renderItem={({ item: CardComponent, index }) => (
-            <View style={{ width: CARD_WIDTH, marginHorizontal: (width - CARD_WIDTH) / 2 }}>
+            <View style={{ width: width, paddingHorizontal: 24 }}>
               {index !== 3 ? (
                 <ViewShot ref={activeCard === index ? cardRef : null} options={{ format: 'png', quality: 1.0 }}>
                   <CardComponent />
