@@ -31,7 +31,8 @@ export default function SettingsScreen({ navigation }) {
           await AsyncStorage.removeItem('auth_token');
           await AsyncStorage.removeItem('user_id');
           await AsyncStorage.removeItem('onboarding_complete');
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          await AsyncStorage.removeItem('user_name');
+          if (global.onSignOut) global.onSignOut();
         }
       }
     ]);

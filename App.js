@@ -28,6 +28,11 @@ export default function App() {
   const [userName, setUserName] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
+  global.onSignOut = () => {
+    setIsAuthenticated(false);
+    setOnboardingDone(false);
+  };
+
   useEffect(() => {
     AsyncStorage.getItem('onboarding_complete').then(val => {
       setOnboardingDone(val === 'true');
