@@ -6,7 +6,6 @@ import { useState, useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { useSettings } from '../context/SettingsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MESSAGES = [
   { title: "Set locked in.", sub: "Every rep is a deposit into your future self." },
