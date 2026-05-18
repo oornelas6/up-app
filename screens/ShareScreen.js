@@ -266,6 +266,7 @@ export default function ShareScreen({ navigation, route }) {
 
         {/* Swipeable cards */}
         <FlatList
+          style={{ marginHorizontal: -24 }}
           ref={flatListRef}
           data={CARD_COMPONENTS}
           horizontal
