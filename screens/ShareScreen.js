@@ -274,7 +274,7 @@ export default function ShareScreen({ navigation, route }) {
           snapToAlignment="center"
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
-          onLayout={() => setTimeout(() => flatListRef.current?.scrollToIndex({ index: 3, animated: false, viewPosition: 0 }), 100)}
+          onLayout={(e) => setTimeout(() => flatListRef.current?.scrollToOffset({ offset: width * 3, animated: false }), 100)}
           onMomentumScrollEnd={(e) => {
             const index = Math.round(e.nativeEvent.contentOffset.x / width);
             setActiveCard(index);
@@ -294,12 +294,7 @@ export default function ShareScreen({ navigation, route }) {
           )}
         />
 
-        {/* Transparent card hint */}
-        {isTransparent && (
-          <View style={styles.clearHint}>
-            <Text style={styles.clearHintText}>Copy → open Instagram Story → paste ✦</Text>
-          </View>
-        )}
+
 
         {/* Dot indicators */}
         <View style={styles.selectorRow}>
