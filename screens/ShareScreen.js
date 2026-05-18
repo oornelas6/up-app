@@ -79,39 +79,9 @@ export default function ShareScreen({ navigation, route }) {
         <Image source={require('../assets/logo.png')} style={[styles.recapLogo, { tintColor: '#ffffff' }]} resizeMode="contain" />
       </View>
 
-      {/* 2x2 stats grid */}
-      <View style={styles.recapGrid}>
-        <View style={styles.recapGridItem}>
-          <Text style={styles.recapGridVal}>{totalSets}</Text>
-          <Text style={styles.recapGridLbl}>SETS</Text>
-        </View>
-        <View style={styles.recapGridItem}>
-          <Text style={styles.recapGridVal}>{totalReps}</Text>
-          <Text style={styles.recapGridLbl}>REPS</Text>
-        </View>
-        <View style={styles.recapGridItem}>
-          <Text style={styles.recapGridVal}>{formatVolume(totalVolume)}</Text>
-          <Text style={styles.recapGridLbl}>VOLUME</Text>
-        </View>
-        <View style={styles.recapGridItem}>
-          <Text style={styles.recapGridVal}>{uniqueExercises.length}</Text>
-          <Text style={styles.recapGridLbl}>EXERCISES</Text>
-        </View>
-      </View>
 
-      {/* Exercise pills */}
-      <View style={styles.recapPills}>
-        {uniqueExercises.slice(0, 5).map((ex, i) => (
-          <View key={i} style={styles.recapPill}>
-            <Text style={styles.recapPillText}>{ex}</Text>
-          </View>
-        ))}
-        {uniqueExercises.length > 5 && (
-          <View style={styles.recapPill}>
-            <Text style={styles.recapPillText}>+{uniqueExercises.length - 5}</Text>
-          </View>
-        )}
-      </View>
+
+
 
       {/* Stats strip */}
       <View style={styles.sharedStrip}>
@@ -345,7 +315,7 @@ const styles = StyleSheet.create({
   recapCard: { width: CARD_WIDTH, borderRadius: 24, padding: 24, overflow: 'hidden', marginBottom: 24, minHeight: 320 },
   recapHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 },
   recapDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginBottom: 4 },
-  recapSplit: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: -0.5 },
+  recapSplit: { fontSize: 72, fontWeight: '900', color: '#ffffff', letterSpacing: -3, lineHeight: 68, marginTop: 8 },
   recapLogo: { width: 38, height: 38, opacity: 0.85 },
   recapGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
   recapGridItem: { width: '47%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, padding: 16 },
@@ -354,13 +324,13 @@ const styles = StyleSheet.create({
   recapPills: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 20 },
   recapPill: { borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 5 },
   recapPillText: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
-  recapFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  recapFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 },
   recapPRBadge: { fontSize: 11, color: '#f0a500', fontWeight: '700' },
   recapSlogan: { fontSize: 15, fontWeight: '800', color: 'rgba(157,78,221,0.6)', letterSpacing: 2 },
 
   // ── PR card
   prCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, minHeight: 360, padding: 24 },
-  prGlowOrb: { position: 'absolute', width: 280, height: 280, borderRadius: 140, backgroundColor: 'rgba(123,44,191,0.5)', top: -100, right: -80 },
+  prGlowOrb: { position: 'absolute', width: 260, height: 260, borderRadius: 130, backgroundColor: 'rgba(123,44,191,0.3)', top: 80, right: -70 },
   prTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   prDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(224,170,255,0.6)' },
   prLogo: { width: 38, height: 38, opacity: 0.85 },
@@ -377,12 +347,12 @@ const styles = StyleSheet.create({
   // ── MINIMAL card
   minimalCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, backgroundColor: '#f5f2ff' },
   minimalInner: { padding: 28, minHeight: 280, justifyContent: 'space-between' },
-  minimalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 },
+  minimalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   minimalDate: { fontSize: 11, fontWeight: '700', letterSpacing: 2, color: 'rgba(26,0,53,0.45)' },
   minimalLogo: { width: 36, height: 36, opacity: 0.75 },
-  minimalCenter: { flex: 1, justifyContent: 'center' },
-  minimalSplit: { fontSize: 58, fontWeight: '900', color: '#1a0035', letterSpacing: -2, lineHeight: 58, marginBottom: 20 },
-  minimalLine: { height: 1, backgroundColor: 'rgba(26,0,53,0.12)', marginBottom: 16 },
+  minimalCenter: { flex: 1, justifyContent: 'flex-start', paddingTop: 8 },
+  minimalSplit: { fontSize: 72, fontWeight: '900', color: '#1a0035', letterSpacing: -3, lineHeight: 68, marginBottom: 24 },
+  minimalLine: { height: 1, backgroundColor: 'rgba(26,0,53,0.07)', marginBottom: 20 },
   minimalStats: { fontSize: 15, fontWeight: '500', color: 'rgba(26,0,53,0.45)', letterSpacing: 0.3 },
   minimalBottom: { marginTop: 40, alignItems: 'flex-end' },
   minimalSlogan: { fontSize: 15, fontWeight: '800', color: 'rgba(123,44,191,0.55)', letterSpacing: 2 },
