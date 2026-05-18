@@ -59,6 +59,7 @@ const SplitCard = ({ split, index, onPress, recommended }) => {
 
 export default function SplitScreen({ navigation }) {
   const theme = useTheme();
+  const styles = getStyles(theme);
   const [recommendedSplit, setRecommendedSplit] = useState(null);
   const [lastSplit, setLastSplit] = useState(null);
 
@@ -146,27 +147,27 @@ export default function SplitScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010' },
   container: { flex: 1, paddingHorizontal: 24, paddingTop: 64, paddingBottom: 0 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
-  back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },
-  title: { fontSize: 38, fontWeight: '900', color: '#ffffff', letterSpacing: -1, lineHeight: 44 },
+  back: { color: theme.textSecondary, fontSize: 15, fontWeight: '600' },
+  title: { fontSize: 38, fontWeight: '900', color: theme.text, letterSpacing: -1, lineHeight: 44 },
   recommendBanner: { marginTop: 20, marginBottom: 4, borderRadius: 16, overflow: 'hidden' },
   recommendBannerGradient: { paddingVertical: 16, paddingHorizontal: 20, borderRadius: 16 },
-  recommendLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.6)', marginBottom: 4 },
-  recommendSplit: { fontSize: 22, fontWeight: '900', color: '#ffffff', letterSpacing: -0.5 },
+  recommendLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 3, color: theme.textSecondary, marginBottom: 4 },
+  recommendSplit: { fontSize: 22, fontWeight: '900', color: theme.text, letterSpacing: -0.5 },
   lastSessionBanner: { marginTop: 16, marginBottom: 4 },
-  lastSessionBannerText: { fontSize: 12, color: 'rgba(255,255,255,0.25)', letterSpacing: 0.5 },
+  lastSessionBannerText: { fontSize: 12, color: theme.textTertiary, letterSpacing: 0.5 },
   card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 20, paddingHorizontal: 20, marginBottom: 10, backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 18 },
   cardRecommended: { borderColor: 'rgba(157,78,221,0.4)', backgroundColor: 'rgba(123,44,191,0.08)' },
   cardLeft: { flex: 1 },
   cardNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-  cardName: { fontSize: 20, fontWeight: '800', color: '#ffffff', letterSpacing: -0.3 },
+  cardName: { fontSize: 20, fontWeight: '800', color: theme.text, letterSpacing: -0.3 },
   todayBadge: { backgroundColor: 'rgba(157,78,221,0.2)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.4)', borderRadius: 100, paddingHorizontal: 8, paddingVertical: 2 },
   todayBadgeText: { fontSize: 9, fontWeight: '800', color: '#9d4edd', letterSpacing: 2 },
-  cardLabel: { fontSize: 12, color: 'rgba(255,255,255,0.25)', fontWeight: '400', letterSpacing: 0.3 },
+  cardLabel: { fontSize: 12, color: theme.textTertiary, fontWeight: '400', letterSpacing: 0.3 },
   cardRight: { alignItems: 'flex-end', marginLeft: 16 },
   cardCount: { fontSize: 22, fontWeight: '800', color: 'rgba(157,78,221,0.7)', letterSpacing: -0.5 },
-  cardCountLabel: { fontSize: 10, color: 'rgba(255,255,255,0.2)', fontWeight: '500', letterSpacing: 1, marginTop: 2 },
+  cardCountLabel: { fontSize: 10, color: theme.textTertiary, fontWeight: '500', letterSpacing: 1, marginTop: 2 },
 });

@@ -23,6 +23,7 @@ export default function HomeScreen({ navigation }) {
   const blob1X = useRef(new Animated.Value(0)).current;
   const [userName, setUserName] = useState('');
   const theme = useTheme();
+  const styles = getStyles(theme);
   const blob2X = useRef(new Animated.Value(0)).current;
   const [savedWorkout, setSavedWorkout] = useState(null);
   const [lastSession, setLastSession] = useState(null);
@@ -267,29 +268,29 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010', overflow: 'hidden' },
   blob: { position: 'absolute' },
   container: { flex: 1, paddingHorizontal: 28, paddingTop: 64, paddingBottom: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 52 },
-  logo: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: 4 },
+  logo: { fontSize: 26, fontWeight: '900', color: theme.text, letterSpacing: 4 },
   streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 100, paddingHorizontal: 14, paddingVertical: 8, gap: 6 },
-  streakText: { color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: '600', letterSpacing: 0.5 },
+  streakText: { color: theme.textSecondary, fontSize: 12, fontWeight: '600', letterSpacing: 0.5 },
   greeting: { marginBottom: 40 },
-  greetingSub: { fontSize: 12, fontWeight: '500', color: 'rgba(255,255,255,0.3)', marginBottom: 12, letterSpacing: 2, textTransform: 'uppercase' },
-  greetingMain: { fontSize: 46, fontWeight: '800', color: '#ffffff', lineHeight: 52, letterSpacing: -1 },
+  greetingSub: { fontSize: 12, fontWeight: '500', color: theme.textSecondary, marginBottom: 12, letterSpacing: 2, textTransform: 'uppercase' },
+  greetingMain: { fontSize: 46, fontWeight: '800', color: theme.text, lineHeight: 52, letterSpacing: -1 },
   divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginBottom: 32 },
   lastSession: { marginBottom: 32 },
   statsBtn: { width: '100%', paddingVertical: 12, alignItems: 'center' },
   statsBtnText: { color: 'rgba(157,78,221,0.6)', fontSize: 13, fontWeight: '600', letterSpacing: 1 },
-  lastSessionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.25)', marginBottom: 12 },
+  lastSessionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: theme.textTertiary, marginBottom: 12 },
   lastSessionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 },
-  lastSessionName: { fontSize: 22, fontWeight: '700', color: '#ffffff' },
-  lastSessionTime: { fontSize: 14, fontWeight: '400', color: 'rgba(255,255,255,0.35)' },
+  lastSessionName: { fontSize: 22, fontWeight: '700', color: theme.text },
+  lastSessionTime: { fontSize: 14, fontWeight: '400', color: theme.textSecondary },
   prRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   prBadge: { backgroundColor: 'rgba(157,78,221,0.12)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.25)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
   prBadgeText: { fontSize: 11, fontWeight: '600', color: '#9d4edd', letterSpacing: 0.5 },
-  lastSessionMeta: { fontSize: 12, color: 'rgba(255,255,255,0.25)' },
+  lastSessionMeta: { fontSize: 12, color: theme.textTertiary },
   statsRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.02)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', borderRadius: 20, paddingVertical: 22, paddingHorizontal: 8 },
   statItem: { flex: 1, alignItems: 'center' },
   resumeBanner: { backgroundColor: 'rgba(123,44,191,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 14, paddingVertical: 12, paddingHorizontal: 16, marginBottom: 12, alignItems: 'center' },
@@ -298,14 +299,14 @@ const styles = StyleSheet.create({
   settingsBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center' },
   settingsBtnText: { fontSize: 16 },
   statDivider: { width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.06)' },
-  statValue: { fontSize: 24, fontWeight: '700', color: '#ffffff', marginBottom: 3, letterSpacing: -0.5 },
-  statLabel: { fontSize: 11, fontWeight: '400', color: 'rgba(255,255,255,0.25)', letterSpacing: 0.5 },
+  statValue: { fontSize: 24, fontWeight: '700', color: theme.text, marginBottom: 3, letterSpacing: -0.5 },
+  statLabel: { fontSize: 11, fontWeight: '400', color: theme.textTertiary, letterSpacing: 0.5 },
   startBtn: { width: '100%', paddingVertical: 22, borderRadius: 18, alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)' },
-  startBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
-  startBtnSub: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '400', letterSpacing: 0.5 },
+  startBtnText: { color: theme.text, fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
+  startBtnSub: { color: theme.textSecondary, fontSize: 12, fontWeight: '400', letterSpacing: 0.5 },
   historyBtn: { width: '100%', paddingVertical: 16, alignItems: 'center' },
   bottomBtns: { flexDirection: 'row', justifyContent: 'center', gap: 24, marginBottom: 4 },
   bottomBtn: { paddingVertical: 12, paddingHorizontal: 20 },
   bottomBtnText: { color: 'rgba(157,78,221,0.6)', fontSize: 13, fontWeight: '600', letterSpacing: 1 },
-  historyBtnText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontWeight: '500', letterSpacing: 1 },
+  historyBtnText: { color: theme.textTertiary, fontSize: 13, fontWeight: '500', letterSpacing: 1 },
 });

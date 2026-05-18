@@ -21,6 +21,7 @@ export default function PRScreen({ navigation, route }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const { restTimer, addSetToSession } = useSettings();
   const theme = useTheme();
+  const styles = getStyles(theme);
 
   const duration = restTimer || 90;
   const endTimeRef = useRef(Date.now() + duration * 1000);
@@ -207,35 +208,35 @@ export default function PRScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010' },
   container: { flex: 1, paddingHorizontal: 28, paddingTop: 80, paddingBottom: 40, alignItems: 'center' },
   badge: { marginBottom: 28 },
   badgeInner: { paddingHorizontal: 28, paddingVertical: 14, borderRadius: 100 },
-  badgeText: { color: 'white', fontSize: 12, fontWeight: '800', letterSpacing: 3 },
+  badgeText: { color: theme.text, fontSize: 12, fontWeight: '800', letterSpacing: 3 },
   statsRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 24, paddingVertical: 24, paddingHorizontal: 40, gap: 40, marginBottom: 28, width: '100%', justifyContent: 'center' },
   statBox: { alignItems: 'center' },
-  statVal: { fontSize: 42, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
-  statLbl: { fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: '500', letterSpacing: 1, marginTop: 4 },
+  statVal: { fontSize: 42, fontWeight: '900', color: theme.text, letterSpacing: -1 },
+  statLbl: { fontSize: 12, color: theme.textSecondary, fontWeight: '500', letterSpacing: 1, marginTop: 4 },
   statDivider: { width: 1, height: 50, backgroundColor: 'rgba(255,255,255,0.08)' },
   msgContainer: { alignItems: 'center', paddingHorizontal: 20, width: '100%' },
-  msgTitle: { fontSize: 24, fontWeight: '800', color: '#ffffff', letterSpacing: -0.5, textAlign: 'center', marginBottom: 8 },
-  msgSub: { fontSize: 13, color: 'rgba(255,255,255,0.3)', textAlign: 'center', lineHeight: 20, fontWeight: '400' },
+  msgTitle: { fontSize: 24, fontWeight: '800', color: theme.text, letterSpacing: -0.5, textAlign: 'center', marginBottom: 8 },
+  msgSub: { fontSize: 13, color: theme.textSecondary, textAlign: 'center', lineHeight: 20, fontWeight: '400' },
   prTitle: { fontSize: 32, fontWeight: '900', color: '#f0a500', letterSpacing: -1, textAlign: 'center', marginBottom: 10, lineHeight: 38 },
   timerContainer: { width: '100%', marginBottom: 20 },
   timerHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  timerLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.25)' },
-  skipText: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.25)' },
+  timerLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: theme.textTertiary },
+  skipText: { fontSize: 13, fontWeight: '600', color: theme.textTertiary },
   progressBar: { height: 3, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 2, marginBottom: 10, overflow: 'hidden', width: '100%' },
   progressFill: { height: '100%', borderRadius: 2 },
   timerCount: { fontSize: 32, fontWeight: '900', letterSpacing: -1, textAlign: 'center' },
   continueBtn: { width: '100%', paddingVertical: 22, borderRadius: 18, alignItems: 'center', marginBottom: 12 },
-  continueBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
+  continueBtnText: { color: theme.text, fontSize: 15, fontWeight: '800', letterSpacing: 3 },
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
-  doneBtnText: { color: 'rgba(255,255,255,0.3)', fontSize: 14, fontWeight: '500' },
+  doneBtnText: { color: theme.textSecondary, fontSize: 14, fontWeight: '500' },
   finishBtn: { paddingVertical: 10, alignItems: 'center' },
-  finishBtnText: { color: 'rgba(255,255,255,0.15)', fontSize: 13, fontWeight: '500', letterSpacing: 0.5 },
+  finishBtnText: { color: theme.textTertiary, fontSize: 13, fontWeight: '500', letterSpacing: 0.5 },
   timerAdjust: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   adjustBtn: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
-  adjustBtnText: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '700' },
+  adjustBtnText: { color: theme.textSecondary, fontSize: 12, fontWeight: '700' },
 });

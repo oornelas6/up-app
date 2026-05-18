@@ -9,6 +9,7 @@ const { width } = Dimensions.get('window');
 
 export default function SummaryScreen({ navigation, route }) {
   const theme = useTheme();
+  const styles = getStyles(theme);
 const rawParams = route.params || {};
 const sets = Array.isArray(rawParams.sets) ? rawParams.sets : [];
 const split = rawParams.split || 'Workout';
@@ -193,7 +194,7 @@ const duration = rawParams.duration || 0;
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#0a000f' },
   glow: {
     position: 'absolute',
@@ -205,27 +206,27 @@ const styles = StyleSheet.create({
   container: { paddingHorizontal: 28, paddingTop: 80, paddingBottom: 40 },
   header: { alignItems: 'center', marginBottom: 32 },
   completedLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 4, color: '#9d4edd', marginBottom: 12 },
-  splitTitle: { fontSize: 48, fontWeight: '900', color: '#ffffff', letterSpacing: -1, textAlign: 'center', marginBottom: 8 },
-  duration: { fontSize: 14, color: 'rgba(255,255,255,0.3)', fontWeight: '500', letterSpacing: 1 },
+  splitTitle: { fontSize: 48, fontWeight: '900', color: theme.text, letterSpacing: -1, textAlign: 'center', marginBottom: 8 },
+  duration: { fontSize: 14, color: theme.textSecondary, fontWeight: '500', letterSpacing: 1 },
   prBanner: { marginBottom: 24, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(240,165,0,0.3)' },
   prBannerGradient: { paddingVertical: 14, alignItems: 'center' },
   prBannerText: { fontSize: 13, fontWeight: '800', color: '#f0a500', letterSpacing: 2 },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 32 },
   statBox: { flex: 1, minWidth: '45%', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 20, paddingVertical: 24, alignItems: 'center' },
-  statVal: { fontSize: 40, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
-  statLbl: { fontSize: 10, color: 'rgba(255,255,255,0.25)', fontWeight: '700', letterSpacing: 2, marginTop: 4 },
-  sectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.25)', marginBottom: 12 },
+  statVal: { fontSize: 40, fontWeight: '900', color: theme.text, letterSpacing: -1 },
+  statLbl: { fontSize: 10, color: theme.textTertiary, fontWeight: '700', letterSpacing: 2, marginTop: 4 },
+  sectionLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: theme.textTertiary, marginBottom: 12 },
   exerciseRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 14, padding: 16, marginBottom: 8 },
   exerciseRowPR: { borderColor: 'rgba(240,165,0,0.3)', backgroundColor: 'rgba(240,165,0,0.05)' },
   exerciseLeft: { flex: 1 },
   shareBtn: { paddingVertical: 18, borderRadius: 18, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(157,78,221,0.4)', backgroundColor: 'rgba(157,78,221,0.08)' },
   shareBtnText: { color: '#9d4edd', fontSize: 15, fontWeight: '700', letterSpacing: 2 },
-  exerciseName: { fontSize: 15, fontWeight: '700', color: '#ffffff', marginBottom: 3 },
-  exerciseMeta: { fontSize: 12, color: 'rgba(255,255,255,0.25)', fontWeight: '400' },
+  exerciseName: { fontSize: 15, fontWeight: '700', color: theme.text, marginBottom: 3 },
+  exerciseMeta: { fontSize: 12, color: theme.textTertiary, fontWeight: '400' },
   prBadge: { backgroundColor: 'rgba(240,165,0,0.15)', borderWidth: 1, borderColor: 'rgba(240,165,0,0.4)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
   prBadgeText: { fontSize: 11, fontWeight: '800', color: '#f0a500', letterSpacing: 1 },
   msgBox: { backgroundColor: 'rgba(123,44,191,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.15)', borderRadius: 16, padding: 20, marginTop: 8, marginBottom: 32 },
-  msgText: { fontSize: 15, color: 'rgba(255,255,255,0.4)', textAlign: 'center', lineHeight: 24, fontWeight: '400', fontStyle: 'italic' },
+  msgText: { fontSize: 15, color: theme.textSecondary, textAlign: 'center', lineHeight: 24, fontWeight: '400', fontStyle: 'italic' },
   doneBtn: { paddingVertical: 22, borderRadius: 18, alignItems: 'center' },
-  doneBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
+  doneBtnText: { color: theme.text, fontSize: 15, fontWeight: '800', letterSpacing: 3 },
 });

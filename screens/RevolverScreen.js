@@ -106,6 +106,7 @@ export default function RevolverScreen({ navigation, route }) {
   const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
   const unit = isKg ? 'kg' : 'lbs';
   const theme = useTheme();
+  const styles = getStyles(theme);
   const selectedWeight = WEIGHTS[weightIdx];
   const selectedReps = REPS[repsIdx];
   const [suggestion, setSuggestion] = useState(null);
@@ -331,34 +332,34 @@ const lastSet = await getLastSet(userId, exercise);
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010' },
   container: { flex: 1, paddingHorizontal: 28, paddingTop: 64, paddingBottom: 40 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },
-  logo: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: 4 },
-  exName: { fontSize: 26, fontWeight: '800', color: '#ffffff', letterSpacing: -0.5, marginBottom: 4 },
+  back: { color: theme.textSecondary, fontSize: 15, fontWeight: '600' },
+  logo: { fontSize: 26, fontWeight: '900', color: theme.text, letterSpacing: 4 },
+  exName: { fontSize: 26, fontWeight: '800', color: theme.text, letterSpacing: -0.5, marginBottom: 4 },
   setRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
   setLabel: { fontSize: 12, fontWeight: '700', letterSpacing: 3, color: '#9d4edd' },
   unitToggle: { backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.3)', borderRadius: 100, paddingHorizontal: 14, paddingVertical: 6 },
   unitToggleText: { color: '#9d4edd', fontSize: 12, fontWeight: '800', letterSpacing: 2 },
   selectedDisplay: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 20, paddingVertical: 16, marginBottom: 16, gap: 32 },
   selectedItem: { alignItems: 'center' },
-  selectedValue: { fontSize: 36, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
-  selectedUnit: { fontSize: 11, color: 'rgba(255,255,255,0.3)', fontWeight: '600', letterSpacing: 1, marginTop: 2 },
+  selectedValue: { fontSize: 36, fontWeight: '900', color: theme.text, letterSpacing: -1 },
+  selectedUnit: { fontSize: 11, color: theme.textSecondary, fontWeight: '600', letterSpacing: 1, marginTop: 2 },
   selectedDivider: { width: 1, height: 40, backgroundColor: 'rgba(255,255,255,0.08)' },
   wheelsRow: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.02)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.15)', borderRadius: 24, overflow: 'hidden' },
   wheelContainer: { flex: 1, alignItems: 'center', paddingTop: 12 },
-  wheelLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: 'rgba(255,255,255,0.2)', marginBottom: 4 },
+  wheelLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 3, color: theme.textTertiary, marginBottom: 4 },
   wheelWrapper: { width: '100%', position: 'relative' },
   wheelItem: { height: ITEM_HEIGHT, justifyContent: 'center', alignItems: 'center' },
-  wheelText: { color: '#ffffff', letterSpacing: -0.5 },
+  wheelText: { color: theme.text, letterSpacing: -0.5 },
   selectorTop: { position: 'absolute', top: ITEM_HEIGHT * 2, left: 8, right: 8, height: 1, backgroundColor: 'rgba(157,78,221,0.3)' },
   selectorBottom: { position: 'absolute', top: ITEM_HEIGHT * 3, left: 8, right: 8, height: 1, backgroundColor: 'rgba(157,78,221,0.3)' },
   wheelDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.06)', marginVertical: 16 },
   logBtn: { paddingVertical: 22, borderRadius: 18, alignItems: 'center', marginBottom: 12, borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)' },
-  logBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
-  logBtnSub: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '400' },
+  logBtnText: { color: theme.text, fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 4 },
+  logBtnSub: { color: theme.textSecondary, fontSize: 12, fontWeight: '400' },
 
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
   suggestionCard: { flexDirection: 'row', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.25)', borderRadius: 16, paddingVertical: 14, paddingHorizontal: 18, marginBottom: 14, alignItems: 'center' },
@@ -366,17 +367,17 @@ const styles = StyleSheet.create({
   suggestionRight: { flex: 1, alignItems: 'flex-end' },
   suggestionDivider: { width: 1, height: 40, backgroundColor: 'rgba(157,78,221,0.2)', marginHorizontal: 16 },
   suggestionLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: 'rgba(157,78,221,0.5)', marginBottom: 4 },
-  suggestionMain: { fontSize: 16, fontWeight: '800', color: '#ffffff', letterSpacing: -0.3 },
-  suggestionRM: { fontSize: 10, color: 'rgba(255,255,255,0.25)', fontWeight: '500', marginTop: 2 },
+  suggestionMain: { fontSize: 16, fontWeight: '800', color: theme.text, letterSpacing: -0.3 },
+  suggestionRM: { fontSize: 10, color: theme.textTertiary, fontWeight: '500', marginTop: 2 },
   weightModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' },
   weightModalBox: { backgroundColor: '#1a0035', borderRadius: 24, padding: 28, width: '80%', alignItems: 'center' },
-  weightModalTitle: { fontSize: 16, fontWeight: '700', color: '#ffffff', marginBottom: 16, letterSpacing: 1 },
-  weightModalInput: { fontSize: 48, fontWeight: '900', color: '#ffffff', textAlign: 'center', borderBottomWidth: 2, borderBottomColor: '#7b2cbf', paddingBottom: 8, width: '100%', marginBottom: 8 },
-  weightModalUnit: { fontSize: 14, color: 'rgba(255,255,255,0.3)', marginBottom: 24 },
+  weightModalTitle: { fontSize: 16, fontWeight: '700', color: theme.text, marginBottom: 16, letterSpacing: 1 },
+  weightModalInput: { fontSize: 48, fontWeight: '900', color: theme.text, textAlign: 'center', borderBottomWidth: 2, borderBottomColor: '#7b2cbf', paddingBottom: 8, width: '100%', marginBottom: 8 },
+  weightModalUnit: { fontSize: 14, color: theme.textSecondary, marginBottom: 24 },
   weightModalBtn: { backgroundColor: '#7b2cbf', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 14, marginBottom: 12 },
-  weightModalBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 2 },
-  weightModalCancel: { color: 'rgba(255,255,255,0.3)', fontSize: 14 },
+  weightModalBtnText: { color: theme.text, fontSize: 15, fontWeight: '800', letterSpacing: 2 },
+  weightModalCancel: { color: theme.textSecondary, fontSize: 14 },
   oneRM: { fontSize: 11, color: 'rgba(157,78,221,0.5)', fontWeight: '600', letterSpacing: 0.5, marginTop: 4 },
   suggestionTarget: { fontSize: 16, fontWeight: '800', color: '#9d4edd', letterSpacing: -0.3 },
-  doneBtnText: { color: 'rgba(255,255,255,0.2)', fontSize: 13, fontWeight: '500', letterSpacing: 1 },
+  doneBtnText: { color: theme.textTertiary, fontSize: 13, fontWeight: '500', letterSpacing: 1 },
 });
