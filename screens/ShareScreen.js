@@ -239,7 +239,7 @@ export default function ShareScreen({ navigation, route }) {
       <LinearGradient colors={['#0d0020', '#080010']} style={StyleSheet.absoluteFillObject} />
 
       {/* Hidden capture */}
-      <ViewShot ref={cardRef} options={{ format: 'png', quality: 1.0 }}
+      <ViewShot ref={cardRef} options={{ format: 'png', quality: 1.0, result: 'tmpfile' }}
         style={{ position: 'absolute', top: -9999, left: 24, width: CARD_WIDTH }}>
         <ActiveCaptureCard />
       </ViewShot>
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   recapHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 },
   recapDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginBottom: 4 },
   recapSplit: { fontSize: 72, fontWeight: '900', color: '#ffffff', letterSpacing: -3, lineHeight: 68, marginTop: 8 },
-  recapLogo: { width: 38, height: 38, opacity: 0.85 },
+  recapLogo: { width: 52, height: 52, opacity: 0.9 },
   recapGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
   recapGridItem: { width: '47%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, padding: 16 },
   recapGridVal: { fontSize: 28, fontWeight: '900', color: '#ffffff', letterSpacing: -0.5, marginBottom: 3 },
@@ -326,14 +326,14 @@ const styles = StyleSheet.create({
   recapPillText: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
   recapFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 },
   recapPRBadge: { fontSize: 11, color: '#f0a500', fontWeight: '700' },
-  recapSlogan: { fontSize: 15, fontWeight: '800', color: 'rgba(157,78,221,0.6)', letterSpacing: 2 },
+  recapSlogan: { fontSize: 20, fontWeight: '900', color: 'rgba(157,78,221,0.7)', letterSpacing: 2 },
 
   // ── PR card
   prCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, minHeight: 360, padding: 24 },
   prGlowOrb: { position: 'absolute', width: 260, height: 260, borderRadius: 130, backgroundColor: 'rgba(123,44,191,0.3)', top: 80, right: -70 },
   prTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
   prDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(224,170,255,0.6)' },
-  prLogo: { width: 38, height: 38, opacity: 0.85 },
+  prLogo: { width: 52, height: 52, opacity: 0.9 },
   prHero: { flex: 1, justifyContent: 'center', marginBottom: 32 },
   prBadgeRow: { marginBottom: 12 },
   prBadgeLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 3, color: '#f0a500' },
@@ -342,33 +342,33 @@ const styles = StyleSheet.create({
   prExercise: { fontSize: 12, fontWeight: '500', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 },
   prBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   prSplit: { fontSize: 13, fontWeight: '700', color: 'rgba(255,255,255,0.3)', letterSpacing: 1 },
-  prSlogan: { fontSize: 15, fontWeight: '800', color: 'rgba(224,170,255,0.65)', letterSpacing: 2 },
+  prSlogan: { fontSize: 20, fontWeight: '900', color: 'rgba(224,170,255,0.8)', letterSpacing: 2 },
 
   // ── MINIMAL card
   minimalCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, backgroundColor: '#f5f2ff' },
   minimalInner: { padding: 28, minHeight: 280, justifyContent: 'space-between' },
   minimalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   minimalDate: { fontSize: 11, fontWeight: '700', letterSpacing: 2, color: 'rgba(26,0,53,0.45)' },
-  minimalLogo: { width: 36, height: 36, opacity: 0.75 },
+  minimalLogo: { width: 52, height: 52, opacity: 0.85 },
   minimalCenter: { flex: 1, justifyContent: 'flex-start', paddingTop: 8 },
   minimalSplit: { fontSize: 72, fontWeight: '900', color: '#1a0035', letterSpacing: -3, lineHeight: 68, marginBottom: 24 },
   minimalLine: { height: 1, backgroundColor: 'rgba(26,0,53,0.07)', marginBottom: 20 },
   minimalStats: { fontSize: 15, fontWeight: '500', color: 'rgba(26,0,53,0.45)', letterSpacing: 0.3 },
   minimalBottom: { marginTop: 40, alignItems: 'flex-end' },
-  minimalSlogan: { fontSize: 15, fontWeight: '800', color: 'rgba(123,44,191,0.55)', letterSpacing: 2 },
+  minimalSlogan: { fontSize: 20, fontWeight: '900', color: 'rgba(123,44,191,0.65)', letterSpacing: 2 },
 
   // ── CLEAR card
   clearCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, backgroundColor: 'transparent', borderWidth: 0 },
   clearInner: { padding: 28, minHeight: 280, justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.35)', borderRadius: 24 },
   clearTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 },
   clearDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: '#ffffff' },
-  clearLogo: { width: 36, height: 36, opacity: 1 },
+  clearLogo: { width: 52, height: 52, opacity: 1 },
   clearCenter: { flex: 1, justifyContent: 'center' },
   clearSplit: { fontSize: 52, fontWeight: '900', color: '#ffffff', letterSpacing: -1.5, lineHeight: 52, marginBottom: 14, textShadowColor: 'rgba(0,0,0,0.4)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 8 },
   clearStats: { fontSize: 15, fontWeight: '600', color: '#ffffff', letterSpacing: 0.3, marginBottom: 8, textShadowColor: 'rgba(0,0,0,0.3)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 6 },
   clearPR: { fontSize: 12, fontWeight: '700', color: '#f0a500', letterSpacing: 1 },
   clearBottom: { marginTop: 40, alignItems: 'flex-end' },
-  clearSlogan: { fontSize: 15, fontWeight: '800', color: 'rgba(255,255,255,0.9)', letterSpacing: 2 },
+  clearSlogan: { fontSize: 20, fontWeight: '900', color: '#ffffff', letterSpacing: 2 },
 
   // Selector
   selectorRow: { flexDirection: 'row', justifyContent: 'center', gap: 24, marginBottom: 32 },
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   secondaryBtnText: { color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: '600', letterSpacing: 0.5 },
   sharedStrip: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, paddingTop: 16, marginTop: 16 },
   sharedStat: { flex: 1, alignItems: 'center' },
-  sharedVal: { fontSize: 16, fontWeight: '900', color: '#ffffff', letterSpacing: -0.3 },
-  sharedLbl: { fontSize: 7, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginTop: 3 },
+  sharedVal: { fontSize: 20, fontWeight: '900', color: '#ffffff', letterSpacing: -0.3 },
+  sharedLbl: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginTop: 4 },
   sharedDiv: { width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.08)' },
 });
