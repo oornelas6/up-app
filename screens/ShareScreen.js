@@ -206,10 +206,15 @@ export default function ShareScreen({ navigation, route }) {
         <View style={styles.minimalCenter}>
           <Text style={styles.minimalSplit}>{split}</Text>
           <View style={styles.minimalLine} />
-          <Text style={styles.minimalStats}>
-            {totalSets} sets  ·  {formatVolume(totalVolume)} lbs
-            {formatDuration(duration) ? `  ·  ${formatDuration(duration)}` : ''}
-          </Text>
+          <View style={[styles.sharedStrip, { borderTopColor: 'rgba(26,0,53,0.08)', marginTop: 0 }]}>
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#1a0035' }]}>{totalSets}</Text><Text style={[styles.sharedLbl, { color: 'rgba(26,0,53,0.35)' }]}>SETS</Text></View>
+            <View style={[styles.sharedDiv, { backgroundColor: 'rgba(26,0,53,0.1)' }]} />
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#1a0035' }]}>{totalReps}</Text><Text style={[styles.sharedLbl, { color: 'rgba(26,0,53,0.35)' }]}>REPS</Text></View>
+            <View style={[styles.sharedDiv, { backgroundColor: 'rgba(26,0,53,0.1)' }]} />
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#1a0035' }]}>{formatVolume(totalVolume)}</Text><Text style={[styles.sharedLbl, { color: 'rgba(26,0,53,0.35)' }]}>VOLUME</Text></View>
+            <View style={[styles.sharedDiv, { backgroundColor: 'rgba(26,0,53,0.1)' }]} />
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#1a0035' }]}>{uniqueExercises.length}</Text><Text style={[styles.sharedLbl, { color: 'rgba(26,0,53,0.35)' }]}>EXERCISES</Text></View>
+          </View>
         </View>
 
         <View style={styles.minimalBottom}>
@@ -231,9 +236,15 @@ export default function ShareScreen({ navigation, route }) {
 
         <View style={styles.clearCenter}>
           <Text style={styles.clearSplit}>{split}</Text>
-          <Text style={styles.clearStats}>
-            {totalSets} sets  ·  {formatVolume(totalVolume)} lbs
-          </Text>
+          <View style={[styles.sharedStrip, { borderTopColor: 'rgba(255,255,255,0.2)', marginTop: 12 }]}>
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#ffffff' }]}>{totalSets}</Text><Text style={[styles.sharedLbl, { color: 'rgba(255,255,255,0.7)' }]}>SETS</Text></View>
+            <View style={[styles.sharedDiv, { backgroundColor: 'rgba(255,255,255,0.2)' }]} />
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#ffffff' }]}>{totalReps}</Text><Text style={[styles.sharedLbl, { color: 'rgba(255,255,255,0.7)' }]}>REPS</Text></View>
+            <View style={[styles.sharedDiv, { backgroundColor: 'rgba(255,255,255,0.2)' }]} />
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#ffffff' }]}>{formatVolume(totalVolume)}</Text><Text style={[styles.sharedLbl, { color: 'rgba(255,255,255,0.7)' }]}>VOLUME</Text></View>
+            <View style={[styles.sharedDiv, { backgroundColor: 'rgba(255,255,255,0.2)' }]} />
+            <View style={styles.sharedStat}><Text style={[styles.sharedVal, { color: '#ffffff' }]}>{uniqueExercises.length}</Text><Text style={[styles.sharedLbl, { color: 'rgba(255,255,255,0.7)' }]}>EXERCISES</Text></View>
+          </View>
           {isPRSession && <Text style={styles.clearPR}>{prs} PR{prs > 1 ? 's' : ''} today</Text>}
         </View>
 
