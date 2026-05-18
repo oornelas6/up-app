@@ -161,7 +161,7 @@ export default function PRScreen({ navigation, route }) {
           </View>
 
           <Text style={[styles.timerCount, {
-            color: timerDone ? '#4caf50' : timeLeft <= 10 ? '#f0a500' : '#ffffff'
+            color: timerDone ? '#4caf50' : timeLeft <= 10 ? '#f0a500' : theme.text
           }]}>
             {timerDone ? 'REST DONE' : formatTime(timeLeft)}
           </Text>

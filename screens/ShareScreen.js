@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView, Alert, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView, Alert, Image, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useRef } from 'react';
 import ViewShot from 'react-native-view-shot';
@@ -11,7 +11,8 @@ const CARD_WIDTH = width - 48;
 
 export default function ShareScreen({ navigation, route }) {
   const { sets = [], split = 'Workout', duration = 0 } = route.params || {};
-  const [activeCard, setActiveCard] = useState(3); // default to Transparent
+  const [activeCard, setActiveCard] = useState(3);
+  const flatListRef = useRef(null);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   const cardRef = useRef(null);
@@ -266,14 +267,33 @@ export default function ShareScreen({ navigation, route }) {
           </ViewShot>
         )}
 
-        {/* Visible card with capture ref for non-transparent cards */}
-        {!isTransparent ? (
-          <ViewShot ref={cardRef} options={{ format: 'png', quality: 1.0 }}>
-            <ActiveCardComponent />
-          </ViewShot>
-        ) : (
-          <ActiveCardComponent />
-        )}
+        {/* Swipeable cards */}
+        <FlatList
+          ref={flatListRef}
+          data={CARD_COMPONENTS}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          initialScrollIndex={3}
+          getItemLayout={(_, index) => ({ length: CARD_WIDTH + 48, offset: (CARD_WIDTH + 48) * index, index })}
+          onMomentumScrollEnd={(e) => {
+            const index = Math.round(e.nativeEvent.contentOffset.x / (CARD_WIDTH + 48));
+            setActiveCard(index);
+          }}
+          contentContainerStyle={{ paddingHorizontal: 24 }}
+          keyExtractor={(_, i) => i.toString()}
+          renderItem={({ item: CardComponent, index }) => (
+            <View style={{ width: CARD_WIDTH + 48, paddingHorizontal: 0, paddingRight: 0 }}>
+              {index !== 3 ? (
+                <ViewShot ref={activeCard === index ? cardRef : null} options={{ format: 'png', quality: 1.0 }}>
+                  <CardComponent />
+                </ViewShot>
+              ) : (
+                <CardComponent />
+              )}
+            </View>
+          )}
+        />
 
         {/* Transparent card hint */}
         {isTransparent && (
@@ -282,10 +302,13 @@ export default function ShareScreen({ navigation, route }) {
           </View>
         )}
 
-        {/* Card selector */}
+        {/* Dot indicators */}
         <View style={styles.selectorRow}>
           {CARDS.map((name, i) => (
-            <TouchableOpacity key={i} style={styles.selectorBtn} onPress={() => setActiveCard(i)}>
+            <TouchableOpacity key={i} style={styles.selectorBtn} onPress={() => {
+              setActiveCard(i);
+              flatListRef.current?.scrollToIndex({ index: i, animated: true });
+            }}>
               <View style={[styles.selectorDot, activeCard === i && styles.selectorDotActive]} />
               <Text style={[styles.selectorLabel, activeCard === i && styles.selectorLabelActive]}>{name}</Text>
             </TouchableOpacity>
@@ -307,7 +330,7 @@ export default function ShareScreen({ navigation, route }) {
         )}
         {isTransparent && (
           <TouchableOpacity style={styles.secondaryBtn} onPress={handleSave} activeOpacity={0.8}>
-            <Text style={styles.secondaryBtnText}>{saved ? '✓ Saved' : 'Save to camera roll instead'}</Text>
+            <Text style={styles.secondaryBtnText}>{saved ? '✓ Saved' : 'Save to camera roll'}</Text>
           </TouchableOpacity>
         )}
 
