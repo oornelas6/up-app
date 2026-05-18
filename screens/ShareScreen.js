@@ -70,13 +70,19 @@ export default function ShareScreen({ navigation, route }) {
     <View style={[styles.recapCard, forCapture && { margin: 0 }]}>
       <LinearGradient colors={['#1a0035', '#080010']} style={StyleSheet.absoluteFillObject} borderRadius={24} />
 
+      {/* Large watermark logo */}
+      <Image
+        source={require('../assets/logo.png')}
+        style={styles.recapWatermark}
+        resizeMode="contain"
+      />
+
       {/* Header */}
       <View style={styles.recapHeader}>
         <View>
           <Text style={styles.recapDate}>{today}</Text>
           <Text style={styles.recapSplit}>{split} Day</Text>
         </View>
-        <Image source={require('../assets/logo.png')} style={[styles.recapLogo, { tintColor: '#ffffff' }]} resizeMode="contain" />
       </View>
 
 
@@ -317,6 +323,7 @@ const styles = StyleSheet.create({
   recapDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginBottom: 4 },
   recapSplit: { fontSize: 72, fontWeight: '900', color: '#ffffff', letterSpacing: -3, lineHeight: 68, marginTop: 8 },
   recapLogo: { width: 52, height: 52, opacity: 0.9 },
+  recapWatermark: { position: 'absolute', width: '95%', height: '95%', top: '2.5%', right: '-15%', tintColor: '#ffffff', opacity: 0.04 },
   recapGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
   recapGridItem: { width: '47%', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, padding: 16 },
   recapGridVal: { fontSize: 28, fontWeight: '900', color: '#ffffff', letterSpacing: -0.5, marginBottom: 3 },
