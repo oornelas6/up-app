@@ -29,7 +29,6 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
-    AsyncStorage.removeItem("onboarding_complete"); // TEMP - remove after testing
     AsyncStorage.getItem('onboarding_complete').then(val => {
       setOnboardingDone(val === 'true');
     });
