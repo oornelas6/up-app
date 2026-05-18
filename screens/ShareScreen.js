@@ -280,7 +280,7 @@ export default function ShareScreen({ navigation, route }) {
           snapToAlignment="center"
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
-          contentOffset={{ x: width * 3, y: 0 }}
+          onLayout={() => setTimeout(() => flatListRef.current?.scrollToIndex({ index: 3, animated: false }), 50)}
           onMomentumScrollEnd={(e) => {
             const index = Math.round(e.nativeEvent.contentOffset.x / width);
             setActiveCard(index);
