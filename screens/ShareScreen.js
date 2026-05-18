@@ -240,7 +240,7 @@ export default function ShareScreen({ navigation, route }) {
   const primaryAction = isTransparent ? handleCopyImage : handleSave;
   const primaryLabel = isTransparent
     ? (copied ? '✓ COPIED' : 'COPY TO CLIPBOARD')
-    : (saved ? '✓ SAVED TO CAMERA ROLL' : 'SAVE TO CAMERA ROLL');
+    : (saved ? '✓ SAVED' : 'SAVE TO CAMERA ROLL');
   const primaryColors = isTransparent
     ? (copied ? ['#4caf50', '#2e7d32'] : ['#ffffff', '#e8e0ff'])
     : ['#7b2cbf', '#4a0080'];
