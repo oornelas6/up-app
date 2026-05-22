@@ -57,8 +57,7 @@ export default function ShareScreen({ navigation, route }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch (err) {
-      // In Expo Go, image copy isn't supported — save instead
-      await handleSave();
+      Alert.alert('Copy failed', 'Image copy is not supported on this device. Use Save to Camera Roll instead.');
     }
   };
 

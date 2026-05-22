@@ -41,8 +41,8 @@ const getLastSet = async (userId, exercise) => {
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 const WHEEL_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
-const WEIGHTS_LBS = Array.from({ length: 161 }, (_, i) => i * 2.5);
-const WEIGHTS_KG = Array.from({ length: 121 }, (_, i) => i * 1.25);
+const WEIGHTS_LBS = Array.from({ length: 601 }, (_, i) => i * 2.5);
+const WEIGHTS_KG = Array.from({ length: 561 }, (_, i) => i * 1.25);
 const REPS = Array.from({ length: 30 }, (_, i) => i + 1);
 
 const WheelPicker = ({ data, unit, selectedIndex, onIndexChange, styles }) => {
@@ -102,6 +102,8 @@ export default function RevolverScreen({ navigation, route }) {
   const { isKg, setIsKg, restTimer, sessionSets } = useSettings();
   const [showWeightInput, setShowWeightInput] = useState(false);
   const [weightInputVal, setWeightInputVal] = useState('');
+  const [showRepsInput, setShowRepsInput] = useState(false);
+  const [repsInputVal, setRepsInputVal] = useState('');
   const WEIGHTS = isKg ? WEIGHTS_KG : WEIGHTS_LBS;
   const unit = isKg ? 'kg' : 'lbs';
   const fineStep = isKg ? 0.25 : 0.5;
@@ -278,10 +280,16 @@ export default function RevolverScreen({ navigation, route }) {
             </View>
           </View>
           <View style={styles.selectedDivider} />
-          <View style={styles.selectedItem}>
+          <TouchableOpacity
+            style={styles.selectedItem}
+            onPress={() => {
+              setRepsInputVal(String(selectedReps));
+              setShowRepsInput(true);
+            }}
+          >
             <Text style={styles.selectedValue}>{selectedReps}</Text>
-            <Text style={styles.selectedUnit}>reps</Text>
-          </View>
+            <Text style={styles.selectedUnit}>reps ✎</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.wheelsRow}>
@@ -325,6 +333,43 @@ export default function RevolverScreen({ navigation, route }) {
         <TouchableOpacity style={styles.doneBtn} onPress={() => navigation.navigate('Workout', { split })}>
           <Text style={styles.doneBtnText}>Done with Exercise</Text>
         </TouchableOpacity>
+
+        {/* Reps input modal */}
+        <Modal visible={showRepsInput} transparent animationType="fade">
+          <View style={styles.weightModalOverlay}>
+            <View style={[styles.weightModalBox, { backgroundColor: theme.bgSecondary }]}>
+              <Text style={styles.weightModalTitle}>Enter Reps</Text>
+              <TextInput
+                style={styles.weightModalInput}
+                value={repsInputVal}
+                onChangeText={setRepsInputVal}
+                keyboardType="number-pad"
+                autoFocus
+                selectTextOnFocus
+              />
+              <Text style={styles.weightModalUnit}>reps</Text>
+              <TouchableOpacity
+                style={styles.weightModalBtn}
+                onPress={() => {
+                  const val = parseInt(repsInputVal);
+                  if (!isNaN(val) && val > 0 && val <= 30) {
+                    setRepsIdx(REPS.findIndex(r => r === Math.min(val, 30)) !== -1
+                      ? REPS.findIndex(r => r === Math.min(val, 30))
+                      : REPS.length - 1);
+                  }
+                  setShowRepsInput(false);
+                }}
+              >
+                <LinearGradient colors={theme.gradientBtn} style={styles.weightModalBtnGradient}>
+                  <Text style={[styles.weightModalBtnText, { color: theme.btnText }]}>SET</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowRepsInput(false)}>
+                <Text style={styles.weightModalCancel}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
         <Modal visible={showWeightInput} transparent animationType="fade">
           <View style={styles.weightModalOverlay}>

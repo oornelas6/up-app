@@ -98,7 +98,7 @@ export default function WorkoutScreen({ navigation, route }) {
   const [customExercise, setCustomExercise] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loggedExercises, setLoggedExercises] = useState([]);
-  const { sessionSets, clearSession } = useSettings();
+  const { sessionSets, clearSession, addSetToSession } = useSettings();
   const [sessionStartTime] = useState(Date.now());
   const [elapsedTime, setElapsedTime] = useState(0);
   const timerRef = useRef(null);
@@ -192,6 +192,36 @@ useEffect(() => {
               autoCorrect={false}
             />
           </View>
+
+          {/* Logged this session */}
+          {sessionSets.length > 0 && (
+            <View style={[styles.loggedBanner, { backgroundColor: theme.bgCard, borderColor: theme.bgCardBorder }]}>
+              <Text style={[styles.loggedTitle, { color: theme.textTertiary }]}>LOGGED THIS SESSION</Text>
+              <View style={styles.loggedList}>
+                {[...new Map(sessionSets.map(s => [s.exercise, s])).values()].map((s, i) => (
+                  <View key={i} style={styles.loggedItem}>
+                    <Text style={[styles.loggedEx, { color: theme.textSecondary }]}>{s.exercise}</Text>
+                    <Text style={[styles.loggedMeta, { color: theme.textTertiary }]}>{s.weight} {s.unit} × {s.reps}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Logged this session */}
+          {sessionSets.length > 0 && (
+            <View style={[styles.loggedBanner, { backgroundColor: theme.bgCard, borderColor: theme.bgCardBorder }]}>
+              <Text style={[styles.loggedTitle, { color: theme.textTertiary }]}>LOGGED THIS SESSION</Text>
+              <View style={styles.loggedList}>
+                {[...new Map(sessionSets.map(s => [s.exercise, s])).values()].map((s, i) => (
+                  <View key={i} style={styles.loggedItem}>
+                    <Text style={[styles.loggedEx, { color: theme.textSecondary }]}>{s.exercise}</Text>
+                    <Text style={[styles.loggedMeta, { color: theme.textTertiary }]}>{s.weight} {s.unit} × {s.reps}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 8 }}>
             {exercises
@@ -325,6 +355,18 @@ const styles = StyleSheet.create({
   customBtnText: { color: 'rgba(157,78,221,0.7)', fontSize: 14, fontWeight: '600', letterSpacing: 0.5 },
   finishBtn: { marginTop: 16, marginBottom: 8 },
   finishBtnGradient: { paddingVertical: 18, borderRadius: 18, alignItems: 'center' },
+  loggedBanner: { borderRadius: 14, borderWidth: 1, padding: 12, marginBottom: 8 },
+  loggedTitle: { fontSize: 9, fontWeight: '700', letterSpacing: 2, marginBottom: 8 },
+  loggedList: { gap: 4 },
+  loggedItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  loggedEx: { fontSize: 12, fontWeight: '600' },
+  loggedMeta: { fontSize: 11, fontWeight: '400' },
+  loggedBanner: { borderRadius: 14, borderWidth: 1, padding: 12, marginBottom: 8 },
+  loggedTitle: { fontSize: 9, fontWeight: '700', letterSpacing: 2, marginBottom: 8 },
+  loggedList: { gap: 4 },
+  loggedItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  loggedEx: { fontSize: 12, fontWeight: '600' },
+  loggedMeta: { fontSize: 11, fontWeight: '400' },
   finishBtnText: { color: 'white', fontSize: 15, fontWeight: '800', letterSpacing: 3 },
   timerDisplay: { fontSize: 14, fontWeight: '700', color: 'rgba(157,78,221,0.7)', letterSpacing: 1 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
