@@ -9,6 +9,7 @@ const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
 
 export default function HistoryScreen({ navigation }) {
   const theme = useTheme();
+  const styles = getStyles(theme);
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -145,26 +146,26 @@ export default function HistoryScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme) => ({
   root: { flex: 1, backgroundColor: '#080010' },
   container: { flex: 1, paddingHorizontal: 24, paddingTop: 64 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 },
-  back: { color: 'rgba(255,255,255,0.4)', fontSize: 15, fontWeight: '600' },
-  logo: { fontSize: 26, fontWeight: '900', color: '#ffffff', letterSpacing: 4 },
-  title: { fontSize: 38, fontWeight: '900', color: '#ffffff', letterSpacing: -1 },
-  empty: { fontSize: 16, color: 'rgba(255,255,255,0.3)', marginTop: 40, textAlign: 'center' },
+  back: { color: theme.textSecondary, fontSize: 15, fontWeight: '600' },
+  logo: { fontSize: 26, fontWeight: '900', color: theme.text, letterSpacing: 4 },
+  title: { fontSize: 38, fontWeight: '900', color: theme.text, letterSpacing: -1 },
+  empty: { fontSize: 16, color: theme.textSecondary, marginTop: 40, textAlign: 'center' },
   sessionCard: { backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)', borderRadius: 20, padding: 20, marginBottom: 12 },
   sessionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  sessionDate: { fontSize: 16, fontWeight: '700', color: '#ffffff', marginBottom: 2 },
-  sessionSplit: { fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: '500' },
+  sessionDate: { fontSize: 16, fontWeight: '700', color: theme.text, marginBottom: 2 },
+  sessionSplit: { fontSize: 12, color: theme.textSecondary, fontWeight: '500' },
   prBadge: { backgroundColor: 'rgba(240,165,0,0.15)', borderWidth: 1, borderColor: 'rgba(240,165,0,0.3)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
   prBadgeText: { fontSize: 11, fontWeight: '700', color: '#f0a500' },
   sessionStats: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   sessionStat: { flex: 1, alignItems: 'center' },
-  sessionStatVal: { fontSize: 22, fontWeight: '800', color: '#ffffff', letterSpacing: -0.5 },
-  sessionStatLbl: { fontSize: 10, color: 'rgba(255,255,255,0.25)', fontWeight: '500', letterSpacing: 1, marginTop: 2 },
+  sessionStatVal: { fontSize: 22, fontWeight: '800', color: theme.text, letterSpacing: -0.5 },
+  sessionStatLbl: { fontSize: 10, color: theme.textTertiary, fontWeight: '500', letterSpacing: 1, marginTop: 2 },
   sessionStatDivider: { width: 1, height: 24, backgroundColor: 'rgba(255,255,255,0.06)' },
   exerciseList: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   exerciseTag: { backgroundColor: 'rgba(157,78,221,0.1)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.2)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
-  exerciseTagText: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
+  exerciseTagText: { fontSize: 11, color: theme.textSecondary, fontWeight: '500' },
 });

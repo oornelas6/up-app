@@ -209,19 +209,7 @@ useEffect(() => {
           )}
 
           {/* Logged this session */}
-          {sessionSets.length > 0 && (
-            <View style={[styles.loggedBanner, { backgroundColor: theme.bgCard, borderColor: theme.bgCardBorder }]}>
-              <Text style={[styles.loggedTitle, { color: theme.textTertiary }]}>LOGGED THIS SESSION</Text>
-              <View style={styles.loggedList}>
-                {[...new Map(sessionSets.map(s => [s.exercise, s])).values()].map((s, i) => (
-                  <View key={i} style={styles.loggedItem}>
-                    <Text style={[styles.loggedEx, { color: theme.textSecondary }]}>{s.exercise}</Text>
-                    <Text style={[styles.loggedMeta, { color: theme.textTertiary }]}>{s.weight} {s.unit} × {s.reps}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          )}
+
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 8 }}>
             {exercises
@@ -361,7 +349,6 @@ const styles = StyleSheet.create({
   loggedItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   loggedEx: { fontSize: 12, fontWeight: '600' },
   loggedMeta: { fontSize: 11, fontWeight: '400' },
-  loggedBanner: { borderRadius: 14, borderWidth: 1, padding: 12, marginBottom: 8 },
   loggedTitle: { fontSize: 9, fontWeight: '700', letterSpacing: 2, marginBottom: 8 },
   loggedList: { gap: 4 },
   loggedItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
