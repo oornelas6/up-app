@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useState } from 'react';
@@ -126,8 +126,8 @@ export default function WorkoutBuilderScreen({ navigation, route }) {
             <Logo size={36} />
           </View>
 
-          {/* Step 0 — Name */}
           {step === 0 && (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.step}>
               <Text style={[styles.eyebrow, { color: theme.accent }]}>NEW WORKOUT</Text>
               <Text style={[styles.title, { color: theme.text }]}>What are we{'\n'}calling this?</Text>
@@ -153,6 +153,7 @@ export default function WorkoutBuilderScreen({ navigation, route }) {
                 </LinearGradient>
               </TouchableOpacity>
             </View>
+            </TouchableWithoutFeedback>
           )}
 
           {/* Step 1 — Exercises */}

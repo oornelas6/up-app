@@ -63,13 +63,14 @@ export default function StreakScreen({ navigation, route }) {
   });
 
   const getCopy = () => {
-    if (streak === 0) return "Show up today.";
-    if (streak < 3) return "The work is adding up.";
-    if (streak < 7) return "You're building something real.";
-    if (streak < 14) return "Consistency is the differentiator.";
-    if (streak < 30) return "Most people never make it this far.";
-    if (streak < 60) return "This is who you are now.";
-    return "Rare.";
+    if (streak === 0) return { main: "Day one starts now.", sub: "Track your first workout to start your streak." };
+    if (streak === 1) return { main: "One down.", sub: "Come back tomorrow to keep it going." };
+    if (streak < 5) return { main: "Building momentum.", sub: "The best thing you can do for your body is be consistent." };
+    if (streak < 10) return { main: `${streak} days in.`, sub: "This is what showing up looks like." };
+    if (streak < 21) return { main: "Locked in.", sub: "Your body is adapting. Keep the pressure on." };
+    if (streak < 30) return { main: "This is a lifestyle.", sub: "Not a phase. Not a resolution. A lifestyle." };
+    if (streak < 60) return { main: "Built different.", sub: "Most people talk about it. You do it." };
+    return { main: `${streak} days.`, sub: "That number speaks for itself." };
   };
 
   return (
@@ -117,7 +118,8 @@ export default function StreakScreen({ navigation, route }) {
         </View>
 
         {/* Copy */}
-        <Text style={[styles.copy, { color: theme.text }]}>{getCopy()}</Text>
+        <Text style={[styles.copy, { color: theme.text }]}>{getCopy().main}</Text>
+        <Text style={[styles.copySub, { color: theme.textSecondary }]}>{getCopy().sub}</Text>
 
         {/* 7 day calendar */}
         <View style={[styles.calendar, { backgroundColor: theme.bgCard, borderColor: theme.bgCardBorder }]}>
@@ -154,7 +156,8 @@ const getStyles = (theme) => ({
   ringCenter: { position: 'absolute', alignItems: 'center' },
   streakNum: { fontSize: 72, fontWeight: '900', letterSpacing: -3, lineHeight: 72 },
   streakLabel: { fontSize: 11, fontWeight: '800', letterSpacing: 4, marginTop: 4 },
-  copy: { fontSize: 24, fontWeight: '800', letterSpacing: -0.5, textAlign: 'center', marginBottom: 36 },
+  copy: { fontSize: 26, fontWeight: '900', letterSpacing: -0.5, textAlign: 'center', marginBottom: 8 },
+  copySub: { fontSize: 14, fontWeight: '400', textAlign: 'center', lineHeight: 20, marginBottom: 36, paddingHorizontal: 8 },
   calendar: { width: '100%', borderRadius: 20, borderWidth: 1, padding: 20 },
   calendarLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 3, marginBottom: 16, textAlign: 'center' },
   daysRow: { flexDirection: 'row', justifyContent: 'space-between' },

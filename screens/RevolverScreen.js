@@ -280,7 +280,7 @@ export default function RevolverScreen({ navigation, route }) {
               }}
             >
               <Text style={styles.selectedValue}>{selectedWeight}</Text>
-              <Text style={styles.selectedUnit}>{unit} ✎</Text>
+              <Text style={styles.selectedUnit}>{unit}  <Text style={{fontSize: 14, color: theme.accent}}>✎</Text></Text>
             </TouchableOpacity>
             {/* Precision fine-tune buttons */}
             <View style={styles.fineTuneRow}>
@@ -308,7 +308,7 @@ export default function RevolverScreen({ navigation, route }) {
             }}
           >
             <Text style={styles.selectedValue}>{selectedReps}</Text>
-            <Text style={styles.selectedUnit}>reps ✎</Text>
+            <Text style={styles.selectedUnit}>reps  <Text style={{fontSize: 14, color: theme.accent}}>✎</Text></Text>
           </TouchableOpacity>
         </View>
 

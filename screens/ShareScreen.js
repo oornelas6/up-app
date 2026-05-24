@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
 
   // ── RECAP card
-  recapCard: { width: CARD_WIDTH, borderRadius: 24, padding: 24, overflow: 'hidden', marginBottom: 24, minHeight: 320 },
+  recapCard: { width: CARD_WIDTH, borderRadius: 24, padding: 22, overflow: 'hidden', marginBottom: 24, minHeight: 300 },
   recapHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 },
   recapDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginBottom: 4 },
   recapSplit: { fontSize: 72, fontWeight: '900', color: '#ffffff', letterSpacing: -3, lineHeight: 68, marginTop: 8 },
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   recapPillText: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
   recapFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 },
   recapPRBadge: { fontSize: 11, color: '#f0a500', fontWeight: '700' },
-  recapSlogan: { fontSize: 20, fontWeight: '900', color: 'rgba(157,78,221,0.7)', letterSpacing: 2 },
+  recapSlogan: { fontSize: 22, fontWeight: '900', color: 'rgba(157,78,221,0.8)', letterSpacing: 2 },
 
   // ── PR card
   prCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, minHeight: 360, padding: 24 },
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
 
   // ── MINIMAL card
   minimalCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, backgroundColor: '#f5f2ff' },
-  minimalInner: { padding: 28, minHeight: 280, justifyContent: 'space-between' },
+  minimalInner: { padding: 22, minHeight: 260, justifyContent: 'space-between' },
   minimalTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   minimalDate: { fontSize: 11, fontWeight: '700', letterSpacing: 2, color: 'rgba(26,0,53,0.45)' },
   minimalLogo: { width: 52, height: 52, opacity: 0.85 },
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
 
   // ── CLEAR card
   clearCard: { width: CARD_WIDTH, borderRadius: 24, overflow: 'hidden', marginBottom: 24, backgroundColor: 'transparent', borderWidth: 0 },
-  clearInner: { padding: 28, minHeight: 280, justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.35)', borderRadius: 24 },
+  clearInner: { padding: 22, minHeight: 260, justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.35)', borderRadius: 24 },
   clearTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 },
   clearDate: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: '#ffffff' },
   clearLogo: { width: 52, height: 52, opacity: 1 },
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   secondaryBtnText: { color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: '600', letterSpacing: 0.5 },
   sharedStrip: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, paddingTop: 16, marginTop: 16 },
   sharedStat: { flex: 1, alignItems: 'center' },
-  sharedVal: { fontSize: 20, fontWeight: '900', color: '#ffffff', letterSpacing: -0.3 },
-  sharedLbl: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginTop: 4 },
+  sharedVal: { fontSize: 22, fontWeight: '900', color: '#ffffff', letterSpacing: -0.3 },
+  sharedLbl: { fontSize: 10, fontWeight: '700', letterSpacing: 2, color: 'rgba(255,255,255,0.35)', marginTop: 4 },
   sharedDiv: { width: 1, height: 20, backgroundColor: 'rgba(255,255,255,0.08)' },
 });
