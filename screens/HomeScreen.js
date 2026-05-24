@@ -257,6 +257,9 @@ export default function HomeScreen({ navigation }) {
       <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Stats')}>
         <Text style={styles.bottomBtnText}>📊 Stats</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('MyWorkouts')}>
+        <Text style={styles.bottomBtnText}>⚡ Workouts</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('SplitBuilder')}>
         <Text style={styles.bottomBtnText}>🗓 Split</Text>
       </TouchableOpacity>

@@ -15,6 +15,9 @@ import SettingsScreen from './screens/SettingsScreen';
 import SummaryScreen from './screens/SummaryScreen';
 import SplashScreen from './screens/SplashScreen';
 import PRHistoryScreen from './screens/PRHistoryScreen';
+import MyWorkoutsScreen from './screens/MyWorkoutsScreen';
+import WorkoutBuilderScreen from './screens/WorkoutBuilderScreen';
+import GuidedWorkoutScreen from './screens/GuidedWorkoutScreen';
 import StatsScreen from './screens/StatsScreen';
 import ShareScreen from './screens/ShareScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
@@ -108,6 +111,9 @@ export default function App() {
           <Stack.Screen name="Stats" component={StatsScreen} />
           <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="PRHistory" component={PRHistoryScreen} />
+          <Stack.Screen name="MyWorkouts" component={MyWorkoutsScreen} />
+          <Stack.Screen name="WorkoutBuilder" component={WorkoutBuilderScreen} />
+          <Stack.Screen name="GuidedWorkout" component={GuidedWorkoutScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
