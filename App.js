@@ -118,7 +118,7 @@ function CustomTabBar({ state, descriptors, navigation }) {
       borderTopWidth: 0.5,
       borderTopColor: theme.bgCardBorder,
       paddingBottom: 28,
-      paddingTop: 12,
+      paddingTop: 10,
       paddingHorizontal: 8,
     }}>
       {state.routes.map((route, index) => {
@@ -135,16 +135,15 @@ function CustomTabBar({ state, descriptors, navigation }) {
               activeOpacity={0.8}
             >
               <View style={{
-                width: 52, height: 52, borderRadius: 26,
-                backgroundColor: isFocused ? theme.accent : 'rgba(157,78,221,0.15)',
+                width: 44, height: 44, borderRadius: 22,
+                backgroundColor: isFocused ? theme.accent : 'rgba(157,78,221,0.12)',
                 alignItems: 'center', justifyContent: 'center',
-                marginTop: -16,
-                borderWidth: 2,
-                borderColor: isFocused ? theme.accent : 'rgba(157,78,221,0.3)',
+                borderWidth: 1.5,
+                borderColor: isFocused ? theme.accent : 'rgba(157,78,221,0.25)',
               }}>
                 <Image
                   source={require('./assets/logo.png')}
-                  style={{ width: 28, height: 28, tintColor: '#ffffff' }}
+                  style={{ width: 24, height: 24, tintColor: '#ffffff' }}
                   resizeMode="contain"
                 />
               </View>
@@ -166,11 +165,11 @@ function CustomTabBar({ state, descriptors, navigation }) {
           >
             <Text style={{
               fontSize: 20, marginBottom: 3,
-              color: isFocused ? theme.accent : theme.textTertiary,
+              color: isFocused ? theme.accent : theme.textSecondary,
             }}>{tab.icon}</Text>
             <Text style={{
               fontSize: 10, fontWeight: '600',
-              color: isFocused ? theme.accent : theme.textTertiary,
+              color: isFocused ? theme.accent : theme.textSecondary,
               letterSpacing: 0.5,
             }}>{tab.label}</Text>
           </TouchableOpacity>
