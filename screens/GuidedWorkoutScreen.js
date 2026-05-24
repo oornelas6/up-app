@@ -18,6 +18,24 @@ export default function GuidedWorkoutScreen({ navigation, route }) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [loggedPerExercise, setLoggedPerExercise] = useState({});
+
+  // When returning from Revolver, update logged sets display
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      const routes = navigation.getState()?.routes;
+      const prevRoute = routes?.[routes.length - 2];
+      if (prevRoute?.name === 'PR' || prevRoute?.name === 'Revolver') {
+        // Update logged sets from sessionSets
+        const map = {};
+        sessionSets.forEach(set => {
+          if (!map[set.exercise]) map[set.exercise] = [];
+          map[set.exercise].push(set);
+        });
+        setLoggedPerExercise(map);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, sessionSets]);
   const timerRef = useRef(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 

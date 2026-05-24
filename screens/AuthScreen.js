@@ -25,6 +25,10 @@ const cognitoRequest = async (action, body) => {
 export default function AuthScreen({ onAuth }) {
   const theme = useTheme();
   const [mode, setMode] = useState('login');
+  const welcomeCopy = {
+    login: { title: 'Welcome back.', sub: 'Your gains are waiting.' },
+    signup: { title: 'Let\'s build\nsomething.', sub: 'Create your account to get started.' },
+  };
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
@@ -168,6 +172,8 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#0a000f' },
   container: { flex: 1, paddingHorizontal: 28, paddingTop: 100, paddingBottom: 48 },
   logo: { fontSize: 56, fontWeight: '900', color: '#ffffff', letterSpacing: 4, textAlign: 'center', marginBottom: 4 },
+  welcomeTitle: { fontSize: 36, fontWeight: '900', color: '#ffffff', letterSpacing: -1, lineHeight: 42, marginBottom: 8, marginTop: 8 },
+  welcomeSub: { fontSize: 14, fontWeight: '400', marginBottom: 28, lineHeight: 20 },
   tagline: { fontSize: 14, color: 'rgba(255,255,255,0.3)', textAlign: 'center', letterSpacing: 3, marginBottom: 60 },
   title: { fontSize: 28, fontWeight: '800', color: '#ffffff', marginBottom: 8, textAlign: 'center' },
   subtitle: { fontSize: 14, color: 'rgba(255,255,255,0.3)', textAlign: 'center', marginBottom: 32 },

@@ -120,6 +120,17 @@ export default function RevolverScreen({ navigation, route }) {
   const styles = getStyles(theme);
   const baseWeight = WEIGHTS[weightIdx];
   const selectedWeight = Math.round((baseWeight + fineWeight) * 100) / 100;
+
+  // Convert suggestion to current unit
+  const displaySuggestion = suggestion ? (() => {
+    if (!suggestion) return null;
+    if ((suggestion.unit === 'kg') === isKg) return suggestion;
+    if (isKg) {
+      return { ...suggestion, weight: Math.round(suggestion.weight * 0.453592 * 4) / 4, unit: 'kg' };
+    } else {
+      return { ...suggestion, weight: Math.round(suggestion.weight * 2.20462 * 2) / 2, unit: 'lbs' };
+    }
+  })() : null;
   const selectedReps = REPS[repsIdx];
   const [suggestion, setSuggestion] = useState(null);
   const hasFineOffset = fineWeight !== 0;
@@ -229,30 +240,30 @@ export default function RevolverScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
 
-        {suggestion && (
+        {displaySuggestion && (
           <View style={styles.suggestionCard}>
             <View style={styles.suggestionLeft}>
               <Text style={styles.suggestionLabel}>LAST SESSION</Text>
               <Text style={styles.suggestionMain}>
-                {suggestion.weight} {suggestion.unit} × {suggestion.reps}
+                {displaySuggestion.weight} {displaySuggestion.unit} × {displaySuggestion.reps}
               </Text>
               <Text style={styles.suggestionRM}>
-                1RM ≈ {Math.round(parseFloat(suggestion.weight) * (1 + suggestion.reps / 30))} {suggestion.unit}
+                1RM ≈ {Math.round(parseFloat(displaySuggestion.weight) * (1 + displaySuggestion.reps / 30))} {displaySuggestion.unit}
               </Text>
             </View>
             <View style={styles.suggestionDivider} />
             <View style={styles.suggestionRight}>
               <Text style={styles.suggestionLabel}>TARGET</Text>
               <Text style={styles.suggestionTarget}>
-                {suggestion.reps >= 12
-                  ? parseFloat(suggestion.weight) + (suggestion.unit === 'kg' ? 2.5 : 5)
-                  : suggestion.reps <= 5
-                  ? parseFloat(suggestion.weight) + (suggestion.unit === 'kg' ? 5 : 10)
-                  : parseFloat(suggestion.weight) + (suggestion.unit === 'kg' ? 2.5 : 5)
-                } {suggestion.unit}
+                {displaySuggestion.reps >= 12
+                  ? parseFloat(displaySuggestion.weight) + (isKg ? 2.5 : 5)
+                  : displaySuggestion.reps <= 5
+                  ? parseFloat(displaySuggestion.weight) + (isKg ? 5 : 10)
+                  : parseFloat(displaySuggestion.weight) + (isKg ? 2.5 : 5)
+                } {displaySuggestion.unit}
               </Text>
               <Text style={styles.suggestionRM}>
-                {suggestion.reps >= 12 ? 'add weight' : suggestion.reps <= 5 ? 'strength jump' : 'progressive'}
+                {displaySuggestion.reps >= 12 ? 'add weight' : displaySuggestion.reps <= 5 ? 'strength jump' : 'progressive'}
               </Text>
             </View>
           </View>

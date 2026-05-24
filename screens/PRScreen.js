@@ -16,7 +16,7 @@ const MESSAGES = [
 ];
 
 export default function PRScreen({ navigation, route }) {
-  const { exercise, weight, reps, setNum, split, isPR } = route.params;
+  const { exercise, weight, reps, setNum, split, isPR, guidedMode, guidedWorkout, guidedIdx } = route.params;
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const { restTimer, addSetToSession, sessionSets, clearSession } = useSettings();
@@ -167,7 +167,13 @@ export default function PRScreen({ navigation, route }) {
           </Text>
         </View>
 
-        <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.goBack()}>
+        <TouchableOpacity activeOpacity={0.9} onPress={() => {
+          if (guidedMode) {
+            navigation.navigate('GuidedWorkout', { workout: guidedWorkout });
+          } else {
+            navigation.goBack();
+          }
+        }}>
           <LinearGradient
             colors={timerDone ? ['#4caf50', '#2e7d32'] : theme.gradientBtn}
             style={styles.continueBtn}
