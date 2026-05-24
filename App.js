@@ -62,6 +62,8 @@ function WorkoutStack() {
       <Stack.Screen name="MyWorkoutsMain" component={MyWorkoutsScreen} />
       <Stack.Screen name="WorkoutBuilder" component={WorkoutBuilderScreen} />
       <Stack.Screen name="GuidedWorkout" component={GuidedWorkoutScreen} />
+      <Stack.Screen name="Split" component={SplitScreen} />
+      <Stack.Screen name="SplitBuilder" component={SplitBuilderScreen} />
       <Stack.Screen name="Workout" component={WorkoutScreen} />
       <Stack.Screen name="Revolver" component={RevolverScreen} />
       <Stack.Screen name="PR" component={PRScreen} />
@@ -105,8 +107,8 @@ function CustomTabBar({ state, descriptors, navigation }) {
 
   const tabs = [
     { name: 'HomeTab', icon: '⌂', label: 'Home' },
-    { name: 'WorkoutTab', icon: '↑', label: 'Train' },
     { name: 'HistoryTab', icon: '◷', label: 'History' },
+    { name: 'WorkoutTab', icon: '↑', label: 'Train' },
     { name: 'StatsTab', icon: '◈', label: 'Stats' },
     { name: 'ProfileTab', icon: '◉', label: 'You' },
   ];
@@ -126,7 +128,7 @@ function CustomTabBar({ state, descriptors, navigation }) {
         const tab = tabs[index];
 
         // Special center "Train" button
-        if (index === 1) {
+        if (index === 2) {
           return (
             <TouchableOpacity
               key={route.key}
@@ -186,8 +188,8 @@ function MainTabs() {
       screenOptions={{ headerShown: false }}
     >
       <Tab.Screen name="HomeTab" component={HomeStack} />
-      <Tab.Screen name="WorkoutTab" component={WorkoutStack} />
       <Tab.Screen name="HistoryTab" component={HistoryStack} />
+      <Tab.Screen name="WorkoutTab" component={WorkoutStack} />
       <Tab.Screen name="StatsTab" component={StatsStack} />
       <Tab.Screen name="ProfileTab" component={ProfileStack} />
     </Tab.Navigator>
