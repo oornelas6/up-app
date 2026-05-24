@@ -140,10 +140,10 @@ function CustomTabBar({ state, descriptors, navigation }) {
             >
               <View style={{
                 width: 44, height: 44, borderRadius: 22,
-                backgroundColor: isFocused ? theme.accent : 'rgba(157,78,221,0.12)',
+                backgroundColor: '#7b2cbf',
                 alignItems: 'center', justifyContent: 'center',
                 borderWidth: 1.5,
-                borderColor: isFocused ? theme.accent : 'rgba(157,78,221,0.25)',
+                borderColor: isFocused ? '#9d4edd' : '#5a189a',
               }}>
                 <Image
                   source={require('./assets/logo.png')}
