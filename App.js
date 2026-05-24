@@ -18,6 +18,7 @@ import SummaryScreen from './screens/SummaryScreen';
 import SplashScreen from './screens/SplashScreen';
 import PRHistoryScreen from './screens/PRHistoryScreen';
 import MyWorkoutsScreen from './screens/MyWorkoutsScreen';
+import StreakScreen from './screens/StreakScreen';
 import WorkoutBuilderScreen from './screens/WorkoutBuilderScreen';
 import GuidedWorkoutScreen from './screens/GuidedWorkoutScreen';
 import StatsScreen from './screens/StatsScreen';
@@ -52,6 +53,7 @@ function HomeStack() {
       <Stack.Screen name="SplitBuilder" component={SplitBuilderScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="PRHistory" component={PRHistoryScreen} />
+      <Stack.Screen name="Streak" component={StreakScreen} />
     </Stack.Navigator>
   );
 }

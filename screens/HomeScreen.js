@@ -167,7 +167,7 @@ export default function HomeScreen({ navigation }) {
           >
             <Text style={styles.settingsBtnText}>⚙</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.streakBadge} onPress={() => navigation.navigate('HistoryTab')}>
+          <TouchableOpacity style={styles.streakBadge} onPress={() => navigation.navigate('Streak', { streak: stats.streak })}>
             <StreakIcon />
             <Text style={styles.streakText}>{stats.streak} day streak</Text>
           </TouchableOpacity>
@@ -257,7 +257,7 @@ export default function HomeScreen({ navigation }) {
 
     </View>
             
-        <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7} onPress={() => navigation.navigate('HistoryTab')}>
+        <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Streak', { streak: stats.streak })}>
           <Text style={styles.historyBtnText}>View History</Text>
         </TouchableOpacity>
       </Animated.View>

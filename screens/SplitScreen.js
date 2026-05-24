@@ -207,14 +207,10 @@ export default function SplitScreen({ navigation }) {
           >
             <LinearGradient colors={theme.gradientBtn} style={styles.loadoutOptionGradient}>
               <Text style={[styles.loadoutOptionTitle, { color: theme.btnText }]}>
-                {selectedSplit === recommendedSplit
-                  ? "Start Today's Session"
-                  : isLastSplit
-                  ? 'Pick Up Where You Left Off'
-                  : "Let's Work"}
+                {selectedSplit === recommendedSplit ? "Start Today's Session" : "Let's Work"}
               </Text>
               <Text style={[styles.loadoutOptionSub, { color: theme.btnText === '#1a0035' ? 'rgba(26,0,53,0.55)' : 'rgba(255,255,255,0.55)' }]}>
-                {isLastSplit ? 'Last session loaded · push further today' : 'Your weights are ready'}
+                Your weights are ready
               </Text>
             </LinearGradient>
           </TouchableOpacity>
