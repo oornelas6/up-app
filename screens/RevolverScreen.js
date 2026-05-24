@@ -58,7 +58,16 @@ const WheelPicker = ({ data, unit, selectedIndex, onIndexChange, styles }) => {
     const idx = Math.round(e.nativeEvent.contentOffset.y / ITEM_HEIGHT);
     const clamped = Math.min(Math.max(idx, 0), data.length - 1);
     onIndexChange(clamped);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   }, [data, onIndexChange]);
+
+  const onScrollEnd = useCallback((e) => {
+    const idx = Math.round(e.nativeEvent.contentOffset.y / ITEM_HEIGHT);
+    const clamped = Math.min(Math.max(idx, 0), data.length - 1);
+    if (clamped !== selectedIndex) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+  }, [selectedIndex]);
 
   return (
     <View style={styles.wheelWrapper}>
@@ -456,14 +465,14 @@ const getStyles = (theme) => ({
   doneBtn: { paddingVertical: 14, alignItems: 'center' },
   doneBtnText: { color: theme.textTertiary, fontSize: 13, fontWeight: '500', letterSpacing: 1 },
   // Suggestion card
-  suggestionCard: { flexDirection: 'row', backgroundColor: 'rgba(157,78,221,0.08)', borderWidth: 1, borderColor: 'rgba(157,78,221,0.25)', borderRadius: 16, paddingVertical: 14, paddingHorizontal: 18, marginBottom: 14, alignItems: 'center' },
+  suggestionCard: { flexDirection: 'row', backgroundColor: 'rgba(157,78,221,0.15)', borderWidth: 1.5, borderColor: 'rgba(157,78,221,0.5)', borderRadius: 16, paddingVertical: 16, paddingHorizontal: 18, marginBottom: 14, alignItems: 'center' },
   suggestionLeft: { flex: 1, alignItems: 'flex-start' },
   suggestionRight: { flex: 1, alignItems: 'flex-end' },
   suggestionDivider: { width: 1, height: 40, backgroundColor: 'rgba(157,78,221,0.2)', marginHorizontal: 16 },
-  suggestionLabel: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: 'rgba(157,78,221,0.5)', marginBottom: 4 },
-  suggestionMain: { fontSize: 16, fontWeight: '800', color: theme.text, letterSpacing: -0.3 },
+  suggestionLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 2, color: '#9d4edd', marginBottom: 4 },
+  suggestionMain: { fontSize: 17, fontWeight: '900', color: theme.text, letterSpacing: -0.3 },
   suggestionRM: { fontSize: 10, color: theme.textTertiary, fontWeight: '500', marginTop: 2 },
-  suggestionTarget: { fontSize: 16, fontWeight: '800', color: '#9d4edd', letterSpacing: -0.3 },
+  suggestionTarget: { fontSize: 17, fontWeight: '900', color: '#9d4edd', letterSpacing: -0.3 },
   // Modal
   weightModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center' },
   weightModalBox: { borderRadius: 24, padding: 28, width: '80%', alignItems: 'center' },

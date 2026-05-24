@@ -157,7 +157,9 @@ export default function HomeScreen({ navigation }) {
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <View style={styles.header}>
-        <Logo size={36} />
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <Logo size={36} />
+        </TouchableOpacity>
         <View style={styles.headerRight}>
           <TouchableOpacity
             style={styles.settingsBtn}
@@ -165,10 +167,10 @@ export default function HomeScreen({ navigation }) {
           >
             <Text style={styles.settingsBtnText}>⚙</Text>
           </TouchableOpacity>
-          <View style={styles.streakBadge}>
+          <TouchableOpacity style={styles.streakBadge} onPress={() => navigation.navigate('History')}>
             <StreakIcon />
             <Text style={styles.streakText}>{stats.streak} day streak</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
 
