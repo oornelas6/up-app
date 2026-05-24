@@ -105,9 +105,7 @@ export default function HistoryScreen({ navigation }) {
       <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFillObject} />
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.back}>← Back</Text>
-          </TouchableOpacity>
+<View style={{ width: 60 }} />
           <Logo size={36} />
         </View>
 

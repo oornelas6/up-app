@@ -157,7 +157,7 @@ export default function HomeScreen({ navigation }) {
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeTab')}>
           <Logo size={36} />
         </TouchableOpacity>
         <View style={styles.headerRight}>
@@ -167,7 +167,7 @@ export default function HomeScreen({ navigation }) {
           >
             <Text style={styles.settingsBtnText}>⚙</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.streakBadge} onPress={() => navigation.navigate('History')}>
+          <TouchableOpacity style={styles.streakBadge} onPress={() => navigation.navigate('HistoryTab')}>
             <StreakIcon />
             <Text style={styles.streakText}>{stats.streak} day streak</Text>
           </TouchableOpacity>
@@ -238,7 +238,7 @@ export default function HomeScreen({ navigation }) {
           )}
 
         <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-          <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.navigate('Split')}>
+          <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.navigate('WorkoutTab', { screen: 'Split' })}>
             <LinearGradient
               colors={theme.gradientBtn}
               start={{ x: 0, y: 0 }}
@@ -254,18 +254,10 @@ export default function HomeScreen({ navigation }) {
         </Animated.View>
 
             <View style={styles.bottomBtns}>
-      <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('Stats')}>
-        <Text style={styles.bottomBtnText}>📊 Stats</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('MyWorkouts')}>
-        <Text style={styles.bottomBtnText}>⚡ Workouts</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.bottomBtn} activeOpacity={0.7} onPress={() => navigation.navigate('SplitBuilder')}>
-        <Text style={styles.bottomBtnText}>🗓 Split</Text>
-      </TouchableOpacity>
+
     </View>
             
-        <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7} onPress={() => navigation.navigate('History')}>
+        <TouchableOpacity style={styles.historyBtn} activeOpacity={0.7} onPress={() => navigation.navigate('HistoryTab')}>
           <Text style={styles.historyBtnText}>View History</Text>
         </TouchableOpacity>
       </Animated.View>

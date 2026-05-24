@@ -178,7 +178,7 @@ const duration = rawParams.duration || 0;
         {/* Done button */}
         <TouchableOpacity
           activeOpacity={0.9}
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('HomeTab')}
         >
           <LinearGradient
             colors={theme.gradientBtn}
