@@ -158,7 +158,7 @@ export default function HomeScreen({ navigation }) {
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('HomeTab')}>
-          <Logo size={36} />
+          <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
         </TouchableOpacity>
         <View style={styles.headerRight}>
           <TouchableOpacity

@@ -176,7 +176,7 @@ useEffect(() => {
               <Text style={styles.back}>← Back</Text>
             </TouchableOpacity>
       <Text style={styles.timerDisplay}>{formatElapsed(elapsedTime)}</Text>
-      <Logo size={36} />
+      <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
           </View>
 
           <Text style={[styles.title, { color: theme.text }]}>{split} Day</Text>

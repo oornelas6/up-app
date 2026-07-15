@@ -99,7 +99,7 @@ export default function AuthScreen({ onAuth }) {
       <View style={[styles.root, { backgroundColor: theme.bg }]}>
         <LinearGradient colors={theme.gradientBg} style={StyleSheet.absoluteFillObject} />
         <View style={styles.container}>
-          <Logo size={36} />
+          <Logo size={36} tappable={false} />
           <Text style={styles.tagline}>train smarter.</Text>
 
           {mode === 'confirm' ? (

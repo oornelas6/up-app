@@ -14,6 +14,7 @@ import RevolverScreen from './screens/RevolverScreen';
 import PRScreen from './screens/PRScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import ProfileScreen from './screens/ProfileScreen';
 import SummaryScreen from './screens/SummaryScreen';
 import SplashScreen from './screens/SplashScreen';
 import PRHistoryScreen from './screens/PRHistoryScreen';
@@ -97,7 +98,8 @@ function StatsStack() {
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={stackOptions}>
-      <Stack.Screen name="ProfileMain" component={SettingsScreen} />
+      <Stack.Screen name="ProfileMain" component={ProfileScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   );
 }
