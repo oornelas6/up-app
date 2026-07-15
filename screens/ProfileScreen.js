@@ -10,18 +10,29 @@ const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
 const AVATAR_COLORS = ['#7b2cbf', '#3c096c', '#5a189a', '#9d4edd', '#480ca8'];
 
 const AWARDS = [
-  { id: 'first_set', title: 'First Rep', desc: 'Logged your first set.', icon: '1', req: (s) => s.totalSets >= 1 },
-  { id: 'ten_sets', title: 'Getting Started', desc: '10 sets logged.', icon: '10', req: (s) => s.totalSets >= 10 },
-  { id: 'fifty_sets', title: 'Consistent', desc: '50 sets logged.', icon: '50', req: (s) => s.totalSets >= 50 },
-  { id: 'hundred_sets', title: 'Century', desc: '100 sets logged.', icon: '100', req: (s) => s.totalSets >= 100 },
-  { id: 'first_pr', title: 'Personal Best', desc: 'Hit your first PR.', icon: 'PR', req: (s) => s.prs >= 1 },
-  { id: 'five_prs', title: 'On a Tear', desc: '5 PRs and counting.', icon: '5', req: (s) => s.prs >= 5 },
-  { id: 'streak_3', title: 'Showing Up', desc: '3-day streak.', icon: '3', req: (s) => s.streak >= 3 },
-  { id: 'streak_7', title: 'Full Week', desc: '7-day streak.', icon: '7', req: (s) => s.streak >= 7 },
-  { id: 'streak_30', title: 'Locked In', desc: '30-day streak.', icon: '30', req: (s) => s.streak >= 30 },
-  { id: 'days_10', title: 'Regular', desc: 'Trained 10 different days.', icon: 'D', req: (s) => s.daysTraining >= 10 },
-  { id: 'days_30', title: 'Dedicated', desc: 'Trained 30 different days.', icon: 'D+', req: (s) => s.daysTraining >= 30 },
-  { id: 'volume_100k', title: 'Volume King', desc: 'Moved 100,000 lbs total.', icon: 'V', req: (s) => s.totalVolume >= 100000 },
+  // First steps
+  { id: 'first_set', title: 'Day One', desc: 'You started. That is everything.', icon: 'I', color: '#7b2cbf', req: (s) => s.totalSets >= 1 },
+  { id: 'ten_sets', title: 'In Motion', desc: '10 sets logged. The habit is forming.', icon: 'X', color: '#5a189a', req: (s) => s.totalSets >= 10 },
+  { id: 'fifty_sets', title: 'Built Different', desc: '50 sets. You are not like everyone else.', icon: 'L', color: '#3c096c', req: (s) => s.totalSets >= 50 },
+  { id: 'hundred_sets', title: 'Century', desc: '100 sets logged. This is a lifestyle.', icon: 'C', color: '#240046', req: (s) => s.totalSets >= 100 },
+  { id: 'fivehundred_sets', title: 'Relentless', desc: '500 sets. Consistency is your superpower.', icon: 'D', color: '#10002b', req: (s) => s.totalSets >= 500 },
+  // PRs
+  { id: 'first_pr', title: 'New Peak', desc: 'Your first personal record. Proof you are improving.', icon: '↑', color: '#9d4edd', req: (s) => s.prs >= 1 },
+  { id: 'five_prs', title: 'On Fire', desc: '5 PRs. Your body is adapting.', icon: '↑↑', color: '#7b2cbf', req: (s) => s.prs >= 5 },
+  { id: 'twenty_prs', title: 'Unbreakable', desc: '20 PRs. Every session you push further.', icon: '↑↑↑', color: '#5a189a', req: (s) => s.prs >= 20 },
+  // Streaks
+  { id: 'streak_3', title: 'Momentum', desc: '3 days in a row. Keep it going.', icon: '3', color: '#6d28d9', req: (s) => s.streak >= 3 },
+  { id: 'streak_7', title: 'Full Week', desc: 'Seven straight days. Most people never get here.', icon: '7', color: '#4c1d95', req: (s) => s.streak >= 7 },
+  { id: 'streak_14', title: 'Two Weeks Strong', desc: 'Two weeks without stopping.', icon: '14', color: '#3b0764', req: (s) => s.streak >= 14 },
+  { id: 'streak_30', title: 'Locked In', desc: '30 days. This is not a phase. This is you.', icon: '30', color: '#2e1065', req: (s) => s.streak >= 30 },
+  // Days
+  { id: 'days_5', title: 'Showing Up', desc: 'Trained 5 different days. The foundation is laid.', icon: '★', color: '#7b2cbf', req: (s) => s.daysTraining >= 5 },
+  { id: 'days_20', title: 'Committed', desc: '20 training days. Your discipline shows.', icon: '★★', color: '#5a189a', req: (s) => s.daysTraining >= 20 },
+  { id: 'days_50', title: 'Athlete', desc: '50 days trained. This word describes you now.', icon: '★★★', color: '#3c096c', req: (s) => s.daysTraining >= 50 },
+  // Volume
+  { id: 'volume_50k', title: 'Heavy Hitter', desc: 'Moved 50,000 lbs of total volume.', icon: 'V', color: '#6d28d9', req: (s) => s.totalVolume >= 50000 },
+  { id: 'volume_100k', title: 'Freight Train', desc: '100,000 lbs moved. The numbers do not lie.', icon: 'VV', color: '#4c1d95', req: (s) => s.totalVolume >= 100000 },
+  { id: 'volume_500k', title: 'Force of Nature', desc: 'Half a million pounds. Legendary.', icon: 'VVV', color: '#2e1065', req: (s) => s.totalVolume >= 500000 },
 ];
 
 export default function ProfileScreen({ navigation }) {
@@ -217,8 +228,8 @@ export default function ProfileScreen({ navigation }) {
         {unlockedAwards.length > 0 && (
           <View style={styles.awardsGrid}>
             {unlockedAwards.map(award => (
-              <View key={award.id} style={[styles.awardCard, { backgroundColor: 'rgba(123,44,191,0.15)', borderColor: 'rgba(157,78,221,0.4)' }]}>
-                <View style={[styles.awardIcon, { backgroundColor: theme.accent }]}>
+              <View key={award.id} style={[styles.awardCard, { backgroundColor: 'rgba(123,44,191,0.12)', borderColor: award.color + '66' }]}>
+                <View style={[styles.awardIcon, { backgroundColor: award.color }]}>
                   <Text style={styles.awardIconText}>{award.icon}</Text>
                 </View>
                 <Text style={[styles.awardTitle, { color: theme.text }]}>{award.title}</Text>
