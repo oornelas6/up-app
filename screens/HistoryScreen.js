@@ -106,7 +106,7 @@ export default function HistoryScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.header}>
 <View style={{ width: 60 }} />
-          <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
+          <Logo size={36} />
         </View>
 
         <Text style={[styles.title, { color: theme.text }]}>History</Text>

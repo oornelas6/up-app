@@ -1,10 +1,16 @@
 import { Image, TouchableOpacity } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
 
-export default function Logo({ size = 40, tappable = true, onPress }) {
+export default function Logo({ size = 40, tappable = true }) {
   const theme = useTheme();
+  const navigation = useNavigation();
 
-  if (!tappable && !onPress) {
+  const handlePress = () => {
+    navigation.navigate('HomeTab');
+  };
+
+  if (!tappable) {
     return (
       <Image
         source={require('../assets/logo.png')}
@@ -15,7 +21,7 @@ export default function Logo({ size = 40, tappable = true, onPress }) {
   }
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
       <Image
         source={require('../assets/logo.png')}
         style={{ width: size, height: size, tintColor: theme.text }}

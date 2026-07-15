@@ -77,7 +77,7 @@ export default function OnboardingScreen({ onFinish }) {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.step}>
               <View style={styles.logoRow}>
-                <Logo size={32} tappable={false} />
+                <Logo size={32} />
               </View>
               <View style={styles.copyBlock}>
                 <Text style={styles.eyebrow}>WELCOME</Text>
@@ -199,7 +199,7 @@ export default function OnboardingScreen({ onFinish }) {
           {/* ── STEP 3: Sendoff ── */}
           {step === 3 && (
             <View style={[styles.step, { justifyContent: 'center', alignItems: 'center' }]}>
-              <Logo size={64} tappable={false} />
+              <Logo size={64} />
               <View style={[styles.copyBlock, { alignItems: 'center', marginTop: 32 }]}>
                 <Text style={[styles.eyebrow, { textAlign: 'center' }]}>YOU'RE ALL SET</Text>
                 <Text style={[styles.headline, { textAlign: 'center', fontSize: 40 }]}>

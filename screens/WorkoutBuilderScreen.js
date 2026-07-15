@@ -123,7 +123,7 @@ export default function WorkoutBuilderScreen({ navigation, route }) {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Text style={styles.back}>← Back</Text>
             </TouchableOpacity>
-            <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
+            <Logo size={36} />
           </View>
 
           {step === 0 && (

@@ -14,8 +14,6 @@ import RevolverScreen from './screens/RevolverScreen';
 import PRScreen from './screens/PRScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import EditWhyScreen from './screens/EditWhyScreen';
 import SummaryScreen from './screens/SummaryScreen';
 import SplashScreen from './screens/SplashScreen';
 import PRHistoryScreen from './screens/PRHistoryScreen';
@@ -56,7 +54,6 @@ function HomeStack() {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="PRHistory" component={PRHistoryScreen} />
       <Stack.Screen name="Streak" component={StreakScreen} />
-      <Stack.Screen name="EditWhy" component={EditWhyScreen} />
     </Stack.Navigator>
   );
 }
@@ -100,8 +97,7 @@ function StatsStack() {
 function ProfileStack() {
   return (
     <Stack.Navigator screenOptions={stackOptions}>
-      <Stack.Screen name="ProfileMain" component={ProfileScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="ProfileMain" component={SettingsScreen} />
     </Stack.Navigator>
   );
 }
@@ -139,15 +135,7 @@ function CustomTabBar({ state, descriptors, navigation }) {
             <TouchableOpacity
               key={route.key}
               style={{ flex: 1, alignItems: 'center' }}
-              onPress={() => {
-              const isFocused = state.index === index;
-              if (isFocused) {
-                // Already on this tab - pop to top
-                navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-              } else {
-                navigation.navigate(route.name);
-              }
-            }}
+              onPress={() => navigation.navigate(route.name)}
               activeOpacity={0.8}
             >
               <View style={{
@@ -176,15 +164,7 @@ function CustomTabBar({ state, descriptors, navigation }) {
           <TouchableOpacity
             key={route.key}
             style={{ flex: 1, alignItems: 'center' }}
-            onPress={() => {
-              const isFocused = state.index === index;
-              if (isFocused) {
-                // Already on this tab - pop to top
-                navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-              } else {
-                navigation.navigate(route.name);
-              }
-            }}
+            onPress={() => navigation.navigate(route.name)}
             activeOpacity={0.8}
           >
             <Text style={{

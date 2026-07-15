@@ -3,13 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../components/Logo';
 import { useTheme } from '../context/ThemeContext';
-
+import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
 const StreakIcon = () => (
-  <Text style={{ fontSize: 10, color: "#9d4edd" }}>★</Text>
+  <Svg width="12" height="12" viewBox="0 0 14 14">
+    <Path d="M7 1 L8.5 5.5 L13 5.5 L9.5 8.5 L11 13 L7 10 L3 13 L4.5 8.5 L1 5.5 L5.5 5.5 Z" fill="#9d4edd" />
+  </Svg>
 );
 
 export default function HomeScreen({ navigation }) {
@@ -156,7 +158,7 @@ export default function HomeScreen({ navigation }) {
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('HomeTab')}>
-          <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
+          <Logo size={36} />
         </TouchableOpacity>
         <View style={styles.headerRight}>
           <TouchableOpacity

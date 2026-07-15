@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
-
+import Svg, { Circle } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';

@@ -49,7 +49,7 @@ export default function MyWorkoutsScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.header}>
 <View style={{ width: 60 }} />
-          <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
+          <Logo size={36} />
         </View>
 
         <View style={styles.titleRow}>
