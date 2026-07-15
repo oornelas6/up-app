@@ -4,11 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../context/ThemeContext';
 import * as Haptics from 'expo-haptics';
-import Svg, { Circle } from 'react-native-svg';
+
 
 const { width } = Dimensions.get('window');
 const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const RING_SIZE = width * 0.65;
 const STROKE = 12;
@@ -85,31 +84,23 @@ export default function StreakScreen({ navigation, route }) {
 
         {/* Ring */}
         <View style={styles.ringContainer}>
-          <Svg width={RING_SIZE} height={RING_SIZE}>
-            {/* Track */}
-            <Circle
-              cx={RING_SIZE / 2}
-              cy={RING_SIZE / 2}
-              r={RADIUS}
-              stroke={theme.bgCardBorder}
-              strokeWidth={STROKE}
-              fill="none"
-            />
-            {/* Progress */}
-            <AnimatedCircle
-              cx={RING_SIZE / 2}
-              cy={RING_SIZE / 2}
-              r={RADIUS}
-              stroke="#9d4edd"
-              strokeWidth={STROKE}
-              fill="none"
-              strokeDasharray={CIRCUMFERENCE}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              rotation="-90"
-              origin={`${RING_SIZE / 2}, ${RING_SIZE / 2}`}
-            />
-          </Svg>
+          <View style={{
+            width: RING_SIZE, height: RING_SIZE,
+            borderRadius: RING_SIZE / 2,
+            borderWidth: 10,
+            borderColor: 'rgba(157,78,221,0.2)',
+            position: 'absolute',
+          }} />
+          <View style={{
+            width: RING_SIZE - 20, height: RING_SIZE - 20,
+            borderRadius: (RING_SIZE - 20) / 2,
+            borderWidth: 10,
+            borderColor: '#9d4edd',
+            borderTopColor: 'transparent',
+            borderRightColor: 'transparent',
+            position: 'absolute',
+            transform: [{ rotate: '-45deg' }],
+          }} />
           {/* Center content */}
           <View style={styles.ringCenter}>
             <Text style={[styles.streakNum, { color: theme.text }]}>{streak}</Text>
