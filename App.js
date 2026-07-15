@@ -110,6 +110,8 @@ function ProfileStack() {
 
 function CustomTabBar({ state, descriptors, navigation }) {
   const theme = useTheme();
+  const navRef = navigation;
+  const navRef = navigation;
 
   const tabs = [
     { name: 'HomeTab', icon: '⌂', label: 'Home' },
@@ -139,7 +141,15 @@ function CustomTabBar({ state, descriptors, navigation }) {
             <TouchableOpacity
               key={route.key}
               style={{ flex: 1, alignItems: 'center' }}
-              onPress={() => navigation.navigate(route.name)}
+              onPress={() => {
+              const isFocused = state.index === index;
+              if (isFocused) {
+                // Already on this tab - pop to top
+                navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+              } else {
+                navigation.navigate(route.name);
+              }
+            }}
               activeOpacity={0.8}
             >
               <View style={{
@@ -168,7 +178,15 @@ function CustomTabBar({ state, descriptors, navigation }) {
           <TouchableOpacity
             key={route.key}
             style={{ flex: 1, alignItems: 'center' }}
-            onPress={() => navigation.navigate(route.name)}
+            onPress={() => {
+              const isFocused = state.index === index;
+              if (isFocused) {
+                // Already on this tab - pop to top
+                navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+              } else {
+                navigation.navigate(route.name);
+              }
+            }}
             activeOpacity={0.8}
           >
             <Text style={{
