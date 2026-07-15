@@ -15,6 +15,7 @@ import PRScreen from './screens/PRScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import EditWhyScreen from './screens/EditWhyScreen';
 import SummaryScreen from './screens/SummaryScreen';
 import SplashScreen from './screens/SplashScreen';
 import PRHistoryScreen from './screens/PRHistoryScreen';
@@ -55,6 +56,7 @@ function HomeStack() {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="PRHistory" component={PRHistoryScreen} />
       <Stack.Screen name="Streak" component={StreakScreen} />
+      <Stack.Screen name="EditWhy" component={EditWhyScreen} />
     </Stack.Navigator>
   );
 }
