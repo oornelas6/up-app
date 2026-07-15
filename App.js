@@ -110,8 +110,6 @@ function ProfileStack() {
 
 function CustomTabBar({ state, descriptors, navigation }) {
   const theme = useTheme();
-  const navRef = navigation;
-  const navRef = navigation;
 
   const tabs = [
     { name: 'HomeTab', icon: '⌂', label: 'Home' },

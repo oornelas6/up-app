@@ -7,8 +7,6 @@ import * as Haptics from 'expo-haptics';
 
 const API_BASE = 'https://lurl0xn2b7.execute-api.us-east-1.amazonaws.com';
 
-const AVATAR_COLORS = ['#7b2cbf', '#3c096c', '#5a189a', '#9d4edd', '#480ca8'];
-
 const AWARDS = [
   { id: 'first_set', title: 'First Rep', desc: 'Logged your first set.', icon: '1', req: (s) => s.totalSets >= 1 },
   { id: 'ten_sets', title: 'Getting Started', desc: '10 sets logged.', icon: '10', req: (s) => s.totalSets >= 10 },
@@ -31,7 +29,6 @@ export default function ProfileScreen({ navigation }) {
   const [userGoal, setUserGoal] = useState('');
   const [userWhy, setUserWhy] = useState('');
   const [activeSplit, setActiveSplit] = useState(null);
-  const [avatarColor, setAvatarColor] = useState('#7b2cbf');
   const [stats, setStats] = useState({ totalSets: 0, totalVolume: 0, streak: 0, prs: 0, daysTraining: 0, topSport: null });
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -51,8 +48,7 @@ export default function ProfileScreen({ navigation }) {
     const goal = await AsyncStorage.getItem('user_goal') || '';
     const why = await AsyncStorage.getItem('user_why') || '';
     const splitStr = await AsyncStorage.getItem('active_split');
-    const color = await AsyncStorage.getItem('avatar_color') || '#7b2cbf';
-    setUserName(name); setUserGoal(goal); setUserWhy(why); setAvatarColor(color);
+    setUserName(name); setUserGoal(goal); setUserWhy(why); 
     if (splitStr) setActiveSplit(JSON.parse(splitStr));
   };
 
@@ -109,13 +105,7 @@ export default function ProfileScreen({ navigation }) {
     performance: 'Performance', consistency: 'Stay Consistent', general: 'General Fitness'
   };
 
-  const cycleAvatarColor = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const idx = AVATAR_COLORS.indexOf(avatarColor);
-    const next = AVATAR_COLORS[(idx + 1) % AVATAR_COLORS.length];
-    setAvatarColor(next);
-    await AsyncStorage.setItem('avatar_color', next);
-  };
+
 
   const unlockedAwards = AWARDS.filter(a => a.req(stats));
   const lockedAwards = AWARDS.filter(a => !a.req(stats));
@@ -140,12 +130,9 @@ export default function ProfileScreen({ navigation }) {
           style={[styles.identityCard, { borderColor: theme.bgCardBorder }]}
         >
           <View style={styles.identityTop}>
-            <TouchableOpacity onPress={cycleAvatarColor} activeOpacity={0.8}>
-              <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
-                <Text style={styles.avatarText}>{firstName ? firstName.charAt(0).toUpperCase() : 'U'}</Text>
-              </View>
-              <Text style={[styles.avatarHint, { color: theme.textTertiary }]}>tap</Text>
-            </TouchableOpacity>
+            <View style={[styles.avatar, { backgroundColor: theme.accent }]}>
+              <Text style={styles.avatarText}>{firstName ? firstName.charAt(0).toUpperCase() : 'U'}</Text>
+            </View>
             <View style={styles.identityInfo}>
               <Text style={[styles.identityName, { color: theme.text }]}>{userName || 'Athlete'}</Text>
               {stats.topSport && (
@@ -262,7 +249,6 @@ const getStyles = (theme) => ({
   identityTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 16, padding: 24 },
   avatar: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
   avatarText: { fontSize: 30, fontWeight: '900', color: '#ffffff' },
-  avatarHint: { fontSize: 9, fontWeight: '500', textAlign: 'center', letterSpacing: 0.5 },
   identityInfo: { flex: 1, paddingTop: 4 },
   identityName: { fontSize: 24, fontWeight: '900', letterSpacing: -0.5, marginBottom: 6 },
   sportBadge: { backgroundColor: 'rgba(157,78,221,0.2)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', marginBottom: 6 },
