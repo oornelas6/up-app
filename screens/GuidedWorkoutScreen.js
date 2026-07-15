@@ -101,7 +101,7 @@ export default function GuidedWorkoutScreen({ navigation, route }) {
             <Text style={styles.back}>← Back</Text>
           </TouchableOpacity>
           <Text style={styles.timer}>{formatTime(elapsedTime)}</Text>
-          <Logo size={36} />
+          <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
         </View>
 
         {/* Workout name + progress */}

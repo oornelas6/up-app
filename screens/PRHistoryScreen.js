@@ -54,7 +54,7 @@ export default function PRHistoryScreen({ navigation, route }) {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={[styles.back, { color: theme.textSecondary }]}>← Back</Text>
           </TouchableOpacity>
-          <Logo size={36} />
+          <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
         </View>
 
         <Text style={[styles.title, { color: theme.text }]}>{exercise}</Text>

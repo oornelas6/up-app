@@ -122,7 +122,7 @@ export default function StatsScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.header}>
 <View style={{ width: 60 }} />
-          <Logo size={36} />
+          <Logo size={36} onPress={() => navigation.navigate('HomeTab')} />
         </View>
 
         <Text style={[styles.title, { color: theme.text }]}>Stats</Text>
